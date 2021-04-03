@@ -6,7 +6,7 @@ Setup an environment variable for the FreeRTOS repo:
 export BAO_DEMOS_FREERTOS=$BAO_DEMOS_WRKDIR_SRC/freertos
 ```
 
-Then clone and build the freertos:
+Then clone and build the FreeRTOS:
 
 ```
 git clone --recursive --shallow-submodules\
@@ -15,7 +15,7 @@ git clone --recursive --shallow-submodules\
 make -C $BAO_DEMOS_FREERTOS PLATFORM=$PLATFORM
 ```
 
-Finally copy the FreeRTOS image to the final guest image directory:
+Finally, copy the FreeRTOS image to the final guest image directory:
 
 ```
 cp $BAO_DEMOS_FREERTOS/build/$PLATFORM/freertos.bin $BAO_DEMOS_WRKDIR_IMGS
