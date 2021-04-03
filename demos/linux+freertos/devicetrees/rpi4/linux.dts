@@ -1,0 +1,123 @@
+/dts-v1/;
+
+/ {
+	#address-cells = <2>;
+	#size-cells = <2>;
+	interrupt-parent = <&gic>;
+
+	cpus {
+		#size-cells = <0x0>;
+		#address-cells = <0x1>;
+
+		cpu@0 {
+			compatible = "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x0>;
+		};
+
+		cpu@1 {
+			compatible = "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x1>;
+		};
+
+		cpu@2 {
+			compatible = "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x2>;
+		};
+
+	};
+
+	psci {
+		compatible = "arm,psci-0.2";
+		method = "smc";
+	};
+
+	memory@20000000 {
+		reg = <0x0 0x20000000 0x0 0x40000000>;
+		device_type = "memory";
+	};
+
+	reserved-memory {
+		#address-cells = <0x02>;
+		#size-cells = <0x01>;
+		ranges;
+
+		linux,cma {
+			compatible = "shared-dma-pool";
+			size = <0x4000000>;
+			reusable;
+			linux,cma-default;
+		};
+	};
+
+	gic: interrupt-controller@3881000 {
+		compatible = "arm,gic-400";
+		#interrupt-cells = <3>;
+		interrupt-controller;
+		reg = <0x0 0xff841000 0x0 0x1000>,
+		      <0x0 0xff842000 0x0 0x2000>;
+	};
+
+	timer {
+		compatible = "arm,armv8-timer";
+		interrupts = <0x1 0xd 0xf08 0x1 0xe 0xf08 0x1 0xb 0xf08 0x1 0xa 0xf08>;
+	};
+
+	scb@7c000000 {
+		compatible = "simple-bus";
+		#address-cells = <0x02>;
+		#size-cells = < 0x02 >;
+		dma-ranges = < 0x00 0x00 0x00 0x00 0x04 0x00 >;
+		ranges = < 0x00 0x7c000000 0x00 0xfc000000 0x00 0x3800000 0x00 0x40000000 0x00 0xff800000 0x00 0x800000 0x06 0x00 0x06 0x00 0x00 0x40000000 0x00 0x00 0x00 0x00 0x00 0xfc000000 >;
+
+		genet: ethernet@7d580000 {
+			local-mac-address = [dc a6 32 a3 9c 57];
+			compatible = "brcm,bcm2711-genet-v5", "brcm,genet-v5";
+			reg = < 0x00 0x7d580000 0x00 0x10000 >;
+			#address-cells = <0x1>;
+			#size-cells = <0x1>;
+			interrupts = <0 157 4>,
+						<0 158 4>;
+			status = "okay";
+
+			phy-handle = <&phy1>;
+			phy-mode = "rgmii-rxid";
+
+			genet_mdio: mdio@e14 {
+				compatible = "brcm,genet-mdio-v5";
+				reg = <0xe14 0x8>;
+				reg-names = "mdio";
+				#address-cells = <0x0>;
+				#size-cells = <0x1>;
+
+				phy1: ethernet-phy@1 {
+					reg = <0x01>;
+					led-modes = < 0x00 0x08 >;
+				};
+			};
+		};
+	};
+
+    bao-ipc@f0000000 {
+        compatible = "bao,ipcshmem";
+        reg = <0x0 0xf0000000 0x0 0x00010000>;
+		read-channel = <0x0 0x2000>;
+		write-channel = <0x2000 0x2000>;
+        interrupts = <0 52 1>;
+		id = <0>;
+    };
+
+	aliases {
+		ethernet0 = &genet;
+	};
+
+	chosen {
+		bootargs = "earlycon clk_ignore_unused ip=192.168.42.15 carrier_timeout=0";
+	};
+
+};
