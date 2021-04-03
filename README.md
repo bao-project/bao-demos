@@ -91,9 +91,9 @@ to make.
 
 **WARNING**
 
-The makefiles will automatically accept EULAs on your behalf for some of the 
-downloaded firmware. If you wish to be prompted for to accept them manually, 
-pass `ALWAYS_ASK=1` to make.
+The makefiles will automatically accept end-user license agreements (EULAs) on 
+your behalf for some of the downloaded firmware. If you wish to be prompted for 
+to accept them manually, pass `ALWAYS_ASK=1` to make.
 
 ---
 
@@ -118,21 +118,21 @@ used as any kind of build system during development.
 
 ## B) Follow the step-by-step guide
 
-As an alternative we provide a step-by-step guide you can follow to build all
-the necessary software and deploy it to your target platform.
+As an alternative, we provide a step-by-step guide that you can follow to build 
+all the necessary software and deploy it to your target platform.
 
 ### B.1) Setup ARCH manually
 
-Setup the *ARCH* environment variable manually according to the tables 
-[Appendix I](#Appendix-I). For example, for the ZCU102 plataform:
+Setup the *ARCH* environment variable manually according to 
+[Appendix I](#Appendix-I). For example, for the ZCU102 platform:
 
 ```
 export ARCH=aarch64
 ```
 
-### B.1) Create working directory
+### B.2) Create working directory
 
-Create the working directories where you'll place the needed source code and
+Create the working directories where you'll place the source code and
 final images:
 
 ```
@@ -146,7 +146,7 @@ mkdir -p $BAO_DEMOS_WRKDIR_SRC
 mkdir -p $BAO_DEMOS_WRKDIR_IMGS
 ```
 
-### B.2) Build guests
+### B.3) Build guests
 
 Build guests according to the target demo:
 
@@ -154,7 +154,7 @@ Build guests according to the target demo:
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
 
 
-### B.3) Build Bao
+### B.4) Build Bao
 
 Clone Bao's repo to the the working directory:
 
@@ -190,7 +190,7 @@ cp $BAO_DEMOS_BAO/bin/$PLATFORM/builtin-configs/$DEMO/bao.bin\
     $BAO_DEMOS_WRKDIR_IMGS
 ```
 
-### B.4) Build Firmware and Deploy
+### B.5) Build Firmware and Deploy
 
 Build the firmware and deploy the system according to the target platform:
 
