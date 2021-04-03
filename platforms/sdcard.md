@@ -2,8 +2,6 @@
 
 First make sure you save all the files currently in the card.
 
-The SD card should be at least.
-
 In this example the sdcard is `/dev/mmcblk0` and the partitions are 
 `/dev/mmcblk0p1`, `/dev/mmcblk0p2`, etc. Other common names might be TODO.
 
