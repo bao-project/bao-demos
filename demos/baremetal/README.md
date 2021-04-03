@@ -1,6 +1,6 @@
 # Bare metal application Demo
 
-This demo features a multi-threaded bare metal application running over bao
+This demo features a multi-threaded bare metal application running over Bao
 on all available cores. The application prints to the first available UART.
 
 It configures a periodic timer interrupt in the first core and, each time this 
