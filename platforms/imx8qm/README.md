@@ -16,7 +16,7 @@ wget -P $BAO_DEMOS_NXP_TOOLS\
     https://www.nxp.com/lgfiles/NMG/MAD/YOCTO/imx-sc-firmware-1.5.0.bin
 cd $BAO_DEMOS_NXP_TOOLS
 chmod +x imx-sc-firmware-1.5.0.bin
-noask=1 ./imx-sc-firmware-1.5.0.bin
+./imx-sc-firmware-1.5.0.bin
 ```
 
 ### 1.2) SECO
@@ -28,7 +28,7 @@ wget -P $BAO_DEMOS_NXP_TOOLS\
     https://www.nxp.com/lgfiles/NMG/MAD/YOCTO/imx-seco-3.6.3.bin
 cd $BAO_DEMOS_NXP_TOOLS
 chmod a+x imx-seco-3.6.3.bin
-noask=1 ./imx-seco-3.6.3.bin
+./imx-seco-3.6.3.bin
 ```
 
 ## 1.3) Build U-boot
