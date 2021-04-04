@@ -92,7 +92,7 @@ to make.
 **WARNING**
 
 The makefiles will automatically accept end-user license agreements (EULAs) on 
-your behalf for some of the downloaded firmware. If you wish to be prompted for 
+your behalf for some of the downloaded firmware. If you wish to be prompted 
 to accept them manually, pass `ALWAYS_ASK=1` to make.
 
 ---
