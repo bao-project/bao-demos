@@ -6,6 +6,7 @@ systems and targeting several supported platforms. The available demos are:
 
 * [Single-guest Baremetal](demos/baremetal/README.md)
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
+* [Dual-Linux connected via IVSHMEM-NET](demos/linux-ivshmem-net/README.md)
 
 ---
 
@@ -152,6 +153,7 @@ Build guests according to the target demo:
 
 * [Single Baremetal Guest](demos/baremetal/README.md)
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
+* [Dual-Linux connected via IVSHMEM-NET](demos/linux-ivshmem-net/README.md)
 
 
 ### B.4) Build Bao

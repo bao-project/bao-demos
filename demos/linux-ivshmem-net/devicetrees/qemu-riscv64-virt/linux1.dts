@@ -1,0 +1,67 @@
+/dts-v1/;
+
+/ {
+	#address-cells = <0x2>;
+	#size-cells = <0x2>;
+
+	cpus {
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		timebase-frequency = <10000000>;
+
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			reg = <0x0>;
+			status = "okay";
+			compatible = "riscv";
+			riscv,isa = "rv64imafdcsu";
+			mmu-type = "riscv,sv48";
+
+			cpu0_intc: interrupt-controller {
+				#interrupt-cells = <0x1>;
+				interrupt-controller;
+				compatible = "riscv,cpu-intc";
+			};
+		};
+
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0x0 0x80000000 0x0 0x40000000>;
+	};
+
+	plic: interrupt-controller@c000000 {
+		riscv,ndev = <60>;
+		reg = <0x0 0xc000000 0x0 0x4000000>;
+		interrupts-extended = <
+			&cpu0_intc 11 &cpu0_intc 9 
+		>;
+		interrupt-controller;
+		compatible = "riscv,plic0";
+		#interrupt-cells = <0x1>;
+	};
+
+	uart0: uart@10000000 {
+		interrupts = <10>;
+		interrupt-parent = <&plic>;
+		clock-frequency = <0x384000>;
+		reg = <0x0 0x10000000 0x0 0x100>;
+		compatible = "ns16550a";
+	};
+
+    bao-ipc@f0000000 {
+        compatible = "bao,pseudo-ivshmem-net";
+        #address-cells = <2>;
+        #size-cells = <2>;
+        reg = <0x0 0xf0000000 0x0 0x00010000>;
+        interrupt-parent = <&plic>;
+        interrupts = <52 53>;
+		id = <0>;
+    };
+
+	chosen {
+		bootargs = "earlycon console=ttyS0 ip=192.168.42.15 carrier_timeout=0";
+		stdout-path = &uart0;
+	};
+};

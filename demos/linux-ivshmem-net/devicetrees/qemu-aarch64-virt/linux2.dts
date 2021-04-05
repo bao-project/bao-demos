@@ -1,0 +1,76 @@
+/dts-v1/;
+
+/ {
+	#size-cells = <0x2>;
+	#address-cells = <0x2>;
+	interrupt-parent = <&gic>;
+
+	cpus {
+		#size-cells = <0x0>;
+		#address-cells = <0x1>;
+
+		cpu@0 {
+			compatible = "arm,cortex-a53", "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x0>;
+		};
+
+		cpu@1 {
+			compatible = "arm,cortex-a53", "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x1>;
+		};
+
+		cpu@2 {
+			compatible = "arm,cortex-a53", "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x2>;
+		};
+	};
+
+	psci {
+		compatible = "arm,psci-0.2";
+		method = "smc";
+	};
+
+	memory@40000000 {
+		reg = <0x0 0x40000000 0x0 0x20000000>;
+		device_type = "memory";
+	};
+
+    gic: intc@8000000 {
+		phandle = <0x8001>;
+		interrupts = <0x01 0x09 0x04>;
+		reg = <0x00 0x8000000 0x00 0x10000 0x00 0x80a0000 0x00 0xf60000>;
+		#redistributor-regions = <0x01>;
+		compatible = "arm,gic-v3";
+		ranges;
+		#size-cells = <0x02>;
+		#address-cells = <0x02>;
+		interrupt-controller;
+		#interrupt-cells = <0x03>;
+	};
+
+	timer {
+		interrupts = <0x1 0xd 0xf04 0x1 0xe 0xf04 0x1 0xb 0xf04 0x1 0xa 0xf04>;
+		always-on;
+		compatible = "arm,armv8-timer", "arm,armv7-timer";
+	};
+
+    bao-ipc@60000000 {
+        compatible = "bao,pseudo-ivshmem-net";
+        #address-cells = <2>;
+        #size-cells = <2>;
+        reg = <0x0 0x60000000 0x0 0x00010000>;
+        interrupt-parent = <&gic>;
+        interrupts = <0x0 152 0x4 0x0 153 0x4>;
+        id = <0>;
+    };
+
+	chosen {
+        bootargs = "earlycon ip=192.168.42.16 carrier_timeout=0";
+	};
+};
