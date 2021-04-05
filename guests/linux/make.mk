@@ -8,7 +8,7 @@ linux_patches:=$(wildcard $(bao_demos)/guests/linux/patches/$(linux_version)/*.p
 
 $(linux_src):
 	git clone --depth 1 --branch $(linux_version) $(linux_repo) $(linux_src)
-	git -C $(linux_src) apply "$(linux_patches)"
+	git -C $(linux_src) apply $(linux_patches)
 
 buildroot_repo:=https://github.com/buildroot/buildroot.git
 buildroot_version:=2020.11.3
