@@ -231,6 +231,7 @@ Build the firmware and deploy the system according to the target platform:
 |--|--|
 | Baremetal guest | baremetal |
 | Linux+FreeRTOS | linux+freertos |
+| Dual-Linux IVSHMEM-NET | linux-ivshmem-net |
 
 <!-- TODO: Add Accepted Platform/Demos table -->
 
