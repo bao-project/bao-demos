@@ -8,7 +8,7 @@ In this guide, we build and flash the TF-A firmware in order to control SMMU
 stream ids of peripherals used by some virtual machines, which are not 
 programmed by default. If you are targeting a demo where no virtual machine 
 features DMA-capable peripherals (e.g. baremetal demo) you can use the 
-pre-flashed firmware and skip directly to step  3.
+pre-flashed firmware and skip directly to [step 4](#4-Setup-SD-card).
 
 ---
 
@@ -78,8 +78,8 @@ If all goes well you should see the message:
 <!--- instruction#2 -->
 ## 4) Setup SD card
 
-After [preparing your sd card](../../platforms/sdcard.md), copy the firmware 
-and bao's final image to it:
+After [preparing your sd card](../../platforms/sdcard.md), copy bao's final
+image to it:
 
 ```
 cp $BAO_DEMOS_WRKDIR_IMGS/bao.bin $BAO_DEMOS_SDCARD
