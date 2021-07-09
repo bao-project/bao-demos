@@ -11,7 +11,7 @@ Then clone and build the FreeRTOS:
 ```
 git clone --recursive --shallow-submodules\
     https://github.com/bao-project/freertos-over-bao.git\
-    $BAO_DEMOS_FREERTOS --branch demo
+    $BAO_DEMOS_FREERTOS --branch demo-rocket
 make -C $BAO_DEMOS_FREERTOS PLATFORM=$PLATFORM
 ```
 
