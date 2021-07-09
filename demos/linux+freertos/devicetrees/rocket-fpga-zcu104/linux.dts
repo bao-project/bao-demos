@@ -1,0 +1,110 @@
+/dts-v1/;
+
+/ {
+	#address-cells = <0x2>;
+	#size-cells = <0x2>;
+
+	cpus {
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		timebase-frequency = <1000000>;
+
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			reg = <0x0>;
+			status = "okay";
+			compatible = "riscv";
+			riscv,isa = "rv64imafdcsu";
+			mmu-type = "riscv,sv48";
+
+			cpu0_intc: interrupt-controller {
+				#interrupt-cells = <0x1>;
+				interrupt-controller;
+				compatible = "riscv,cpu-intc";
+			};
+		};
+
+		cpu1: cpu@1 {
+			device_type = "cpu";
+			reg = <0x1>;
+			status = "okay";
+			compatible = "riscv";
+			riscv,isa = "rv64imafdcsu";
+			mmu-type = "riscv,sv48";
+
+			cpu1_intc: interrupt-controller {
+				#interrupt-cells = <0x1>;
+				interrupt-controller;
+				compatible = "riscv,cpu-intc";
+			};
+		};
+
+		cpu2: cpu@2 {
+			device_type = "cpu";
+			reg = <0x2>;
+			status = "okay";
+			compatible = "riscv";
+			riscv,isa = "rv64imafdcsu";
+			mmu-type = "riscv,sv48";
+
+			cpu2_intc: interrupt-controller {
+				#interrupt-cells = <0x1>;
+				interrupt-controller;
+				compatible = "riscv,cpu-intc";
+			};
+		};
+	};
+
+	memory@40200000 {
+		device_type = "memory";
+		reg = <0x0 0x40200000 0x0 0x10000000>;
+	};
+
+	plic: interrupt-controller@c000000 {
+		riscv,ndev = <60>;
+		reg = <0x0 0xc000000 0x0 0x4000000>;
+		interrupts-extended = <
+			&cpu0_intc 11 &cpu0_intc 9 
+			&cpu1_intc 11 &cpu1_intc 9 
+			&cpu2_intc 11 &cpu2_intc 9
+		>;
+		interrupt-controller;
+		compatible = "riscv,plic0";
+		#interrupt-cells = <0x1>;
+	};
+
+	uartclk: uartclk {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <100000000>;
+	};
+
+    serial@ff010000 {
+    	compatible = "cdns,uart-r1p12";
+    	status = "okay";
+        interrupts = <2>;
+        interrupt-parent = <&plic>;
+    	reg = <0x0 0xff010000 0x0 0x1000>;
+    	clock-names = "uart_clk", "pclk";
+    	clocks = <&uartclk>, <&uartclk>;
+    };
+
+    bao-ipc@f0000000 {
+        compatible = "bao,ipcshmem";
+        reg = <0x0 0xf0000000 0x0 0x00010000>;
+		read-channel = <0x0 0x2000>;
+		write-channel = <0x2000 0x2000>;
+		interrupt-parent = <&plic>;
+        interrupts = <52>;
+		id = <0>;
+    };
+
+    aliases {
+        serial0 = "/serial@ff010000";
+    };
+
+	chosen {		
+		bootargs = "earlycon console=ttyPS0,115200n8";
+        stdout-path = "/serial@ff010000";
+	};	
+};

@@ -1,0 +1,186 @@
+From 533ffa1fba44396e915b01ddc9cf1034309a065f Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Thu, 24 Jun 2021 22:46:52 +0100
+Subject: [PATCH] add rocket hyp fpga support
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+---
+ bootromFPGA/Makefile                          | 27 ++++++++++
+ bootromFPGA/bootrom.S                         | 27 ++++++++++
+ bootromFPGA/linker.ld                         | 11 ++++
+ .../scala/config/RocketHypFPGAConfigs.scala   | 52 +++++++++++++++++++
+ variables.mk                                  | 12 +++++
+ 5 files changed, 129 insertions(+)
+ create mode 100644 bootromFPGA/Makefile
+ create mode 100644 bootromFPGA/bootrom.S
+ create mode 100644 bootromFPGA/linker.ld
+ create mode 100644 generators/chipyard/src/main/scala/config/RocketHypFPGAConfigs.scala
+
+diff --git a/bootromFPGA/Makefile b/bootromFPGA/Makefile
+new file mode 100644
+index 00000000..6a269631
+--- /dev/null
++++ b/bootromFPGA/Makefile
+@@ -0,0 +1,27 @@
++BOARD:=$(patsubst rocket-fpga-%,%,$(PLATFORM))
++ifneq ($(filter $(BOARD), zcu104),)
++	DRAM_BASE:=0x40000000
++	SUFFIX:=zynqmp
++else ifneq ($(filter $(BOARD), zybo),)
++	DRAM_BASE:=0x10000000
++	SUFFIX:=zynq
++else
++    $(error unknown target $(PLATFORM))
++endif
++
++GCC=riscv64-unknown-elf-gcc
++OBJCOPY=riscv64-unknown-elf-objcopy
++
++all: bootrom_$(SUFFIX).img
++
++%.img: %.bin
++	dd if=$< of=$@ bs=128 count=1
++
++%.bin: %.elf
++	$(OBJCOPY) -O binary $< $@
++
++%.elf: bootrom.S linker.ld
++	$(GCC) -Tlinker.ld $< -nostdlib -static -Wl,--no-gc-sections -DDRAM_BASE=$(DRAM_BASE) -o $@
++
++clean:
++	-rm *.img
+\ No newline at end of file
+diff --git a/bootromFPGA/bootrom.S b/bootromFPGA/bootrom.S
+new file mode 100644
+index 00000000..21cf5bca
+--- /dev/null
++++ b/bootromFPGA/bootrom.S
+@@ -0,0 +1,27 @@
++.section .text.start, "ax", @progbits
++.globl _start
++_start:
++  csrwi 0x7c1, 0 // disable chicken bits
++  li s0, DRAM_BASE
++  csrr a0, mhartid
++  la a1, _dtb
++  jr s0
++
++.section .text.hang, "ax", @progbits
++.globl _hang
++_hang:
++  csrwi 0x7c1, 0 // disable chicken bits
++  li s0, DRAM_BASE
++  csrr a0, mhartid
++  la a1, _dtb
++  jr s0
++1:
++  wfi
++  j 1b
++
++.section .rodata.dtb, "a", @progbits
++.globl _dtb
++.align 5, 0
++_dtb:
++    .word 0
++    .word 0
+diff --git a/bootromFPGA/linker.ld b/bootromFPGA/linker.ld
+new file mode 100644
+index 00000000..43bc012a
+--- /dev/null
++++ b/bootromFPGA/linker.ld
+@@ -0,0 +1,11 @@
++SECTIONS
++{
++    ROM_BASE = 0x10000; /* ... but actually position independent */
++
++    . = ROM_BASE;
++    .text.start : { *(.text.start) }
++    . = ROM_BASE + 0x40;
++    .text.hang : { *(.text.hang) }
++    . = ROM_BASE + 0x80;
++    .rodata.dtb : { *(.rodata.dtb) }
++}
+diff --git a/generators/chipyard/src/main/scala/config/RocketHypFPGAConfigs.scala b/generators/chipyard/src/main/scala/config/RocketHypFPGAConfigs.scala
+new file mode 100644
+index 00000000..d49b8692
+--- /dev/null
++++ b/generators/chipyard/src/main/scala/config/RocketHypFPGAConfigs.scala
+@@ -0,0 +1,52 @@
++package chipyard
++
++import freechips.rocketchip.config.{Config}
++
++import freechips.rocketchip.subsystem._
++import freechips.rocketchip.config._
++import freechips.rocketchip.devices.debug._
++import freechips.rocketchip.devices.tilelink._
++import freechips.rocketchip.diplomacy._
++import freechips.rocketchip.rocket._
++import freechips.rocketchip.tile._
++import freechips.rocketchip.tilelink._
++import freechips.rocketchip.util._
++
++class RocketHypConfigzcu104 extends RocketHypZCU(4)
++
++class RocketHypZCU(numHarts: Int) extends Config(
++  new Config((site, here, up) => {
++      case ExtMem => Some(MemoryPortParams(MasterPortParams(
++                  base = 0x40000000L,
++                  size = 0x40000000L,
++                  beatBytes = site(MemoryBusKey).beatBytes,
++                  idBits = 4), 1))
++      case ExtBus => Some(MasterPortParams(
++                  base = 0xFF000000L,
++                  size = 0x01000000L,
++                  beatBytes = site(MemoryBusKey).beatBytes,
++                  idBits = 4))
++  }) ++
++  new freechips.rocketchip.subsystem.WithNExtTopInterrupts(2) ++
++  new freechips.rocketchip.subsystem.WithBootROMFile(s"./bootromFPGA/bootrom_zynqmp.img") ++
++  new RocketFPGAConfig(numHarts)
++)
++
++class RocketFPGAConfig(numHarts: Int) extends Config(
++  new Config((site, here, up)=> {
++    case RocketTilesKey => up(RocketTilesKey, site) map { r =>
++        r.copy(core = r.core.copy(haveCFlush = true)) 
++    }
++  }) ++
++  new freechips.rocketchip.subsystem.WithHyp ++
++  new freechips.rocketchip.subsystem.WithNBigCores(numHarts) ++
++  new Config((site, up, here) => {
++    case DebugModuleKey => None
++  }) ++
++  new chipyard.config.WithL2TLBs(1024) ++                        // use L2 TLBs
++  new freechips.rocketchip.subsystem.WithNoSlavePort ++          // no top-level MMIO slave port (overrides default set in rocketchip)
++  new freechips.rocketchip.subsystem.WithInclusiveCache ++       // use Sifive L2 cache
++  new freechips.rocketchip.subsystem.WithCoherentBusTopology ++  // hierarchical buses including mbus+l2
++  new freechips.rocketchip.system.BaseConfig
++)
++
+diff --git a/variables.mk b/variables.mk
+index 4d49d5fe..f740e62e 100644
+--- a/variables.mk
++++ b/variables.mk
+@@ -27,6 +27,18 @@
+ #########################################################################################
+ SUB_PROJECT ?= chipyard
+ 
++ifeq ($(SUB_PROJECT),rocket)
++	SBT_PROJECT       ?= chipyard
++	MODEL             ?= TestHarness
++	VLOG_MODEL        ?= TestHarness
++	MODEL_PACKAGE     ?= freechips.rocketchip.system
++	CONFIG            ?= RocketConfig
++	CONFIG_PACKAGE    ?= $(SBT_PROJECT)
++	GENERATOR_PACKAGE ?= $(SBT_PROJECT)
++	TB                ?= TestDriver
++	TOP               ?= ExampleRocketSystem
++endif
++
+ ifeq ($(SUB_PROJECT),chipyard)
+ 	SBT_PROJECT       ?= chipyard
+ 	MODEL             ?= TestHarness
+-- 
+2.30.2
+

@@ -203,6 +203,7 @@ Build the firmware and deploy the system according to the target platform:
 
 #### RISC-V platforms:
 * [QEMU virt](platforms/qemu-riscv64-virt/README.md)
+* [Rocket/Chipyard on ZCU104 FPGA](platforms/rocket-fpga-common/README.md)
 
 ---
 
@@ -217,6 +218,7 @@ Build the firmware and deploy the system according to the target platform:
 | Raspberry 4 Model B | rpi4 | aarch64
 | QEMU Aarch64 virt | qemu-aarch64-virt | aarch64
 | QEMU RV64 virt | qemu-riscv64-virt | riscv
+| Rocket/Chipyard on ZCU104 FPGA | rocket-fpga-zcu104 | riscv
 <!-- TODO -->
 <!-- | NXP i.MX8MQ | imx8mq | -->
 <!-- | Avnet Ultra96 | ultra96 | -->

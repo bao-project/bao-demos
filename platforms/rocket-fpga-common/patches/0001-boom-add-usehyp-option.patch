@@ -1,0 +1,25 @@
+From 02157c1ee9fbe863ad47d005b66f428faeefb512 Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Mon, 2 Nov 2020 10:16:33 +0000
+Subject: [PATCH] add usehyp option
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+---
+ src/main/scala/common/parameters.scala | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/main/scala/common/parameters.scala b/src/main/scala/common/parameters.scala
+index 1a0c25fd..51f1b11c 100644
+--- a/src/main/scala/common/parameters.scala
++++ b/src/main/scala/common/parameters.scala
+@@ -85,6 +85,7 @@ case class BoomCoreParams(
+   useDebug: Boolean = true,
+   useUser: Boolean = true,
+   useSupervisor: Boolean = false,
++  useHype: Boolean = false,
+   useVM: Boolean = true,
+   useSCIE: Boolean = false,
+   useRVE: Boolean = false,
+-- 
+2.25.1
+

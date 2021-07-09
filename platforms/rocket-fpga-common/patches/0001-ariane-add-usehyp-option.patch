@@ -1,0 +1,25 @@
+From b11870ab40db0fa046ed00189e66d73a08c4ee6a Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Mon, 2 Nov 2020 10:16:03 +0000
+Subject: [PATCH] add usehyp option
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+---
+ src/main/scala/ArianeTile.scala | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/main/scala/ArianeTile.scala b/src/main/scala/ArianeTile.scala
+index 8983baf..cf62daf 100644
+--- a/src/main/scala/ArianeTile.scala
++++ b/src/main/scala/ArianeTile.scala
+@@ -43,6 +43,7 @@ case class ArianeCoreParams(
+   val useVM: Boolean = true
+   val useUser: Boolean = true
+   val useSupervisor: Boolean = false
++  val useHype: Boolean = false
+   val useDebug: Boolean = true
+   val useAtomics: Boolean = true
+   val useAtomicsOnlyForIO: Boolean = false // copied from Rocket
+-- 
+2.25.1
+
