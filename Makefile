@@ -105,7 +105,8 @@ bao_clean:
 	$(MAKE) -C $(bao_src) clean\
 		PLATFORM=$(PLATFORM)\
 		CONFIG_REPO=$(bao_cfg_repo)\
-		CONFIG=$(DEMO)
+		CONFIG=$(DEMO)\
+		CPPFLAGS=-DBAO_DEMOS_WRKDIR_IMGS=$(wrkdir_demo_imgs)
 
 platform: $(bao_image)
 
