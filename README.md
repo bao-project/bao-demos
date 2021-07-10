@@ -248,6 +248,7 @@ Build the firmware and deploy the system according to the target platform:
 | mkimage | 20.10 |
 | cmake | 3.16.3 |
 | ninja | 1.10.1 |
+| Vivado | 2020.1.1 |
 
 
 <!-- Links -->
