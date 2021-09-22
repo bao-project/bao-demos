@@ -8,10 +8,10 @@ endif
 
 ARCH?=aarch64
 ifeq ($(ARCH), aarch64)
-CROSS_COMPILE=aarch64-none-elf-
+CROSS_COMPILE?=aarch64-none-elf-
 OPTIONS=-mcmodel=large 
 else ifeq ($(ARCH), riscv)
-CROSS_COMPILE=riscv64-unknown-elf-
+CROSS_COMPILE?=riscv64-unknown-elf-
 OPTIONS=-mcmodel=medany
 else
 $(error unkown architecture $(ARCH))
