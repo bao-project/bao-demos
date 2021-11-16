@@ -73,16 +73,6 @@ struct config config = {
                         .interrupts = 
                             (uint64_t[]) {95, 96}                           
                     },
-                    {
-                        /* PCI */
-                        .id = 0x877, /* smmu stream id */
-                        .pa = 0xff0e0000,
-                        .va = 0xff0e0000,
-                        .size = 0x1000,
-                        .interrupt_num = 2,
-                        .interrupts = 
-                            (uint64_t[]) {95, 96}                           
-                    }
                 },
 
                 .arch = {
