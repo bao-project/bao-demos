@@ -28,7 +28,8 @@ newer/compatible versions of the tools and software listed in
 ## -1. Install dependencies
 
 ```
-sudo apt install ninja-build u-boot-tools pandoc
+sudo apt install build-essential bison flex git libssl-dev ninja-build \
+    u-boot-tools pandoc
 ```
 
 ## 0. Download and setup the toolchain
