@@ -2,22 +2,9 @@
 
 ## 1) Download build and install RV64 qemu
 
----
-
-**NOTE**
-
-For now you really need to use our patched QEMU because currently RISC-V QEMU 
-is missing a couple small features from the latest draft Hypervisor 
-specification that Bao depends on to run correctly. We have submitted patches 
-to fix these issues which we hope will be merged and available in the next 
-release.
-
----
-
 ```
 export BAO_DEMOS_QEMU=$BAO_DEMOS_WRKDIR_SRC/qemu-$ARCH
-git clone https://github.com/josecm/qemu.git $BAO_DEMOS_QEMU --depth 1\
-    --branch josecm/hyp
+git clone --recurse-submodules -j8 https://gitlab.com/qemu-project/qemu.git $BAO_DEMOS_QEMU
 cd $BAO_DEMOS_QEMU
 ./configure --target-list=riscv64-softmmu
 make -j$(nproc)
