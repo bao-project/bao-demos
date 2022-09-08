@@ -11,6 +11,6 @@ well as RISC-V using RV64:
 * [QEMU virt](qemu-aarch64-virt/README.md)
 
 ### RV64 platforms:
-* [QEMU virt](qemu-aarch64-virt/README.md)
+* [QEMU virt](qemu-riscv64-virt/README.md)
 <!-- * [Rocket ???](platform/) -->
 <!-- * [Rocket Firesim*](platform/) -->
