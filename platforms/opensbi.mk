@@ -1,5 +1,5 @@
 opensbi_repo:=https://github.com/bao-project/opensbi.git
-opensbi_version:=bao
+opensbi_version:=bao/demo
 opensbi_src:=$(wrkdir_src)/opensbi
 
 $(opensbi_src):

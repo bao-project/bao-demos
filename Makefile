@@ -71,7 +71,7 @@ environment+=BAO_DEMOS_SDCARD=/media/$$USER/boot
 all: platform 
 
 bao_repo:=https://github.com/bao-project/bao-hypervisor
-bao_version:=latest
+bao_version:=demo
 bao_src:=$(wrkdir_src)/bao
 bao_cfg_repo:=$(wrkdir_demo_imgs)/config
 wrkdirs+=$(bao_cfg_repo)
@@ -97,9 +97,9 @@ bao $(bao_image): $(guest_images) $(bao_cfg) $(bao_src)
 	$(MAKE) -C $(bao_src)\
 		PLATFORM=$(PLATFORM)\
 		CONFIG_REPO=$(bao_cfg_repo)\
-		CONFIG=$(DEMO) CONFIG_BUILTIN=y\
+		CONFIG=$(DEMO) \
 		CPPFLAGS=-DBAO_DEMOS_WRKDIR_IMGS=$(wrkdir_demo_imgs)
-	cp $(bao_src)/bin/$(PLATFORM)/builtin-configs/$(DEMO)/bao.bin $(bao_image)
+	cp $(bao_src)/bin/$(PLATFORM)/$(DEMO)/bao.bin $(bao_image)
 
 bao_clean:
 	$(MAKE) -C $(bao_src) clean\

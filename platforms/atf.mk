@@ -1,8 +1,9 @@
 atf_repo:=https://github.com/bao-project/arm-trusted-firmware.git
 atf_src:=$(wrkdir_src)/arm-trusted-firmware
+atf_version:=bao/demo
 
 $(atf_src):
-	git clone --depth 1 $(atf_repo) $(atf_src)
+	git clone --depth 1 --branch $(atf_version) $(atf_repo) $(atf_src)
 
 define build-atf
 $(strip $1): $(atf_src)
