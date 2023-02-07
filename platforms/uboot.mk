@@ -1,9 +1,9 @@
 uboot_repo:=https://github.com/u-boot/u-boot.git
-uboot_version:=2021.01
+uboot_version:=v2022.10
 uboot_src:=$(wrkdir_src)/u-boot
 
 $(uboot_src):
-	git clone --depth 1 --branch v$(uboot_version) $(uboot_repo) $(uboot_src)
+	git clone --depth 1 --branch $(uboot_version) $(uboot_repo) $(uboot_src)
 
 define build-uboot
 $(strip $1): $(uboot_src)

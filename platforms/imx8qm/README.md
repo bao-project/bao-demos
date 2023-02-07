@@ -43,7 +43,7 @@ Download, configure and build it:
 
 ```
 git clone https://github.com/u-boot/u-boot.git $BAO_DEMOS_UBOOT\
-    --depth 1 --branch v2021.01
+    --depth 1 --branch v2022.10
 cd $BAO_DEMOS_UBOOT
 make imx8qm_mek_defconfig
 make -j $(nproc)

@@ -15,7 +15,7 @@ git clone https://github.com/raspberrypi/firmware.git $BAO_DEMOS_FW\
 ```
 export BAO_DEMOS_UBOOT=$BAO_DEMOS_WRKDIR_SRC/u-boot
 git clone https://github.com/u-boot/u-boot.git $BAO_DEMOS_UBOOT\
-    --depth 1 --branch v2021.01
+    --depth 1 --branch v2022.10
 cd $BAO_DEMOS_UBOOT
 make rpi_4_defconfig
 ```

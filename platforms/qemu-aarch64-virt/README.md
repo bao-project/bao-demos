@@ -28,7 +28,7 @@ sudo make install
 ```
 export BAO_DEMOS_UBOOT=$BAO_DEMOS_WRKDIR_SRC/u-boot
 git clone https://github.com/u-boot/u-boot.git $BAO_DEMOS_UBOOT --depth 1\
-   --branch v2021.01
+   --branch v2022.10
 cd $BAO_DEMOS_UBOOT
 make qemu_arm64_defconfig
 ```
