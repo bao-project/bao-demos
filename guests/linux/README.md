@@ -19,7 +19,7 @@ For all other platforms clone the lastest mainline Linux release:
 
 ```
 export BAO_DEMOS_LINUX_REPO=https://github.com/torvalds/linux.git
-export BAO_DEMOS_LINUX_VERSION=v5.11
+export BAO_DEMOS_LINUX_VERSION=v6.1
 ```
 
 Setup an environment variable pointing to Linux's source code:
@@ -61,7 +61,7 @@ Clone the latest buildroot at the latest stable version:
 
 ```
 git clone https://github.com/buildroot/buildroot.git $BAO_DEMOS_BUILDROOT\
-    --depth 1 --branch 2020.11.3
+    --depth 1 --branch 2022.11
 cd $BAO_DEMOS_BUILDROOT
 ```
 
@@ -110,7 +110,7 @@ make -C $BAO_DEMOS_LINUX/lloader\
     ARCH=$ARCH\
     IMAGE=$BAO_DEMOS_BUILDROOT/output/images/Image-$PLATFORM\
     DTB=$BAO_DEMOS_WRKDIR_IMGS/$BAO_DEMO_LINUX_VM.dtb\
-    TARGET=$BAO_DEMOS_WRKDIR_IMGS/$BAO_DEMO_LINUX_VM.bin
+    TARGET=$BAO_DEMOS_WRKDIR_IMGS/$BAO_DEMO_LINUX_VM
 ```
 
 ---

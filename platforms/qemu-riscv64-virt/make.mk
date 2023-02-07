@@ -1,4 +1,4 @@
-ARCH:=riscv
+ARCH:=riscv64
 
 include $(bao_demos)/platforms/qemu.mk
 include $(bao_demos)/platforms/opensbi.mk

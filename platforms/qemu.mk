@@ -1,9 +1,4 @@
-ifeq ($(ARCH),riscv)
-qemu_arch:=riscv64
-else
 qemu_arch:=$(ARCH)
-endif
-
 qemu_repo:=https://github.com/qemu/qemu.git
 qemu_version:=v7.2.0
 qemu_cmd:=qemu-system-$(qemu_arch)

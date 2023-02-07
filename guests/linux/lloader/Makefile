@@ -6,31 +6,30 @@ ifneq ($(MAKECMDGOALS), clean)
 endif
 endif
 
-ARCH?=aarch64
+ARCH=aarch64
 ifeq ($(ARCH), aarch64)
 CROSS_COMPILE?=aarch64-none-elf-
 OPTIONS=-mcmodel=large 
-else ifeq ($(ARCH), riscv)
+else ifeq ($(ARCH), aarch32)
+CROSS_COMPILE?=arm-none-eabi-
+OPTIONS=-march=armv7-a
+else ifeq ($(ARCH), riscv64)
 CROSS_COMPILE?=riscv64-unknown-elf-
 OPTIONS=-mcmodel=medany
 else
 $(error unkown architecture $(ARCH))
 endif
 
-LLOADER_ASM:=$(ARCH).S
-LLOADER_LD:=$(ARCH).ld
-TARGET_ELF:=$(basename $(TARGET)).elf
-
-all: $(TARGET)
+all: $(TARGET).bin
 
 clean:
-	-rm $(TARGET_ELF) $(TARGET)
+	-rm *.elf *.bin
 
 .PHONY: all clean
 	
-$(TARGET): $(TARGET_ELF)
-	$(CROSS_COMPILE)objcopy -S -O binary $(TARGET_ELF) $(TARGET)
+$(TARGET).bin: $(TARGET).elf
+	$(CROSS_COMPILE)objcopy -S -O binary $(TARGET).elf $(TARGET).bin
 
-$(TARGET_ELF): $(LLOADER_ASM) $(IMAGE) $(DTB) $(LLOADER_LD)
-	$(CROSS_COMPILE)gcc -Wl,-build-id=none -nostdlib -T $(LLOADER_LD)\
-		-o $@ $(OPTIONS) $(LLOADER_ASM) -I. -D IMAGE=$(IMAGE) -D DTB=$(DTB)
+$(TARGET).elf: $(ARCH).S $(IMAGE) $(DTB) loader_$(ARCH).ld
+	$(CROSS_COMPILE)gcc -Wl,-build-id=none -nostdlib -T loader_$(ARCH).ld\
+		-o $(TARGET).elf $(OPTIONS) $(ARCH).S -I. -D IMAGE=$(IMAGE) -D DTB=$(DTB)

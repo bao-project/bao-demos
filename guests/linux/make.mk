@@ -35,5 +35,5 @@ $(wrkdir_demo_imgs)/$(basename $(notdir $2)).dtb: $(strip $2)
 	dtc $$< > $$@
 $(strip $1): $(buildroot_image) $(wrkdir_demo_imgs)/$(basename $(notdir $2)).dtb
 	$(MAKE) -C $(lloader_dir) ARCH=$(ARCH) IMAGE=$(buildroot_image)\
-		DTB=$(wrkdir_demo_imgs)/$(basename $(notdir $2)).dtb TARGET=$(basename $$@)
+		DTB=$(wrkdir_demo_imgs)/$(basename $(notdir $2)).dtb TARGET=$$(basename $$@)
 endef
