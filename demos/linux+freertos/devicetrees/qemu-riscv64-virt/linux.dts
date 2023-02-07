@@ -140,7 +140,7 @@
     };
 
 	chosen {
-		bootargs = "earlycon console=hvc1 ip=192.168.42.15";
+		bootargs = "earlycon console=hvc0 ip=192.168.42.15";
 	};
 
 };
