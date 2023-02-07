@@ -25,5 +25,11 @@ FreeRTOS message by reading `/dev/baoipc0`:
 cat /dev/baoipc0
 ```
 
-Follow the instructions to build [FreeRTOS](../../guests/freertos/README.md) 
-and [Linux](../../guests/linux/README.md).
+To build FreeRTOS set:
+
+```
+export FREERTOS_PARAMS="STD_ADDR_SPACE=y"
+```
+
+And follow the instructions in [FreeRTOS](../../guests/freertos/README.md). To
+build linux follow [Linux](../../guests/linux/README.md).

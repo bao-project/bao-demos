@@ -8,10 +8,8 @@ $(freertos_src):
 
 freertos_bin:=$(freertos_src)/build/$(PLATFORM)/freertos.bin
 
-freertos $(freertos_bin): $(freertos_src)
-	$(MAKE) -C $(freertos_src) PLATFORM=$(PLATFORM)
-
 define build-freertos
-$(strip $1): $(freertos_bin)
-	cp $$< $$@
+$(strip $1): $(freertos_src)
+	$(MAKE) -C $(freertos_src) PLATFORM=$(PLATFORM) $(strip $2)
+	cp $(freertos_bin) $$@
 endef

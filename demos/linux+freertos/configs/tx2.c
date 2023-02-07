@@ -28,7 +28,7 @@ struct config config = {
                 .cpu_num = 5,
                 
                 .region_num = 2,
-                .regions =  (struct mem_region[]) {
+                .regions =  (struct vm_mem_region[]) {
                     {
                         .base = 0x90000000,
                         .size = 0x40000000,                                     
@@ -49,19 +49,19 @@ struct config config = {
                         .size = 0x00010000,
                         .shmem_id = 0,
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {52}
+                        .interrupts = (irqid_t[]) {52}
                     }
                 },
 
                 .dev_num = 5,
-                .devs =  (struct dev_region[]) {
+                .devs =  (struct vm_dev_region[]) {
                     {   
                         /* ethernet */
                         .pa = 0x02490000,
                         .va = 0x02490000,
                         .size = 0x10000,
                         .interrupt_num = 10,
-                        .interrupts = (uint64_t[]) {226,227,222,218,223,219,224,220,225,221},
+                        .interrupts = (irqid_t[]) {226,227,222,218,223,219,224,220,225,221},
                         .id = 0x1                  
                     },
                     {
@@ -70,7 +70,7 @@ struct config config = {
                         .va = 0x03c00000,
                         .size = 0xa0000,    
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {208},
+                        .interrupts = (irqid_t[]) {208},
                     },
                     {
                         /* bpmp */
@@ -82,13 +82,13 @@ struct config config = {
                         .va = 0x2200000,
                         .size = 0x20000,    
                         .interrupt_num = 6,
-                        .interrupts = (uint64_t[]) {79,82,85,88,91,212}
+                        .interrupts = (irqid_t[]) {79,82,85,88,91,212}
                     },
                     {   
                         /* Arch timer interrupt */
                         .interrupt_num = 1,
                         .interrupts = 
-                            (uint64_t[]) {27}                         
+                            (irqid_t[]) {27}                         
                     }
                 },
 
@@ -113,7 +113,7 @@ struct config config = {
                 .cpu_num = 1,
                 
                 .region_num = 1,
-                .regions =  (struct mem_region[]) {
+                .regions =  (struct vm_mem_region[]) {
                     {
                         .base = 0x0,
                         .size = 0x8000000 
@@ -127,25 +127,25 @@ struct config config = {
                         .size = 0x00010000,
                         .shmem_id = 0,
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {52}
+                        .interrupts = (irqid_t[]) {52}
                     }
                 },
 
                 .dev_num = 2,
-                .devs =  (struct dev_region[]) {
+                .devs =  (struct vm_dev_region[]) {
                     {   
                         /* uarta */
                         .pa = 0x03100000,
-                        .va = 0x80000000,
+                        .va = 0xff000000,
                         .size = 0x1000,
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {144}                        
+                        .interrupts = (irqid_t[]) {144}                        
                     },
                     {   
                         /* Arch timer interrupt */
                         .interrupt_num = 1,
                         .interrupts = 
-                            (uint64_t[]) {27}                         
+                            (irqid_t[]) {27}                         
                     }
                },
 

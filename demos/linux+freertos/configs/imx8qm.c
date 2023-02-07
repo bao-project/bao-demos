@@ -28,7 +28,7 @@ struct config config = {
                 .cpu_num = 5,   
                 
                 .region_num = 1,
-                .regions =  (struct mem_region[]) {
+                .regions =  (struct vm_mem_region[]) {
                     {
                         .base = 0x80200000,
                         .size = 0x20000000
@@ -42,7 +42,7 @@ struct config config = {
                         .size = 0x00010000,
                         .shmem_id = 0,
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {52}
+                        .interrupts = (irqid_t[]) {52}
                     }
                 },
 
@@ -56,19 +56,19 @@ struct config config = {
  * communication to the SCU to limit which resources it might configure.
  */ 
                 .dev_num = 4,
-                .devs =  (struct dev_region[]) {  
+                .devs =  (struct vm_dev_region[]) {  
                     {
                         /* lsio_mu1 message unit */
                         .pa = 0x5d1c0000,
                         .va = 0x5d1c0000,
                         .size = 0x10000,
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {209},    
+                        .interrupts = (irqid_t[]) {209},    
                     },
                     {   
                         /* Arch timer interrupt */
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {27}                         
+                        .interrupts = (irqid_t[]) {27}                         
                     },
                     {   
                         /* enet0 clock generator */
@@ -82,7 +82,7 @@ struct config config = {
                         .va = 0x5b040000,
                         .size = 0x10000,
                         .interrupt_num = 4,
-                        .interrupts = (uint64_t[]) {288, 289, 290, 291},    
+                        .interrupts = (irqid_t[]) {288, 289, 290, 291},    
                         .id = 0x2,
                     },
                 },
@@ -97,19 +97,19 @@ struct config config = {
         },
         { 
             .image = {
-                .base_addr = 0x00000000,
+                .base_addr = 0x0,
                 .load_addr = VM_IMAGE_OFFSET(freertos_image),
                 .size = VM_IMAGE_SIZE(freertos_image)
             },
 
-            .entry = 0x00000000,
+            .entry = 0x0,
             .cpu_affinity = 0b001000,
 
             .platform = {
                 .cpu_num = 1,
                 
                 .region_num = 1,
-                .regions =  (struct mem_region[]) {
+                .regions =  (struct vm_mem_region[]) {
                     {
                         .base = 0x0,
                         .size = 0x8000000 
@@ -123,25 +123,25 @@ struct config config = {
                         .size = 0x00010000,
                         .shmem_id = 0,
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {52}
+                        .interrupts = (irqid_t[]) {52}
                     }
                 },
 
                 .dev_num = 2,
-                .devs =  (struct dev_region[]) {
+                .devs =  (struct vm_dev_region[]) {
                     {   
                         /* lpuart0 */
                         .pa = 0x5a060000,
                         .va = 0xff000000,
                         .size = 0x1000,
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {377}                           
+                        .interrupts = (irqid_t[]) {377}                           
                     },
                     {   
                         /* Arch timer interrupt */
                         .interrupt_num = 1,
                         .interrupts = 
-                            (uint64_t[]) {27}                         
+                            (irqid_t[]) {27}                         
                     }
                 },
 

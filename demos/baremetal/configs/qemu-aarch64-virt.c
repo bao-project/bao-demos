@@ -10,46 +10,46 @@ struct config config = {
     .vmlist = {
         { 
             .image = {
-                .base_addr = 0x00000000,
+                .base_addr = 0x50000000,
                 .load_addr = VM_IMAGE_OFFSET(baremetal_image),
                 .size = VM_IMAGE_SIZE(baremetal_image)
             },
 
-            .entry = 0x00000000,
+            .entry = 0x50000000,
 
             .platform = {
                 .cpu_num = 4,
                 
                 .region_num = 1,
-                .regions =  (struct mem_region[]) {
+                .regions =  (struct vm_mem_region[]) {
                     {
-                        .base = 0x00000000,
+                        .base = 0x50000000,
                         .size = 0x4000000 
                     }
                 },
 
                 .dev_num = 2,
-                .devs =  (struct dev_region[]) {
+                .devs =  (struct vm_dev_region[]) {
                     {   
                         /* PL011 */
                         .pa = 0x9000000,
-                        .va = 0xFF010000,
+                        .va = 0x9000000,
                         .size = 0x10000,
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {33}                        
+                        .interrupts = (irqid_t[]) {33}                        
                     },
                     {   
                         /* Arch timer interrupt */
                         .interrupt_num = 1,
                         .interrupts = 
-                            (uint64_t[]) {27}                         
+                            (irqid_t[]) {27}                         
                     }
                 },
 
                 .arch = {
                     .gic = {
-                        .gicd_addr = 0xF9010000,
-                        .gicr_addr = 0xF9020000,
+                        .gicd_addr = 0x08000000,
+                        .gicr_addr = 0x080A0000,
                     }
                 }
             },

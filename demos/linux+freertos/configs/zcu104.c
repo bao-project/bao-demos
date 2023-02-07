@@ -28,7 +28,7 @@ struct config config = {
                 .cpu_num = 3,
                 
                 .region_num = 1,
-                .regions =  (struct mem_region[]) {
+                .regions =  (struct vm_mem_region[]) {
                     {
                         .base = 0x00000000,
                         .size = 0x40000000
@@ -42,12 +42,12 @@ struct config config = {
                         .size = 0x00010000,
                         .shmem_id = 0,
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {52}
+                        .interrupts = (irqid_t[]) {52}
                     }
                 },
 
                 .dev_num = 3,
-                .devs =  (struct dev_region[]) {
+                .devs =  (struct vm_dev_region[]) {
                     {   
                         /* UART1 */
                         .pa = 0xFF010000,
@@ -55,13 +55,13 @@ struct config config = {
                         .size = 0x1000,
                         .interrupt_num = 1,
                         .interrupts = 
-                            (uint64_t[]) {54}                         
+                            (irqid_t[]) {54}                         
                     },
                     {   
                         /* Arch timer interrupt */
                         .interrupt_num = 1,
                         .interrupts = 
-                            (uint64_t[]) {27}                         
+                            (irqid_t[]) {27}                         
                     },
                     {
                         /* GEM3 */
@@ -71,7 +71,7 @@ struct config config = {
                         .size = 0x1000,
                         .interrupt_num = 2,
                         .interrupts = 
-                            (uint64_t[]) {95, 96}                           
+                            (irqid_t[]) {95, 96}                           
                     },
                 },
 
@@ -85,20 +85,20 @@ struct config config = {
         },
         { 
             .image = {
-                .base_addr = 0x00000000,
+                .base_addr = 0x0,
                 .load_addr = VM_IMAGE_OFFSET(freertos_image),
                 .size = VM_IMAGE_SIZE(freertos_image)
             },
 
-            .entry = 0x00000000,
+            .entry = 0x0,
 
             .platform = {
                 .cpu_num = 1,
                 
                 .region_num = 1,
-                .regions =  (struct mem_region[]) {
+                .regions =  (struct vm_mem_region[]) {
                     {
-                        .base = 0x00000000,
+                        .base = 0x0,
                         .size = 0x8000000 
                     }
                 },
@@ -110,12 +110,12 @@ struct config config = {
                         .size = 0x00010000,
                         .shmem_id = 0,
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {52}
+                        .interrupts = (irqid_t[]) {52}
                     }
                 },
 
                 .dev_num = 2,
-                .devs =  (struct dev_region[]) {
+                .devs =  (struct vm_dev_region[]) {
                     {   
                         /* UART0 */
                         .pa = 0xFF000000,
@@ -123,13 +123,13 @@ struct config config = {
                         .size = 0x10000,
                         .interrupt_num = 1,
                         .interrupts = 
-                            (uint64_t[]) {53}                         
+                            (irqid_t[]) {53}                         
                     },
                     {   
                         /* Arch timer interrupt */
                         .interrupt_num = 1,
                         .interrupts = 
-                            (uint64_t[]) {27}                         
+                            (irqid_t[]) {27}                         
                     }
                },
 

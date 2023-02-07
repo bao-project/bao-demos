@@ -21,21 +21,21 @@ struct config config  = {
                 .cpu_num = 4,
                 
                 .region_num = 1,
-                .regions =  (struct mem_region[]) {
+                .regions =  (struct vm_mem_region[]) {
                     {
-                        .base = 0x80000000,
-                        .size = 0x1000000 //128MB
+                        .base = 0x80200000,
+                        .size = 0x4000000
                     }
                 },
 
                 .dev_num = 1,
-                .devs =  (struct dev_region[]) {
+                .devs =  (struct vm_dev_region[]) {
                     {
                         .pa = 0x10000000,   
                         .va = 0x10000000,  
                         .size = 0x1000, 
                         .interrupt_num = 1,
-                        .interrupts = (uint64_t[]) {10}
+                        .interrupts = (irqid_t[]) {10}
                     },
                 },
 
