@@ -29,7 +29,7 @@ newer/compatible versions of the tools and software listed in
 
 ```
 sudo apt install build-essential bison flex git libssl-dev ninja-build \
-    u-boot-tools pandoc
+    u-boot-tools pandoc libslirp-dev pkg-config libglib2.0-dev libpixman-1-dev
 ```
 
 ## 0. Download and setup the toolchain
@@ -162,7 +162,7 @@ Clone Bao's repo to the the working directory:
 ```
 export BAO_DEMOS_BAO=$BAO_DEMOS_WRKDIR_SRC/bao
 git clone https://github.com/bao-project/bao-hypervisor $BAO_DEMOS_BAO\
-    --branch v0.1.0
+    --branch demo
 ```
 
 Copy your config to the working directory:
@@ -180,14 +180,13 @@ make -C $BAO_DEMOS_BAO\
     PLATFORM=$PLATFORM\
     CONFIG_REPO=$BAO_DEMOS_WRKDIR_IMGS/config\
     CONFIG=$DEMO\
-    CONFIG_BUILTIN=y\
     CPPFLAGS=-DBAO_DEMOS_WRKDIR_IMGS=$BAO_DEMOS_WRKDIR_IMGS
 ```
 
 And copy the resulting binary into the final image directory:
 
 ```
-cp $BAO_DEMOS_BAO/bin/$PLATFORM/builtin-configs/$DEMO/bao.bin\
+cp $BAO_DEMOS_BAO/bin/$PLATFORM/$DEMO/bao.bin\
     $BAO_DEMOS_WRKDIR_IMGS
 ```
 
@@ -217,7 +216,7 @@ Build the firmware and deploy the system according to the target platform:
 | Nvidia TX2 | tx2 | aarch64
 | Raspberry 4 Model B | rpi4 | aarch64
 | QEMU Aarch64 virt | qemu-aarch64-virt | aarch64
-| QEMU RV64 virt | qemu-riscv64-virt | riscv
+| QEMU RV64 virt | qemu-riscv64-virt | riscv64
 <!-- TODO -->
 <!-- | NXP i.MX8MQ | imx8mq | -->
 <!-- | Avnet Ultra96 | ultra96 | -->
@@ -237,19 +236,19 @@ Build the firmware and deploy the system according to the target platform:
 
 ## Appendix II
 
-| Tool | Version |
-|--|--|
-| aarch64-none-elf-gcc | 9.2.1 |
-| riscv64-unknown-elf-gcc | 10.1.0 |
-| make | 4.2.1 |
-| dtc | 1.5.0 |
-| gcc | 9.3.0 |
-| mkimage | 20.10 |
-| cmake | 3.16.3 |
-| ninja | 1.10.1 |
+| Tool                    | Version |
+| ----------------------- | ------- |
+| aarch64-none-elf-gcc    | 11.2.1  |
+| riscv64-unknown-elf-gcc | 10.2.0  |
+| make                    | 4.2.1   |
+| dtc                     | 1.5.0   |
+| gcc                     | 9.3.0   |
+| mkimage                 | 20.10   |
+| cmake                   | 3.16.3  |
+| ninja                   | 1.10.1  |
 
 
 <!-- Links -->
 
-[arm-toolchains]: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads
+[arm-toolchains]: https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
 [riscv-toolchains]: https://github.com/sifive/freedom-tools/releases

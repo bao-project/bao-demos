@@ -8,16 +8,16 @@
 
 If you already have qemu-system-aarch64 installed or you don't want to compile 
 it but install it directly using a package manager or some other method, please
-make sure you are using version 6.1.0 or higher. If so, you can skip this step.
+make sure you are using version 7.2.0 or higher. If so, you can skip this step.
 
 ---
 
 ```
 export BAO_DEMOS_QEMU=$BAO_DEMOS_WRKDIR_SRC/qemu-$ARCH
 git clone https://github.com/qemu/qemu.git $BAO_DEMOS_QEMU --depth 1\
-   --branch v6.1.0
+   --branch v7.2.0
 cd $BAO_DEMOS_QEMU
-./configure --target-list=aarch64-softmmu
+./configure --target-list=aarch64-softmmu --enable-slirp
 make -j$(nproc)
 sudo make install
 ```

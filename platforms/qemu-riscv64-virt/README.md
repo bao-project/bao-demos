@@ -6,20 +6,18 @@
 
 **NOTE**
 
-For now you really need to use our patched QEMU because currently RISC-V QEMU 
-is missing a couple small features from the latest draft Hypervisor 
-specification that Bao depends on to run correctly. We have submitted patches 
-to fix these issues which we hope will be merged and available in the next 
-release.
+If you already have qemu-system-riscv64 installed or you don't want to compile 
+it but install it directly using a package manager or some other method, please
+make sure you are using version 7.2.0 or higher. If so, you can skip this step.
 
 ---
 
 ```
 export BAO_DEMOS_QEMU=$BAO_DEMOS_WRKDIR_SRC/qemu-$ARCH
-git clone https://github.com/josecm/qemu.git $BAO_DEMOS_QEMU --depth 1\
-    --branch josecm/hyp
+git clone https://github.com/qemu/qemu.git $BAO_DEMOS_QEMU --depth 1\
+   --branch v7.2.0
 cd $BAO_DEMOS_QEMU
-./configure --target-list=riscv64-softmmu
+./configure --target-list=riscv64-softmmu --enable-slirp
 make -j$(nproc)
 sudo make install
 ```
@@ -42,7 +40,7 @@ cp $BAO_DEMOS_OPENSBI/build/platform/generic/firmware/fw_payload.elf\
 
 ```
  qemu-system-riscv64 -nographic\
-    -M virt -cpu rv64,priv_spec=v1.10.0,x-h=true -m 4G -smp 4 -serial pty\
+    -M virt -cpu rv64 -m 4G -smp 4\
     -bios $BAO_DEMOS_WRKDIR_IMGS/opensbi.elf\
     -device virtio-net-device,netdev=net0 -netdev user,id=net0,hostfwd=tcp:127.0.0.1:5555-:22\
     -device virtio-serial-device -chardev pty,id=serial3 -device virtconsole,chardev=serial3 -S
