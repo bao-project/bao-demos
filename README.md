@@ -29,7 +29,8 @@ newer/compatible versions of the tools and software listed in
 
 ```
 sudo apt install build-essential bison flex git libssl-dev ninja-build \
-    u-boot-tools pandoc libslirp-dev pkg-config libglib2.0-dev libpixman-1-dev
+    u-boot-tools pandoc libslirp-dev pkg-config libglib2.0-dev libpixman-1-dev \
+    gettext-base
 ```
 
 ## 0. Download and setup the toolchain
