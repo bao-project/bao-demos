@@ -1,7 +1,7 @@
 ARCH:=aarch64
 
 boot_bin:=$(wrkdir_plat_imgs)/BOOT.BIN
-prebuilt_images_tar:=$(wrkdir_src)/2020.2-$(PLATFORM)-release.tar.xz
+prebuilt_images_tar:=$(wrkdir_src)/2022.2_$(PLATFORM)_release.tar.xz
 instuctions:=$(bao_demos)/platforms/$(PLATFORM)/README.md
 bao_uboot_image:=$(wrkdir_demo_imgs)/bao.img
 

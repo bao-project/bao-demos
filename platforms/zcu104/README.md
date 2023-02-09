@@ -7,8 +7,8 @@ Download latest pre-built Zynq UltraScale+ MPSoC Firmware for your target
 platform (you will need to sign-in to Xilinx account and provide further 
 personal information) to $BAO_DEMOS_WRKDIR_SRC:
 
-* [ZCU102](https://www.xilinx.com/member/forms/download/xef.html?filename=2020.2-zcu102-release.tar.xz)
-* [ZCU104](https://www.xilinx.com/member/forms/download/xef.html?filename=2020.2-zcu104-release.tar.xz)
+* [ZCU102](https://www.xilinx.com/member/forms/download/xef.html?filename=2022.2_zcu102_release.tar.xz)
+* [ZCU104](https://www.xilinx.com/member/forms/download/xef.html?filename=2022.2_zcu104_release.tar.xz)
 
 <!--- instruction#end -->
 
