@@ -1,0 +1,26 @@
+From 981d9057119072f485a2320a177c14f52bbc405e Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Sat, 28 Jan 2023 20:39:50 +0000
+Subject: [PATCH] compile for armv7ve instead of armv7-a
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+---
+ arch/arm/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index c846119c4..10a29fc58 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -64,7 +64,7 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-ipa-sra)
+ # macro, but instead defines a whole series of macros which makes
+ # testing for a specific architecture or later rather impossible.
+ arch-$(CONFIG_CPU_32v7M)	=-D__LINUX_ARM_ARCH__=7 -march=armv7-m
+-arch-$(CONFIG_CPU_32v7)		=-D__LINUX_ARM_ARCH__=7 -march=armv7-a
++arch-$(CONFIG_CPU_32v7)		=-D__LINUX_ARM_ARCH__=7 -march=armv7ve
+ arch-$(CONFIG_CPU_32v6)		=-D__LINUX_ARM_ARCH__=6 -march=armv6
+ # Only override the compiler option if ARMv6. The ARMv6K extensions are
+ # always available in ARMv7
+-- 
+2.34.1
+

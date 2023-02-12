@@ -38,11 +38,15 @@ sudo apt install build-essential bison flex git libssl-dev ninja-build \
 Download the latest bare-metal cross-compile toolchain for your target 
 architecture:
 
-a) For Armv8-A, use the **aarch64-none-elf-** toolchain.
+a) For Armv8 Aarch64, use the **aarch64-none-elf-** toolchain.
 
 Download it from the [Arm Developer's][arm-toolchains]  website.
 
-b) For RISC-V, use the **riscv64-unknown-elf-** toolchain.
+b) For Armv7 or Armv8 Aarch32, use the **arm-none-eabi-** toolchain.
+
+Download it from the [Arm Developer's][arm-toolchains]  website.
+
+c) For RISC-V, use the **riscv64-unknown-elf-** toolchain.
 
 Download it from [SiFive's Freedom Tools][riscv-toolchains] github reposiroty.
 
@@ -209,27 +213,22 @@ Build the firmware and deploy the system according to the target platform:
 
 ## Appendix I
 
-| | PLATFORM | ARCH
-|--|--|--|
-| Xilinx ZCU102 | zcu102 | aarch64
-| Xilinx ZCU104 | zcu104 | aarch64
-| NXP i.MX8QM | imx8qm | aarch64
-| Nvidia TX2 | tx2 | aarch64
-| Raspberry 4 Model B | rpi4 | aarch64
-| QEMU Aarch64 virt | qemu-aarch64-virt | aarch64
-| QEMU RV64 virt | qemu-riscv64-virt | riscv64
-<!-- TODO -->
-<!-- | NXP i.MX8MQ | imx8mq | -->
-<!-- | Avnet Ultra96 | ultra96 | -->
-<!-- | Rocket on ZynqMP | rocket-fpga | -->
-<!-- | Rocket on Firesim | rocket-firesim | -->
-<!-- | Hikey 960 | hikey960 | -->
-<!-- | Rock 960 | rock960 | -->
+|                     | PLATFORM          | ARCH    |
+| ------------------- | ----------------- | ------- |
+| Xilinx ZCU102       | zcu102            | aarch64 |
+| Xilinx ZCU104       | zcu104            | aarch64 |
+| NXP i.MX8QM         | imx8qm            | aarch64 |
+| Nvidia TX2          | tx2               | aarch64 |
+| Raspberry 4 Model B | rpi4              | aarch64 |
+| QEMU Aarch64 virt   | qemu-aarch64-virt | aarch64 |
+| FVP-A AArch64       | fvp-a             | aarch64 |
+| FVP-A AArch32       | fvp-a-aarch32     | aarch32 |
+| QEMU RV64 virt      | qemu-riscv64-virt | riscv64 |
 
-| | DEMO |
-|--|--|
-| Baremetal guest | baremetal |
-| Linux+FreeRTOS | linux+freertos |
+|                  | DEMO             |
+| ---------------- | ---------------- |
+| Baremetal guest  | baremetal        |
+| Linux+FreeRTOS   | linux+freertos   |
 
 <!-- TODO: Add Accepted Platform/Demos table -->
 

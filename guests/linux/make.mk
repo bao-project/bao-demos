@@ -26,7 +26,7 @@ export BAO_DEMOS_LINUX_CFG_FRAG=$(linux_cfg_frag)
 linux $(buildroot_image): $(linux_patches) $(linux_cfg_frag) $(buildroot_defcfg) | $(linux_src) $(buildroot_src) 
 	$(MAKE) -C $(buildroot_src) defconfig BR2_DEFCONFIG=$(buildroot_defcfg)
 	$(MAKE) -C $(buildroot_src) linux-reconfigure all
-	mv $(buildroot_src)/output/images/Image $(buildroot_image)
+	mv $(buildroot_src)/output/images/*Image $(buildroot_image)
 
 lloader_dir:=$(bao_demos)/guests/linux/lloader
 
