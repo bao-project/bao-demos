@@ -69,15 +69,18 @@ git clone https://github.com/bao-project/bao-demos
 cd bao-demos
 ```
 
-Depending on your target platform and demo, setup the **PLATFORM** and **DEMO** 
-environment variables using the IDs in [Appendix I](#Appendix-I). For example, 
-for a system configuration targeting the ZCU102 board and featuring a dual-guest
-Linux+FreeRTOS demo:
+Depending on your target platform and demo, setup the **PLATFORM** and **DEMO**
+environment variables using the IDs in [Appendix I](#Appendix-I). For example,
+for a system configuration targeting the ZCU102 board and featuring a
+dual-guest Linux+FreeRTOS demo:
 
 ```
 export PLATFORM=zcu102
 export DEMO=linux+freertos
 ```
+
+Note that not every platform supports every demo. The supported platform/demo
+combinations are available in [Appendix II](#Appendix-II).
 
 At this point you have two options:
 
@@ -237,7 +240,22 @@ Build the firmware and deploy the system according to the target platform:
 | Linux+Zephyr     | linux+zephyr     |
 | Zephyr+Baremetal | zephyr+baremetal |
 
-<!-- TODO: Add Accepted Platform/Demos table -->
+## Appendix II
+
+|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal |
+| ----------------- | --------- | -------------- | ------------ | ---------------- |
+| zcu102            | x         | x              |              |                  |
+| zcu104            | x         | x              |              |                  |
+| imx8qm            | x         | x              |              |                  |
+| tx2               | x         | x              |              |                  |
+| rpi4              | x         | x              |              |                  |
+| qemu-aarch64-virt | x         | x              | x            |                  |
+| fvp-a-aarch64     | x         | x              | x            | x                |
+| fvp-a-aarch32     | x         | x              | x            | x                |
+| fvp-r-aarch64     | x         | x              | x            | x                |
+| fvp-r-aarch32     | x         |                |              | x                |
+| qemu-riscv64-virt | x         | x              |              |                  |
+
 
 ---
 
