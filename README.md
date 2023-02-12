@@ -222,7 +222,9 @@ Build the firmware and deploy the system according to the target platform:
 | Raspberry 4 Model B | rpi4              | aarch64 |
 | QEMU Aarch64 virt   | qemu-aarch64-virt | aarch64 |
 | FVP-A AArch64       | fvp-a             | aarch64 |
+| FVP-R AArch64       | fvp-r             | aarch64 |
 | FVP-A AArch32       | fvp-a-aarch32     | aarch32 |
+| FVP-R AArch32       | fvp-r-aarch32     | aarch32 |
 | QEMU RV64 virt      | qemu-riscv64-virt | riscv64 |
 
 |                  | DEMO             |

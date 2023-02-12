@@ -12,5 +12,12 @@ The application also setups an RX UART interrupt that might be forwarded to just
 one or multiple cores, depending on the capabilities of the platform's interrupt 
 controller. Each time it receives a character, it will print a message.
 
-Follow the [build instructions](../../guests/baremetal/README.md) to compile the
-bare metal application to your target platform.
+To build the baremetal app, in case you are targeting an MPU platform (e.g.
+fvp-r), set:
+
+```
+export BAREMETAL_PARAMS="MEM_BASE=0x10000000"
+```
+
+Then, follow the [build instructions](../../guests/baremetal/README.md) to
+compile the bare metal application to your target platform.

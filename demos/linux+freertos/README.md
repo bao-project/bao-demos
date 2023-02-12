@@ -25,7 +25,13 @@ FreeRTOS message by reading `/dev/baoipc0`:
 cat /dev/baoipc0
 ```
 
-To build FreeRTOS set:
+To build FreeRTOS, in case you are targeting an MPU platform (e.g. fvp-r), set:
+
+```
+export FREERTOS_PARAMS="MEM_BASE=0x10000000"
+```
+
+Otherwise set:
 
 ```
 export FREERTOS_PARAMS="STD_ADDR_SPACE=y"
