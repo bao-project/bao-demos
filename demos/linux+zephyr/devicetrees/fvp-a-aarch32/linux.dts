@@ -1,0 +1,97 @@
+/dts-v1/;
+
+/ {
+	#size-cells = <0x2>;
+	#address-cells = <0x2>;
+    interrupt-parent = <&gic>;
+
+	cpus {
+		#size-cells = <0x0>;
+		#address-cells = <0x1>;
+
+		cpu@0 {
+			compatible = "arm,cortex-a15";
+			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x0>;
+		};
+
+		cpu@1 {
+			compatible = "arm,cortex-a15";
+			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x1>;
+		};
+
+		cpu@2 {
+			compatible = "arm,cortex-a15";
+			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x2>;
+		};
+	};
+
+	psci {
+		compatible = "arm,psci-0.2";
+		method = "smc";
+	};
+
+	memory@a0000000 {
+		reg = <0x0 0x80000000 0x0 0x40000000>;
+		device_type = "memory";
+	};
+
+	gic: intc@2F000000 {
+		interrupts = <0x01 0x09 0x04>;
+		reg = <0x00 0x2F000000 0x00 0x10000 0x00 0x2F100000 0x00 0xf60000>;
+		#redistributor-regions = <0x01>;
+		compatible = "arm,gic-v3";
+		ranges;
+		#size-cells = <0x02>;
+		#address-cells = <0x02>;
+		interrupt-controller;
+		#interrupt-cells = <0x03>;
+	};
+
+	timer {
+		interrupts = <0x1 0xd 0xf04 0x1 0xe 0xf04 0x1 0xb 0xf04 0x1 0xa 0xf04>;
+		always-on;
+		compatible = "arm,armv7-timer";
+	};
+
+	pl011@1c0a0000 {
+		clock-names = "uartclk", "apb_pclk";
+		clocks = <0x8000 0x8000>;
+		interrupts = <0x0 0x6 0x4>;
+		reg = <0x0 0x1c0a0000 0x0 0x1000>;
+		compatible = "arm,pl011", "arm,primecell";
+	};
+
+    ethernet@1a000000 { 
+        compatible = "smsc,lan91c111";
+        reg = <0x0 0x01a000000 0x0 0x10000>;
+        interrupts = <0x0 15 0x4>;
+    };
+
+	apb-pclk {
+		phandle = <0x8000>;
+		clock-output-names = "clk24mhz";
+		clock-frequency = <0x16e3600>;
+		#clock-cells = <0x0>;
+		compatible = "fixed-clock";
+	};
+
+    bao-ipc@f0000000 {
+        compatible = "bao,ipcshmem";
+        reg = <0x0 0xf0000000 0x0 0x00010000>;
+		read-channel = <0x0 0x2000>;
+		write-channel = <0x2000 0x2000>;
+        interrupts = <0 52 1>;
+		id = <0>;
+    };
+
+	chosen {
+        bootargs = "earlycon console=ttyAMA0,115200n8 ip=192.168.42.15 carrier_timeout=0";
+	    stdout-path = "/pl011@1c090000";
+	};
+};

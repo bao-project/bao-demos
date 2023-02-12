@@ -1,0 +1,12 @@
+/ {
+    bao-ipc@70000000 {
+        compatible = "bao,ipcshmem";
+        reg = <0x70000000 0x0004000>;
+		read-channel = <0x0 0x2000>;
+		write-channel = <0x2000 0x2000>;
+        interrupts = <0 20 1 0>;
+        interrupt-parent = <&gic>;
+        id = <0>;
+        status = "okay";
+    };
+};

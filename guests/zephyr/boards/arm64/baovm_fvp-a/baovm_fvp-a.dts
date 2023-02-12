@@ -1,0 +1,106 @@
+/*
+ * Copyright (c) 2021 Carlo Caione <ccaione@baylibre.com>
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+
+#include <mem.h>
+#include <zephyr/dt-bindings/interrupt-controller/arm-gic.h>
+
+/ {
+	model = "FVP Base RevC 2xAEMv8A";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	aliases { };
+
+	chosen {
+		/*
+		 * The SRAM node is actually located in the
+		 * DRAM region of the FVP Base RevC 2xAEMv8A.
+		 */
+		zephyr,sram = &dram0;
+		zephyr,console = &uart2;
+		zephyr,shell-uart = &uart2;
+	};
+
+	psci {
+		compatible = "arm,psci-0.2";
+		method = "smc";
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <0>;
+		};
+
+		cpu@1 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <0x01>;
+		};
+	};
+
+	timer {
+		compatible = "arm,armv8-timer";
+		interrupt-parent = <&gic>;
+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 14 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 11 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 10 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>;
+	};
+
+	uartclk: apb-pclk {
+		compatible = "fixed-clock";
+		clock-frequency = <24000000>;
+		#clock-cells = <0>;
+	};
+
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "simple-bus";
+		ranges;
+		interrupt-parent = <&gic>;
+
+		gic: interrupt-controller@2f000000 {
+			compatible = "arm,gic";
+			reg = <0x2f000000 0x10000>, // GICD
+			      <0x2f100000 0x200000>; // GICR
+			interrupt-controller;
+			#interrupt-cells = <4>;
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <1>;
+		};
+
+		uart2: uart@1c0b0000 {
+			compatible = "arm,pl011";
+			reg = <0x1c0b0000 0x1000>;
+			status = "disabled";
+			interrupts = <GIC_SPI 7 0 IRQ_TYPE_LEVEL>;
+			interrupt-names = "irq_7";
+			clocks = <&uartclk>;
+		};
+
+		dram0: memory@90000000 {
+			compatible = "mmio-dram";
+			reg = <0x90000000 DT_SIZE_M(128)>;
+		};
+	};
+};
+
+&uart2 {
+	status = "okay";
+	current-speed = <115200>;
+};
