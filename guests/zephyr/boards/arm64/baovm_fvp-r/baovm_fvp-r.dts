@@ -1,0 +1,113 @@
+/*
+ * Copyright (c) 2021 Arm Limited (or its affiliates). All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+
+// #include <arm64/fvp/fvp-aemv8r.dtsi>
+#include <mem.h>
+#include <zephyr/dt-bindings/interrupt-controller/arm-gic.h>
+
+/ {
+	model = "Bao VM for FVP BaseR AEMv8R";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+
+	chosen {
+		/*
+		 * The SRAM node is actually located in the
+		 * DRAM region of the FVP BaseR AEMv8R.
+		 */
+		zephyr,sram = &dram0;
+		zephyr,flash = &flash0;
+		zephyr,console = &uart2;
+		zephyr,shell-uart = &uart2;
+	};
+
+	psci {
+		compatible = "arm,psci-0.2";
+		method = "hvc";
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-r82";
+			reg = <0>;
+		};
+
+		cpu@1 {
+			device_type = "cpu";
+			compatible = "arm,cortex-r82";
+			reg = <1>;
+		};
+
+	};
+
+	timer {
+		compatible = "arm,armv8-timer";
+		interrupt-parent = <&gic>;
+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 14 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 11 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 10 IRQ_TYPE_LEVEL
+			      IRQ_DEFAULT_PRIORITY>;
+	};
+
+	uartclk: apb-pclk {
+		compatible = "fixed-clock";
+		clock-frequency = <24000000>;
+		#clock-cells = <0>;
+	};
+
+
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "simple-bus";
+		ranges;
+    	interrupt-parent = <&gic>;
+
+		gic: interrupt-controller@af000000 {
+			compatible = "arm,gic";
+			reg = <0xaf000000 0x10000>,
+			      <0xaf100000 0x200000>;
+			interrupt-controller;
+			#interrupt-cells = <4>;
+			status = "okay";
+		};
+
+
+		uart2: uart@9c0b0000 {
+			compatible = "arm,pl011";
+			reg = <0x9c0b0000 0x10000>;
+			status = "disabled";
+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY>;
+			interrupt-names = "irq_7";
+			clocks = <&uartclk>;
+		};
+
+		flash0: flash@20000000 {
+			compatible = "soc-nv-flash";
+			reg = <0x20000000 DT_SIZE_M(64)>;
+		};
+
+		dram0: memory@24000000 {
+			compatible = "mmio-dram";
+			reg = <0x24000000 DT_SIZE_M((512*3)-64)>;
+		};
+	};
+};
+
+&uart2 {
+	status = "okay";
+	current-speed = <115200>;
+};

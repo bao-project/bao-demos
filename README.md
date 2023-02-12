@@ -6,6 +6,9 @@ systems and targeting several supported platforms. The available demos are:
 
 * [Single-guest Baremetal](demos/baremetal/README.md)
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
+* [Dual-Guest Linux+Zephyr](../demos/linux+zephyr/README.md)
+* [Dual-Guest Zephyr+Baremetal](../demos/zephyr+baremetal/README.md)
+
 
 ---
 
@@ -231,6 +234,8 @@ Build the firmware and deploy the system according to the target platform:
 | ---------------- | ---------------- |
 | Baremetal guest  | baremetal        |
 | Linux+FreeRTOS   | linux+freertos   |
+| Linux+Zephyr     | linux+zephyr     |
+| Zephyr+Baremetal | zephyr+baremetal |
 
 <!-- TODO: Add Accepted Platform/Demos table -->
 
