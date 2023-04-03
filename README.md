@@ -6,8 +6,8 @@ systems and targeting several supported platforms. The available demos are:
 
 * [Single-guest Baremetal](demos/baremetal/README.md)
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
-* [Dual-Guest Linux+Zephyr](../demos/linux+zephyr/README.md)
-* [Dual-Guest Zephyr+Baremetal](../demos/zephyr+baremetal/README.md)
+* [Dual-Guest Linux+Zephyr](demos/linux+zephyr/README.md)
+* [Dual-Guest Zephyr+Baremetal](demos/zephyr+baremetal/README.md)
 
 
 ---
@@ -24,7 +24,7 @@ info@bao-project.org.
 If you run into any problem while following this guide, we ask you to raise 
 an issue on Github, but first please make sure you are using the same or
 newer/compatible versions of the tools and software listed in 
-[Appendix II](#Appendix-II) (not all are needed for all target platforms). 
+[Appendix III](#Appendix-III) (not all are needed for all target platforms). 
 
 ---
 
@@ -33,7 +33,7 @@ newer/compatible versions of the tools and software listed in
 ```
 sudo apt install build-essential bison flex git libssl-dev ninja-build \
     u-boot-tools pandoc libslirp-dev pkg-config libglib2.0-dev libpixman-1-dev \
-    gettext-base
+    gettext-base curl
 ```
 
 ## 0. Download and setup the toolchain
@@ -211,6 +211,12 @@ Build the firmware and deploy the system according to the target platform:
 * [Nvidia TX2](platforms/tx2/README.md)
 * [Raspberry 4 Model B](platforms/rpi4/README.md)
 * [QEMU virt](platforms/qemu-aarch64-virt/README.md)
+* [FVP-A Aarch64](platforms/fvp-a/README.md)
+* [FVP-R Aarch64](platforms/fvp-r/README.md)
+
+#### AArch32 platforms:
+* [FVP-A Aarch32](platforms/fvp-a-aarch32/README.md)
+* [FVP-R Aarch32](platforms/fvp-r-aarch32/README.md)
 
 #### RISC-V platforms:
 * [QEMU virt](platforms/qemu-riscv64-virt/README.md)
@@ -259,7 +265,7 @@ Build the firmware and deploy the system according to the target platform:
 
 ---
 
-## Appendix II
+## Appendix III
 
 | Tool                    | Version |
 | ----------------------- | ------- |
@@ -269,7 +275,7 @@ Build the firmware and deploy the system according to the target platform:
 | dtc                     | 1.5.0   |
 | gcc                     | 9.3.0   |
 | mkimage                 | 20.10   |
-| cmake                   | 3.16.3  |
+| cmake                   | 3.20.0  |
 | ninja                   | 1.10.1  |
 
 
