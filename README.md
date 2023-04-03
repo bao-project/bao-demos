@@ -269,6 +269,7 @@ Build the firmware and deploy the system according to the target platform:
 
 | Tool                    | Version |
 | ----------------------- | ------- |
+| arm-none-eabi-gcc       | 11.3.1  |
 | aarch64-none-elf-gcc    | 11.2.1  |
 | riscv64-unknown-elf-gcc | 10.2.0  |
 | make                    | 4.2.1   |
