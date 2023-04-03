@@ -19,7 +19,7 @@ Then clone and build it:
 git clone https://github.com/zephyrproject-rtos/cmsis.git --depth 1 \
     $BAO_DEMOS_ZEPHYR_CMSIS_SRC
 git clone https://github.com/zephyrproject-rtos/zephyr.git --depth 1 \
-    --branch v3.3.0-rc2 $BAO_DEMOS_ZEPHYR_SRC
+    --branch v3.3.0 $BAO_DEMOS_ZEPHYR_SRC
 
 $BAO_DEMOS_ZEPHYR_ENV cmake -GNinja \
     -DCMAKE_PREFIX_PATH=$BAO_DEMOS_ZEPHYR_SRC/share/zephyr-package \

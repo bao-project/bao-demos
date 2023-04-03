@@ -1,4 +1,4 @@
-From 3e1da6c4139fd111654fa3ec24db8299ba48fa99 Mon Sep 17 00:00:00 2001
+From 6e8232b9462de3a950a56a51d8718ac60c2fce0f Mon Sep 17 00:00:00 2001
 From: Jose Martins <josemartins90@gmail.com>
 Date: Mon, 6 Feb 2023 19:20:41 +0000
 Subject: [PATCH] add smc support for aarch32-r
@@ -45,7 +45,7 @@ index 418aa9a0..c9b52a22 100644
  	  implementation.
 diff --git a/arch/arm/core/aarch32/cortex_a_r/smccc-call.S b/arch/arm/core/aarch32/cortex_a_r/smccc-call.S
 new file mode 100644
-index 00000000..d249a733
+index 00000000..f655def9
 --- /dev/null
 +++ b/arch/arm/core/aarch32/cortex_a_r/smccc-call.S
 @@ -0,0 +1,41 @@
@@ -69,7 +69,7 @@ index 00000000..d249a733
 +
 +.macro SMCCC instr
 +	\instr  #0
-+    ldr      r4, [sp]
++    ldr      r4, [sp, #0x10]
 +    strd     r0, r1, [r4], #8
 +    strd     r2, r3, [r4], #8
 +	bx lr

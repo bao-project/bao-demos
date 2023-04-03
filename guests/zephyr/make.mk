@@ -1,6 +1,6 @@
 zephyr_src:=$(wrkdir_src)/zephyr
 zephyr_repo:=https://github.com/zephyrproject-rtos/zephyr.git
-zephyr_version:=v3.3.0-rc2
+zephyr_version:=v3.3.0
 zephyr_cmsis_repo:=https://github.com/zephyrproject-rtos/cmsis.git
 zephyr_cmsis_src:=$(wrkdir_src)/cmsis
 zephyr_build:=$(wrkdir_demo_imgs)/zephyr_build
