@@ -31,6 +31,7 @@ sudo fdisk /dev/mmcblk0
 
 Then run the commands:
 
+* `o` to create a new empty DOS partition table
 * `n` to create a new partition. Select the folowing options:
     *  `p` to make it a primary partition
     *  the automatically assined partition number by pressing `return`
