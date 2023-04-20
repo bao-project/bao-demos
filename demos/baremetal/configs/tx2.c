@@ -32,7 +32,7 @@ struct config config = {
                     {   
                         /* uarta */
                         .pa = 0x03100000,
-                        .va = 0x80000000,
+                        .va = 0x03100000,
                         .size = 0x1000,
                         .interrupt_num = 1,
                         .interrupts = (irqid_t[]) {144}                        
@@ -47,8 +47,8 @@ struct config config = {
 
                 .arch = {
                     .gic = {
-                        .gicd_addr = 0xF9010000,
-                        .gicc_addr = 0xF9020000,
+                        .gicd_addr = 0x03881000,
+                        .gicc_addr = 0x03882000,
                     }
                 }
             },
