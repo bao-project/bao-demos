@@ -124,8 +124,8 @@ struct config config = {
 
                 .arch = {
                     .gic = {
-                        .gicd_addr = 0xff841000,
-                        .gicc_addr = 0xff842000,
+                        .gicd_addr = 0xF9010000,
+                        .gicc_addr = 0xF9020000,
                     }
                 }
             },
