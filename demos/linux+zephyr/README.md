@@ -6,10 +6,10 @@ Linux and Zephyr, connected through an inter-VM communication object. This
 object is implemented through a shared memory region and a doorbell mechanism
 in the form of hardware interrupts.
 
-If Zephyr supports SMP for the taarget architecture, half of the cores are
+If Zephyr supports SMP for the target architecture, half of the cores are
 assigned to Zephyr and half to Linux. If not, one core is assigned to Zephyr
 and the remaining ones to Linux. The platform's first available UART is also
-assigned to Zephyr. A ny additional UART device is assigned to Linux. The Linux
+assigned to Zephyr. Any additional UART device is assigned to Linux. The Linux
 guest is also accessible via ssh at the static address **192.168.42.15**.
 
 You can send messages to Zephyr by writing to `/dev/baoipc0`. For example:
