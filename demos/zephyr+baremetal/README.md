@@ -1,10 +1,10 @@
 # Zephyr+Baremetal Demo
 
-This Demo features two guests, Zephyr and a baremetal app, that can communicate
+This demo features two guests, Zephyr and a baremetal app, that can communicate
 via a shared memory object which includes a shared memory region and a
 notification mechanism in the form of hardware interrupts. 
 
-If Zephyr supports SMP for the taarget architecture, half of the cores are
+If Zephyr supports SMP for the target architecture, half of the cores are
 assigned to Zephyr and half to the baremetal app. If not, one core is assigned
 to Zephyr and the remaining ones to the baremetal app. 
 
@@ -13,9 +13,9 @@ peripherals where one is assigned to the baremetal app and the other to Zephyr.
 Each time the baremetal app receives a UART interrupt it will update the shared
 memory region with a message.
 
-Zephyr is configured with its shell enabled plus aditional an aditional
-'baoipc' command used for interacting with the baremetal app via the shared
-memory object. To read the baremetal app message run:
+Zephyr is configured with its shell enabled plus an aditional 'baoipc' command 
+used for interacting with the baremetal app via the shared memory object. To 
+read the baremetal app message run:
 
 ```
 baoipc read 0
