@@ -1,7 +1,5 @@
 #include <config.h>
 
-VM_IMAGE(zephyr_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/zephyr.bin));
-VM_IMAGE(baremetal_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/baremetal.bin));
 
 struct config config = {
 
@@ -16,11 +14,7 @@ struct config config = {
     .vmlist_size = 2,
     .vmlist = {
         {
-            .image = {
-                .base_addr = 0x24000000,
-                .load_addr = VM_IMAGE_OFFSET(zephyr_image),
-                .size = VM_IMAGE_SIZE(zephyr_image),
-            },
+            .image = VM_IMAGE_LOADED(0x24000000, 0x24000000, 1 * 1024 * 1024),
 
             .entry = 0x24000000,
 
@@ -71,11 +65,7 @@ struct config config = {
             },
         },
         {
-            .image = {
-                .base_addr = 0x10000000,
-                .load_addr = VM_IMAGE_OFFSET(baremetal_image),
-                .size = VM_IMAGE_SIZE(baremetal_image),
-            },
+            .image = VM_IMAGE_LOADED(0x10000000, 0x10000000, 100 * 1024),
 
             .entry = 0x10000000,
 

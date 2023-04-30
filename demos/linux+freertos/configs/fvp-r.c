@@ -1,7 +1,5 @@
 #include <config.h>
 
-VM_IMAGE(linux_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/linux.bin));
-VM_IMAGE(freertos_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/freertos.bin));
 
 struct config config = {
 
@@ -16,11 +14,7 @@ struct config config = {
     .vmlist_size = 2,
     .vmlist = {
         {
-            .image = {
-                .base_addr = 0x20000000,
-                .load_addr = VM_IMAGE_OFFSET(linux_image),
-                .size = VM_IMAGE_SIZE(linux_image),
-            },
+            .image = VM_IMAGE_LOADED(0x20000000, 0x20000000, 50*1024*1024),
 
             .entry = 0x20000000,
 
@@ -81,11 +75,7 @@ struct config config = {
             },
         },
         {
-            .image = {
-                .base_addr = 0x10000000,
-                .load_addr = VM_IMAGE_OFFSET(freertos_image),
-                .size = VM_IMAGE_SIZE(freertos_image),
-            },
+            .image = VM_IMAGE_LOADED(0x10000000, 0x10000000, 148*1024),
 
             .entry = 0x10000000,
 

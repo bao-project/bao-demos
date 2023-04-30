@@ -1,17 +1,12 @@
 #include <config.h>
 
-VM_IMAGE(baremetal_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/baremetal.bin));
 
 struct config config = {
 
     .vmlist_size = 1,
     .vmlist = {
         {
-            .image = {
-                .base_addr = 0x10000000,
-                .load_addr = VM_IMAGE_OFFSET(baremetal_image),
-                .size = VM_IMAGE_SIZE(baremetal_image),
-            },
+            .image = VM_IMAGE_LOADED(0x10000000, 0x10000000, 100*1024),
 
             .entry = 0x10000000,
 

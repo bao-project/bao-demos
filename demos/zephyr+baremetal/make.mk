@@ -8,6 +8,7 @@ baremetal_image:=$(wrkdir_demo_imgs)/baremetal.bin
 baremetal_args:=DEMO_IPC=y
 ifeq ($(ARCH_PROFILE),armv8-r)
 baremetal_args+=MEM_BASE=0x10000000
+fvpr_image_data:=$(baremetal_image)@0x10000000 $(zephyr_image)@0x24000000
 else
 baremetal_args+=STD_ADDR_SPACE=y
 endif

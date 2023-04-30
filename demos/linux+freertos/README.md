@@ -25,6 +25,13 @@ FreeRTOS message by reading `/dev/baoipc0`:
 cat /dev/baoipc0
 ```
 
+If you are targetting an MPU platform (i.e. fvp-r), set:
+
+```
+export FVPR_VM_IMAGES="$BAO_DEMOS_WRKDIR_IMGS/freertos.bin@0x10000000 \
+    $BAO_DEMOS_WRKDIR_IMGS/linux.bin@0x20000000"
+```
+
 To build FreeRTOS, in case you are targeting an MPU platform (e.g. fvp-r), set:
 
 ```

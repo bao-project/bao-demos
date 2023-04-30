@@ -1,8 +1,5 @@
 #include <config.h>
 
-VM_IMAGE(zephyr_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/zephyr.bin));
-VM_IMAGE(baremetal_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/baremetal.bin));
-
 struct config config = {
 
     .shmemlist_size = 1,
@@ -16,13 +13,9 @@ struct config config = {
     .vmlist_size = 2,
     .vmlist = {
         {
-            .image = {
-                .base_addr = 0x20000000,
-                .load_addr = VM_IMAGE_OFFSET(zephyr_image),
-                .size = VM_IMAGE_SIZE(zephyr_image),
-            },
+            .image = VM_IMAGE_LOADED(0x24000000, 0x24000000, 1 * 1024 * 1024),
 
-            .entry = 0x20000000,
+            .entry = 0x24000000,
 
             .platform = {
                 .cpu_num = 1,
@@ -30,7 +23,7 @@ struct config config = {
                 .region_num = 1,
                 .regions =  (struct vm_mem_region[]) {
                     {
-                        .base = 0x20000000,
+                        .base = 0x24000000,
                         .size = 0x08000000,
                     },
                 },
@@ -71,11 +64,7 @@ struct config config = {
             },
         },
         {
-            .image = {
-                .base_addr = 0x10000000,
-                .load_addr = VM_IMAGE_OFFSET(baremetal_image),
-                .size = VM_IMAGE_SIZE(baremetal_image),
-            },
+            .image = VM_IMAGE_LOADED(0x10000000, 0x10000000, 100 * 1024),
 
             .entry = 0x10000000,
 

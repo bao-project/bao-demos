@@ -26,9 +26,9 @@
 	};
 
 	soc {
-		dram0: memory@20000000 {
+		dram0: memory@24000000 {
 			compatible = "mmio-dram";
-			reg = <0x20000000 DT_SIZE_M(512+1024)>;
+			reg = <0x24000000 DT_SIZE_M(512+1024)>;
 		};
 	};
 };

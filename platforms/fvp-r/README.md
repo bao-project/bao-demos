@@ -39,7 +39,7 @@ FVP_BaseR_AEMv8R \
 	-C cluster0.VMSA_supported=$(([[ $ARCH == aarch64 ]]) && echo 1 || echo 0) \
 	-C bp.smsc_91c111.enabled=true -C bp.hostbridge.userNetworking=true \
 	-C bp.hostbridge.userNetSubnet=192.168.42.0/24 -C bp.hostbridge.userNetPorts=127.0.0.1:5555=22 \
-    --data==$BAO_DEMOS_WRKDIR_IMGS/bao.bin@0x0
+    --data==$BAO_DEMOS_WRKDIR_IMGS/bao.bin@0x0 $(printf -- "--data=%s " $FVPR_VM_IMAGES)
 ```
 
 ---

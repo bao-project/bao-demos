@@ -28,4 +28,5 @@ run: fvp platform
 ifeq ($(ARCH),aarch64)
 	$(call print-instructions, $(instructions), 1, false)
 endif
-	@$(fvp_cmd) $(fvp_args) --data=$(bao_image)@0x0
+	$(fvp_cmd) $(fvp_args) --data=$(bao_image)@0x0 \
+		$(foreach image, $(fvpr_image_data), --data=$(image))
