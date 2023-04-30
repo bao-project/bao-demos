@@ -55,10 +55,11 @@ endif
 
 wrkdir:=$(bao_demos)/wrkdir
 wrkdir_src:=$(wrkdir)/srcs
+wrkdir_bin:=$(wrkdir)/bin
 wrkdir_imgs:=$(wrkdir)/imgs
 wrkdir_plat_imgs:=$(wrkdir_imgs)/$(PLATFORM)
 wrkdir_demo_imgs:=$(wrkdir_plat_imgs)/$(DEMO)
-wrkdirs=$(wrkdir) $(wrkdir_src) $(wrkdir_plat_imgs) $(wrkdir_demo_imgs)
+wrkdirs=$(wrkdir) $(wrkdir_src) $(wrkdir_bin) $(wrkdir_plat_imgs) $(wrkdir_demo_imgs)
 
 environment:=BAO_DEMOS=$(bao_demos)
 environment+=BAO_DEMOS_WRKDIR=$(wrkdir)
