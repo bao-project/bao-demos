@@ -6,9 +6,11 @@ include $(bao_demos)/platforms/fvp.mk
 
 platform: $(bao_image)
 
-fvp_args:= -C cache_state_modelled=1 \
+fvp_args:= \
+	-C cache_state_modelled=0 \
+	-C bp.exclusive_monitor.monitor_access_level=1 \
 	-C cci400.force_on_from_start=1 \
-    -C gic_distributor.has-two-security-states=0 \
+	-C gic_distributor.has-two-security-states=0 \
 	-C cluster0.gicv3.cpuintf-mmap-access-level=2 \
 	-C cluster0.gicv3.SRE-EL2-enable-RAO=1 \
 	-C bp.smsc_91c111.enabled=true -C bp.hostbridge.userNetworking=true \
