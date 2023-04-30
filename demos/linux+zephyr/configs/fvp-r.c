@@ -14,9 +14,9 @@ struct config config = {
     .vmlist_size = 2,
     .vmlist = {
         {
-            .image = VM_IMAGE_LOADED(0x20000000, 0x20000000, 50 * 1024 * 1024),
+            .image = VM_IMAGE_LOADED(0x28000000, 0x28000000, 50 * 1024 * 1024),
 
-            .entry = 0x20000000,
+            .entry = 0x28000000,
 
             .platform = {
                 .cpu_num = 2,
@@ -26,7 +26,7 @@ struct config config = {
                 .region_num = 1,
                 .regions =  (struct vm_mem_region[]) {
                     {
-                        .base = 0x20000000,
+                        .base = 0x28000000,
                         .size = 0x40000000,
                     },
                 },
