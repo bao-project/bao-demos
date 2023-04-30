@@ -7,14 +7,14 @@
 **NOTE**
 
 If you already have FVP_BaseR_AEMv8R installed please make sure you are
-using version 11.20.15 or higher. If so, you can skip this step.
+using version 11.21.15 or higher. If so, you can skip this step.
 
 ---
 
 Download and extract the model:
 
 ```
-curl -L https://developer.arm.com/-/media/Files/downloads/ecosystem-models/FVP_Base_AEMv8R_11.20_15_Linux64.tgz | tar xz -C $BAO_DEMOS_WRKDIR_PLAT
+curl -L https://developer.arm.com/-/media/Files/downloads/ecosystem-models/FVP_Base_AEMv8R_11.21_15_Linux64.tgz | tar xz -C $BAO_DEMOS_WRKDIR_PLAT
 export PATH=$PATH:$BAO_DEMOS_WRKDIR_PLAT/AEMv8R_base_pkg/models/Linux64_GCC-9.3
 ```
 
