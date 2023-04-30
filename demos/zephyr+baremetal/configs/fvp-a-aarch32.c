@@ -1,7 +1,7 @@
 #include <config.h>
 
-VM_IMAGE(linux_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/linux.bin));
-VM_IMAGE(freertos_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/freertos.bin));
+VM_IMAGE(zephyr_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/zephyr.bin));
+VM_IMAGE(baremetal_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/baremetal.bin));
 
 struct config config = {
 
@@ -14,77 +14,12 @@ struct config config = {
     .vmlist = {
         { 
             .image = {
-                .base_addr = 0xa0000000,
-                .load_addr = VM_IMAGE_OFFSET(linux_image),
-                .size = VM_IMAGE_SIZE(linux_image),
+                .base_addr = 0x20000000,
+                .load_addr = VM_IMAGE_OFFSET(zephyr_image),
+                .size = VM_IMAGE_SIZE(zephyr_image)
             },
 
-            .entry = 0xa0000000,
-
-            .platform = {
-                .cpu_num = 2,
-                
-                .region_num = 1,
-                .regions =  (struct vm_mem_region[]) {
-                    {
-                        .base = 0xa0000000,
-                        .size = 0x40000000,
-                        .place_phys = true,
-                        .phys = 0xa0000000,
-                    }
-                },
-
-                .ipc_num = 1,
-                .ipcs = (struct ipc[]) {
-                    {
-                        .base = 0xf0000000,
-                        .size = 0x00010000,
-                        .shmem_id = 0,
-                        .interrupt_num = 1,
-                        .interrupts = (irqid_t[]) {52}
-                    }
-                },
-
-                .dev_num = 3,
-                .devs =  (struct vm_dev_region[]) {
-                    {   
-                        /* UART1, PL011 */
-                        .pa = 0x1c0a0000,
-                        .va = 0x1c0a0000,
-                        .size = 0x10000,
-                        .interrupt_num = 1,
-                        .interrupts = (irqid_t[]) {38} 
-                    },
-                    {   
-                        /* smsc,lan91c111t */
-                        .pa = 0x01a000000,
-                        .va = 0x01a000000,
-                        .size = 0x10000,
-                        .interrupt_num = 1,
-                        .interrupts = (irqid_t[]) {47} 
-                    },
-                    {   
-                        .interrupt_num = 1,
-                        .interrupts = (irqid_t[]) {27} 
-                    }
-                },
-
-                .arch = {
-                    .gic = {
-                        .gicd_addr = 0x2F000000,
-                        .gicr_addr = 0x2F100000,
-                    }
-                }
-            },
-        },
-        { 
-            .image = {
-                .base_addr = 0x0,
-                .load_addr = VM_IMAGE_OFFSET(freertos_image),
-                .size = VM_IMAGE_SIZE(freertos_image)
-            },
-
-            .entry = 0x0,
+            .entry = 0x20000000,
 
             .platform = {
                 .cpu_num = 1,
@@ -92,7 +27,7 @@ struct config config = {
                 .region_num = 1,
                 .regions =  (struct vm_mem_region[]) {
                     {
-                        .base = 0x0,
+                        .base = 0x20000000,
                         .size = 0x8000000
                     }
                 },
@@ -109,6 +44,60 @@ struct config config = {
                     }
                 },
 
+                .dev_num = 2,
+                .devs =  (struct vm_dev_region[]) {
+                    {   
+                        /* UART2, PL011 */
+                        .pa = 0x1c0b0000,
+                        .va = 0x9c0b0000,
+                        .size = 0x10000,
+                        .interrupt_num = 1,
+                        .interrupts = (irqid_t[]) {39} 
+                    },
+                    {   
+                        .interrupt_num = 1,
+                        .interrupts = (irqid_t[]) {27} 
+                    }
+                },
+
+                .arch = {
+                    .gic = {
+                        .gicd_addr = 0xaf000000,
+                        .gicr_addr = 0xaf100000,
+                    }
+                }
+            },
+        },
+        { 
+            .image = {
+                .base_addr = 0x0,
+                .load_addr = VM_IMAGE_OFFSET(baremetal_image),
+                .size = VM_IMAGE_SIZE(baremetal_image)
+            },
+
+            .entry = 0x0,
+
+            .platform = {
+                .cpu_num = 2,
+                
+                .region_num = 1,
+                .regions =  (struct vm_mem_region[]) {
+                    {
+                        .base = 0x0,
+                        .size = 0x8000000,
+                    }
+                },
+
+                .ipc_num = 1,
+                .ipcs = (struct ipc[]) {
+                    {
+                        .base = 0x70000000,
+                        .size = 0x00010000,
+                        .shmem_id = 0,
+                        .interrupt_num = 1,
+                        .interrupts = (irqid_t[]) {52}
+                    }
+                },
 
                 .dev_num = 2,
                 .devs =  (struct vm_dev_region[]) {

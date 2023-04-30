@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2021 Arm Limited (or its affiliates). All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+
+#include <arm64/fvp/fvp-aemv8r.dtsi>
+
+/ {
+	model = "Bao VM for FVP BaseR AEMv8R AArch32";
+
+	chosen {
+		/*
+		 * The SRAM node is actually located in the
+		 * DRAM region of the FVP BaseR AEMv8R.
+		 */
+		zephyr,sram = &dram0;
+		zephyr,console = &uart2;
+		zephyr,shell-uart = &uart2;
+	};
+
+	psci {
+		compatible = "arm,psci-0.2";
+		method = "hvc";
+	};
+
+	soc {
+		dram0: memory@20000000 {
+			compatible = "mmio-dram";
+			reg = <0x20000000 DT_SIZE_M(128)>;
+		};
+	};
+};
+
+&uart2 {
+	status = "okay";
+	current-speed = <115200>;
+};
