@@ -30,6 +30,12 @@ baoipc write_notify 0 "Hello, Bao!"
 When receiving the notification, the baremetal app should print the message
 written by Zephyr.
 
+Configure the baremetal app for communication:
+
+```
+export BAREMETAL_PARAMS="DEMO_IPC=y"
+```
+
 If you are targetting an MPU platform (i.e. fvp-r), set:
 
 ```
