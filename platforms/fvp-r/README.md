@@ -18,17 +18,7 @@ curl -L https://developer.arm.com/-/media/Files/downloads/ecosystem-models/FVP_B
 export PATH=$PATH:$BAO_DEMOS_WRKDIR_PLAT/AEMv8R_base_pkg/models/Linux64_GCC-9.3
 ```
 
-## 2) Download and install XTerm
-
----
-
-Download and install XTerm:
-
-```
-sudo apt-get install xterm
-```
-
-## 3) Run FVP
+## 2) Run FVP
 
 ```
 FVP_BaseR_AEMv8R \
