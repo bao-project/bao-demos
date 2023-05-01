@@ -30,7 +30,7 @@ cat /dev/baoipc0
 If you are targetting an MPU platform (i.e. fvp-r), set:
 
 ```
-export FVPR_VM_IMAGES="$BAO_DEMOS_WRKDIR_IMGS/zephyr.bin@0x20000000 \
+export FVPR_VM_IMAGES="$BAO_DEMOS_WRKDIR_IMGS/zephyr.bin@0x24000000 \
     $BAO_DEMOS_WRKDIR_IMGS/linux.bin@0x28000000"
 ```
 
