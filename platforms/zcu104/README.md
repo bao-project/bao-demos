@@ -81,7 +81,7 @@ fatload mmc 0 0x200000 bao.img; bootm start 0x200000; bootm loados; bootm go
 You should see the firmare, bao and its guests printing on the UARTs.
 
 At this point, depending on your demo, you might be able connect to one of the 
-guests via ssh by connecting to the board's ethernet RJ54 socket.
+guests via ssh by connecting to the board's ethernet RJ45 socket.
 
 <!--- instruction#end -->
 

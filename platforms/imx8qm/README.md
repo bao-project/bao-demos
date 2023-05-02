@@ -165,6 +165,6 @@ You should see a message from Bao followed by the guests' output on the UART
 console.
 
 At this point, depending on your demo, you might be able connect to one of the 
-guests via ssh by connecting to the board's ethernet RJ54 socket.
+guests via ssh by connecting to the board's ethernet RJ45 socket.
 
 <!--- instruction#end -->
