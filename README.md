@@ -221,8 +221,8 @@ Build the firmware and deploy the system according to the target platform:
 * [FVP-R Aarch64](platforms/fvp-r/README.md)
 
 #### AArch32 platforms:
-* [FVP-A Aarch32](platforms/fvp-a/README.md)
-* [FVP-R Aarch32](platforms/fvp-r/README.md)
+* [FVP-A Aarch32](platforms/fvp-a-aarch32/README.md)
+* [FVP-R Aarch32](platforms/fvp-r-aarch32/README.md)
 
 #### RISC-V platforms:
 * [QEMU virt](platforms/qemu-riscv64-virt/README.md)
