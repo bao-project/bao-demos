@@ -35,7 +35,7 @@ newer/compatible versions of the tools and software listed in
 sudo apt install build-essential bison flex git libssl-dev ninja-build \
     u-boot-tools pandoc libslirp-dev pkg-config libglib2.0-dev libpixman-1-dev \
     gettext-base curl xterm cmake python3-pip xilinx-bootgen file cpio \
-    device-tree-compiler gdisk e2fsprogs
+    device-tree-compiler gdisk e2fsprogs unzip rsync bc
 
 pip3 install pykwalify packaging pyelftools
 ```
