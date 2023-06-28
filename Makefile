@@ -114,7 +114,7 @@ platform: $(bao_image)
 guests_clean bao_clean platform_clean:
 
 clean: guests_clean bao_clean platform_clean
-	-@rm -rf $(wrkdir)/imgs/$(PLAT)/$(DEMO)
+	-@rm -rf $(wrkdir)/imgs/$(PLATFORM)/$(DEMO)
 
 distclean:
 	rm -rf $(wrkdir)
