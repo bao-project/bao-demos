@@ -1,0 +1,72 @@
+From 8f4fda3fc844413b2d12623b0665ca66715cc369 Mon Sep 17 00:00:00 2001
+From: Clay Chang <clay.chang@gmail.com>
+Date: Mon, 26 Jun 2023 21:48:16 +0800
+Subject: [PATCH 2/2] bao: add mmap for shmem ipc
+
+Signed-off-by: Clay Chang <clay.chang@gmail.com>
+---
+ drivers/bao/bao-ipcshmem.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/bao/bao-ipcshmem.c b/drivers/bao/bao-ipcshmem.c
+index daa9903d0..e9cc304ea 100644
+--- a/drivers/bao/bao-ipcshmem.c
++++ b/drivers/bao/bao-ipcshmem.c
+@@ -21,6 +21,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/mutex.h>
+ #include <linux/wait.h>
++#include <linux/mm.h>
+ 
+ #if defined(CONFIG_ARM64) || defined(CONFIG_ARM)
+ #include <linux/arm-smccc.h>
+@@ -47,6 +48,7 @@ struct bao_ipcshmem
+     size_t read_size;
+     void* write_base;
+     size_t write_size;
++    void* physical_base;
+ };
+ 
+ #ifdef CONFIG_ARM64
+@@ -132,6 +134,22 @@ static ssize_t bao_ipcshmem_write_fops(struct file *filp,
+     return count;
+ }
+ 
++static int bao_ipcshmem_mmap_fops(struct file *filp, struct vm_area_struct *vma)
++{
++    struct bao_ipcshmem *bao = filp->private_data;
++
++    unsigned long vsize = vma->vm_end - vma->vm_start;
++
++    if (remap_pfn_range(vma, vma->vm_start,
++            (unsigned long)bao->physical_base >> PAGE_SHIFT, vsize,
++            vma->vm_page_prot)) {
++        printk(KERN_ERR "failed to remap physical address of shmem\n");
++        return -EFAULT;
++    }
++
++    return 0;
++}
++
+ static int bao_ipcshmem_open_fops(struct inode *inode, struct file *filp)
+ {
+     struct bao_ipcshmem *bao_ipcshmem = container_of(inode->i_cdev,
+@@ -158,6 +176,7 @@ static struct file_operations bao_ipcshmem_fops = {
+     .owner = THIS_MODULE,
+     .read = bao_ipcshmem_read_fops,
+     .write = bao_ipcshmem_write_fops,
++    .mmap = bao_ipcshmem_mmap_fops,
+     .open = bao_ipcshmem_open_fops,
+     .release = bao_ipcshmem_release_fops
+ };
+@@ -220,6 +239,7 @@ int bao_ipcshmem_register(struct platform_device *pdev)
+     bao->write_size = write_size;
+     bao->read_base = shmem_base_addr + read_offset;
+     bao->write_base = shmem_base_addr + write_offset;
++    bao->physical_base = (void *)r->start;
+ 
+     cdev_init(&bao->cdev, &bao_ipcshmem_fops);
+     bao->cdev.owner = owner;
+-- 
+2.34.1
+
