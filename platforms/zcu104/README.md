@@ -78,7 +78,7 @@ you get the u-boot prompt. Then load the bao image, and jump to it:
 fatload mmc 0 0x200000 bao.img; bootm start 0x200000; bootm loados; bootm go
 ```
 
-You should see the firmare, bao and its guests printing on the UARTs.
+You should see the firmware, bao and its guests printing on the UARTs.
 
 At this point, depending on your demo, you might be able connect to one of the 
 guests via ssh by connecting to the board's ethernet RJ45 socket.

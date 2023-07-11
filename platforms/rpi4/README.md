@@ -2,7 +2,7 @@
 
 ## 1) Get firmware
 
-Download the lastest firmware files for Raspberry Pi:
+Download the latest firmware files for Raspberry Pi:
 
 ```
 export BAO_DEMOS_FW=$BAO_DEMOS_WRKDIR_PLAT/firmware 
@@ -91,7 +91,7 @@ you get the u-boot prompt. Then load the bao image, and jump to it:
 fatload mmc 0 0x200000 bao.bin; go 0x200000
 ```
 
-You should see the firmare, bao and its guests printing on the UART.
+You should see the firmware, bao and its guests printing on the UART.
 
 At this point, depending on your demo, you might be able connect to one of the 
 guests via ssh by connecting to the board's ethernet RJ45 socket.

@@ -109,7 +109,7 @@ You will get u-boot's prompt. Load the bao image, and jump to it:
 fatload mmc 1 0xa0000000 bao.bin; go 0xa0000000
 ```
 
-You should see the firmare, bao and its guests printing on the UART.
+You should see the firmware, bao and its guests printing on the UART.
 
 At this point, depending on your demo, you might be able connect to one of the 
 guests via ssh by connecting to the board's ethernet RJ45 socket.
