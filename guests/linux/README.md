@@ -15,7 +15,7 @@ export BAO_DEMOS_LINUX_REPO=https://source.codeaurora.org/external/imx/linux-imx
 export BAO_DEMOS_LINUX_VERSION=rel_imx_5.4.24_2.1.0
 ```
 
-For all other platforms clone the lastest mainline Linux release:
+For all other platforms clone the latest mainline Linux release:
 
 ```
 export BAO_DEMOS_LINUX_REPO=https://github.com/torvalds/linux.git

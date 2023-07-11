@@ -13,7 +13,7 @@ peripherals where one is assigned to the baremetal app and the other to Zephyr.
 Each time the baremetal app receives a UART interrupt it will update the shared
 memory region with a message.
 
-Zephyr is configured with its shell enabled plus an aditional 'baoipc' command 
+Zephyr is configured with its shell enabled plus an additional 'baoipc' command
 used for interacting with the baremetal app via the shared memory object. To 
 read the baremetal app message run:
 
