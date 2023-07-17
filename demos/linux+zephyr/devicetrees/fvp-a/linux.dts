@@ -79,7 +79,7 @@
         reg = <0x0 0xf0000000 0x0 0x00010000>;
 		read-channel = <0x0 0x2000>;
 		write-channel = <0x2000 0x2000>;
-        interrupts = <0 52 1>;
+        interrupts = <0 20 1>;
 		id = <0>;
     };
 
