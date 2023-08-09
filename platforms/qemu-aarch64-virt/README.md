@@ -81,7 +81,8 @@ qemu-system-aarch64 -nographic\
    -cpu cortex-a53 -smp 4 -m 4G\
    -bios $BAO_DEMOS_WRKDIR/imgs/$PLATFORM/flash.bin \
    -device loader,file="$BAO_DEMOS_WRKDIR_IMGS/bao.bin",addr=0x50000000,force-raw=on\
-   -device virtio-net-device,netdev=net0 -netdev user,id=net0,hostfwd=tcp:127.0.0.1:5555-:22\
+   -device virtio-net-device,netdev=net0\
+   -netdev user,id=net0,net=192.168.42.0/24,hostfwd=tcp:127.0.0.1:5555-:22\
    -device virtio-serial-device -chardev pty,id=serial3 -device virtconsole,chardev=serial3
 ```
 
