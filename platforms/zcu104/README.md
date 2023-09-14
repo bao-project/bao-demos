@@ -1,25 +1,16 @@
 # Xilinx ZCU10X
 
-<!--- instruction#1 -->
 ## 1) Get firmware
 
-Download latest pre-built Zynq UltraScale+ MPSoC Firmware for your target 
-platform (you will need to sign-in to Xilinx account and provide further 
-personal information) to $BAO_DEMOS_WRKDIR_SRC:
-
-* [ZCU102](https://www.xilinx.com/member/forms/download/xef.html?filename=2022.2_zcu102_release.tar.xz)
-* [ZCU104](https://www.xilinx.com/member/forms/download/xef.html?filename=2022.2_zcu104_release.tar.xz)
-
-<!--- instruction#end -->
-
-Extract it  to $BAO_DEMOS_WRKDIR_SRC: 
+Download latest pre-built Zynq UltraScale+ MPSoC Firmware and use *bootgen*
+to build the firmware binary:
 
 ```
-tar xvfm $BAO_DEMOS_WRKDIR_SRC/2020.2-$PLATFORM-release.tar.xz\
-    -C $BAO_DEMOS_WRKDIR_PLAT --wildcards "*BOOT.BIN" --strip-components=1
+git clone https://github.com/Xilinx/soc-prebuilt-firmware.git --depth 1 \
+    --branch xilinx_v2023.1 $BAO_DEMOS_WRKDIR_SRC/zcu-firmware
+cd $BAO_DEMOS_WRKDIR_SRC/zcu-firmware/$PLATFORM-zynqmp && 
+    bootgen -arch zynqmp -image bootgen.bif -w -o $BAO_DEMOS_WRKDIR_PLAT/BOOT.BIN
 ```
-
-Alternatively, you can [build the firmware from scratch][firmware-from-scratch]. 
 
 ## 2) Prepare a U-boot image
 
@@ -30,7 +21,7 @@ mkimage -n bao_uboot -A arm64 -O linux -C none -T kernel -a 0x200000\
     -e 0x200000 -d $BAO_DEMOS_WRKDIR_IMGS/bao.bin $BAO_DEMOS_WRKDIR_IMGS/bao.img
 ```
 
-<!--- instruction#2 -->
+<!--- instruction#1 -->
 ## 3) Setup SD card
 
 After [preparing your sd card](../../platforms/sdcard.md), copy the firmware and 
@@ -42,7 +33,7 @@ cp $BAO_DEMOS_WRKDIR_IMGS/bao.img $BAO_DEMOS_SDCARD
 umount $BAO_DEMOS_SDCARD
 ```
 
-<!--- instruction#3 -->
+<!--- instruction#2 -->
 ## 4) Setup board
 
 First make sure you have the board configured to boot from the SD card. If you 
@@ -68,7 +59,7 @@ screen /dev/ttyUSB1 115200
 
 Turn on/reset your board.
 
-<!--- instruction#4 -->
+<!--- instruction#3 -->
 ## 5) Run u-boot commands
 
 Quickly press any key to skip autoboot. If not possibly press `ctrl-c` until 
