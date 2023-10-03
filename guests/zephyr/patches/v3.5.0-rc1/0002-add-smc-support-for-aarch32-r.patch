@@ -1,32 +1,32 @@
-From 6e8232b9462de3a950a56a51d8718ac60c2fce0f Mon Sep 17 00:00:00 2001
+From a25559cde559e6fc0e41026a8367f4d71357fc86 Mon Sep 17 00:00:00 2001
 From: Jose Martins <josemartins90@gmail.com>
 Date: Mon, 6 Feb 2023 19:20:41 +0000
-Subject: [PATCH] add smc support for aarch32-r
+Subject: [PATCH 2/3] add smc support for aarch32-r
 
 Signed-off-by: Jose Martins <josemartins90@gmail.com>
 ---
- .../core/aarch32/cortex_a_r/CMakeLists.txt    |  1 +
- arch/arm/core/aarch32/cortex_a_r/Kconfig      |  7 +++
- arch/arm/core/aarch32/cortex_a_r/smccc-call.S | 41 +++++++++++++++
- include/zephyr/arch/arm/aarch32/arm-smccc.h   | 51 +++++++++++++++++++
+ arch/arm/core/cortex_a_r/CMakeLists.txt |  1 +
+ arch/arm/core/cortex_a_r/Kconfig        |  7 ++++
+ arch/arm/core/cortex_a_r/smccc-call.S   | 41 ++++++++++++++++++++
+ include/zephyr/arch/arm/arm-smccc.h     | 51 +++++++++++++++++++++++++
  4 files changed, 100 insertions(+)
- create mode 100644 arch/arm/core/aarch32/cortex_a_r/smccc-call.S
- create mode 100644 include/zephyr/arch/arm/aarch32/arm-smccc.h
+ create mode 100644 arch/arm/core/cortex_a_r/smccc-call.S
+ create mode 100644 include/zephyr/arch/arm/arm-smccc.h
 
-diff --git a/arch/arm/core/aarch32/cortex_a_r/CMakeLists.txt b/arch/arm/core/aarch32/cortex_a_r/CMakeLists.txt
-index d3337a67..878800f4 100644
---- a/arch/arm/core/aarch32/cortex_a_r/CMakeLists.txt
-+++ b/arch/arm/core/aarch32/cortex_a_r/CMakeLists.txt
-@@ -17,3 +17,4 @@ zephyr_library_sources(
- zephyr_library_sources_ifdef(CONFIG_USERSPACE thread.c)
+diff --git a/arch/arm/core/cortex_a_r/CMakeLists.txt b/arch/arm/core/cortex_a_r/CMakeLists.txt
+index 8b0dac374e..78271d9a2a 100644
+--- a/arch/arm/core/cortex_a_r/CMakeLists.txt
++++ b/arch/arm/core/cortex_a_r/CMakeLists.txt
+@@ -25,3 +25,4 @@ zephyr_library_sources_ifdef(CONFIG_USERSPACE thread.c)
  zephyr_library_sources_ifdef(CONFIG_SEMIHOST semihost.c)
  zephyr_library_sources_ifdef(CONFIG_THREAD_LOCAL_STORAGE __aeabi_read_tp.S)
+ zephyr_library_sources_ifdef(CONFIG_ARCH_CACHE cache.c)
 +zephyr_library_sources_ifdef(CONFIG_HAS_ARM_SMCCC smccc-call.S)
-diff --git a/arch/arm/core/aarch32/cortex_a_r/Kconfig b/arch/arm/core/aarch32/cortex_a_r/Kconfig
-index 418aa9a0..c9b52a22 100644
---- a/arch/arm/core/aarch32/cortex_a_r/Kconfig
-+++ b/arch/arm/core/aarch32/cortex_a_r/Kconfig
-@@ -126,9 +126,16 @@ config ARMV7_R_FP
+diff --git a/arch/arm/core/cortex_a_r/Kconfig b/arch/arm/core/cortex_a_r/Kconfig
+index 10bf721a87..c43a6e586d 100644
+--- a/arch/arm/core/cortex_a_r/Kconfig
++++ b/arch/arm/core/cortex_a_r/Kconfig
+@@ -127,9 +127,16 @@ config ARMV7_R_FP
  	  This option signifies the use of an ARMv7-R processor
  	  implementation supporting the Floating-Point Extension.
  
@@ -43,11 +43,11 @@ index 418aa9a0..c9b52a22 100644
  	help
  	  This option signifies the use of an ARMv8-R AArch32 processor
  	  implementation.
-diff --git a/arch/arm/core/aarch32/cortex_a_r/smccc-call.S b/arch/arm/core/aarch32/cortex_a_r/smccc-call.S
+diff --git a/arch/arm/core/cortex_a_r/smccc-call.S b/arch/arm/core/cortex_a_r/smccc-call.S
 new file mode 100644
-index 00000000..f655def9
+index 0000000000..f655def9b2
 --- /dev/null
-+++ b/arch/arm/core/aarch32/cortex_a_r/smccc-call.S
++++ b/arch/arm/core/cortex_a_r/smccc-call.S
 @@ -0,0 +1,41 @@
 +/*
 + * Copyright (c) 2019 Carlo Caione <ccaione@baylibre.com>
@@ -90,11 +90,11 @@ index 00000000..f655def9
 +GTEXT(arm_smccc_hvc)
 +SECTION_FUNC(TEXT, arm_smccc_hvc)
 +	SMCCC	hvc
-diff --git a/include/zephyr/arch/arm/aarch32/arm-smccc.h b/include/zephyr/arch/arm/aarch32/arm-smccc.h
+diff --git a/include/zephyr/arch/arm/arm-smccc.h b/include/zephyr/arch/arm/arm-smccc.h
 new file mode 100644
-index 00000000..e702ce22
+index 0000000000..e702ce2280
 --- /dev/null
-+++ b/include/zephyr/arch/arm/aarch32/arm-smccc.h
++++ b/include/zephyr/arch/arm/arm-smccc.h
 @@ -0,0 +1,51 @@
 +/*
 + * Copyright 2020 Carlo Caione <ccaione@baylibre.com>
