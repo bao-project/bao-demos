@@ -260,7 +260,7 @@ Build the firmware and deploy the system according to the target platform:
 | zcu104            | x         | x              |              |                  |
 | imx8qm            | x         | x              |              |                  |
 | tx2               | x         | x              |              |                  |
-| rpi4              | x         | x              |              |                  |
+| rpi4              | x         | x              | x            |                  |
 | qemu-aarch64-virt | x         | x              | x            |                  |
 | fvp-a-aarch64     | x         | x              | x            | x                |
 | fvp-a-aarch32     | x         | x              | x            | x                |
