@@ -1,0 +1,13 @@
+# Copyright (c) 2019 Carlo Caione <ccaione@baylibre.com>
+# Copyright (c) 2023 Yan-Jie Wang <yanjiewtw@gmail.com>
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_RASPBERRY_PI_4B
+
+config BUILD_OUTPUT_BIN
+	default y
+
+config BOARD
+	default "raspberry_pi_4b"
+
+endif # BOARD_RASPBERRY_PI_4B

@@ -1,0 +1,8 @@
+# Copyright (c) 2019 Carlo Caione <ccaione@baylibre.com>
+# Copyright (c) 2023 Yan-Jie Wang <yanjiewtw@gmail.com>
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_RASPBERRY_PI_4B
+	bool "Raspberry Pi 4B"
+	depends on SOC_BCM2711
+	select ARM64
