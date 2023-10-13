@@ -79,12 +79,12 @@ struct config config = {
         },
         { 
             .image = {
-                .base_addr = 0x20000000,
+                .base_addr = 0x90000000,
                 .load_addr = VM_IMAGE_OFFSET(zephyr_image),
                 .size = VM_IMAGE_SIZE(zephyr_image)
             },
 
-            .entry = 0x20000000,
+            .entry = 0x90000000,
 
             .platform = {
                 .cpu_num = 2,
@@ -92,7 +92,7 @@ struct config config = {
                 .region_num = 1,
                 .regions =  (struct vm_mem_region[]) {
                     {
-                        .base = 0x20000000,
+                        .base = 0x90000000,
                         .size = 0x8000000
                     }
                 },
@@ -114,7 +114,7 @@ struct config config = {
                     {   
                         /* UART2, PL011 */
                         .pa = 0x1c0b0000,
-                        .va = 0x9c0b0000,
+                        .va = 0x1c0b0000,
                         .size = 0x10000,
                         .interrupt_num = 1,
                         .interrupts = (irqid_t[]) {39} 
@@ -127,8 +127,8 @@ struct config config = {
 
                 .arch = {
                     .gic = {
-                        .gicd_addr = 0xaf000000,
-                        .gicr_addr = 0xaf100000,
+                        .gicd_addr = 0x2f000000,
+                        .gicr_addr = 0x2f100000,
                     }
                 }
             },
