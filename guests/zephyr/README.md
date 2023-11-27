@@ -3,7 +3,7 @@
 Setup the environment variables for Zephyr:
 
 ```
-export BAO_DEMOS_ZEPHYR_VRS=v3.3.0
+export BAO_DEMOS_ZEPHYR_VRS=v3.5.0-rc1
 export BAO_DEMOS_ZEPHYR_SRC=$BAO_DEMOS_WRKDIR_SRC/zephyr
 export BAO_DEMOS_ZEPHYR_CMSIS_SRC=$BAO_DEMOS_WRKDIR_SRC/cmsis
 export BAO_DEMOS_ZEPHYR_BUILD=$BAO_DEMOS_WRKDIR_PLAT/zephyr_build
