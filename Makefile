@@ -119,5 +119,5 @@ clean: guests_clean bao_clean platform_clean
 distclean:
 	rm -rf $(wrkdir)
 
-.PHONY: all clean guests bao paltform
+.PHONY: all clean guests bao platform
 .NOTPARALLEL:
