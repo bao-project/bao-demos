@@ -135,7 +135,7 @@
 		read-channel = <0x0 0x2000>;
 		write-channel = <0x2000 0x2000>;
 		interrupt-parent = <&plic>;
-        interrupts = <52>;
+        interrupts = <20>;
 		id = <0>;
     };
 
