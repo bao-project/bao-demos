@@ -7,7 +7,7 @@ Download the latest firmware files for Raspberry Pi:
 ```
 export BAO_DEMOS_FW=$BAO_DEMOS_WRKDIR_PLAT/firmware 
 git clone https://github.com/raspberrypi/firmware.git $BAO_DEMOS_FW\
-    --depth 1 --branch 1.20210201
+    --depth 1 --branch 1.20240306
 ```
 
 ## 2) Build U-boot
