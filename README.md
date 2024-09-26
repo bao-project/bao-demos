@@ -242,6 +242,7 @@ Build the firmware and deploy the system according to the target platform:
 * [QEMU virt](platforms/qemu-aarch64-virt/README.md)
 * [FVP-A Aarch64](platforms/fvp-a/README.md)
 * [FVP-R Aarch64](platforms/fvp-r/README.md)
+* [iMX8MP-Verdin](platforms/imx8mp-verdin/README.md)
 
 #### AArch32 platforms:
 * [FVP-A Aarch32](platforms/fvp-a-aarch32/README.md)
@@ -280,6 +281,7 @@ Build the firmware and deploy the system according to the target platform:
 | RH850-U2A16         | rh850-u2a16       | rh850   |
 | Infineon TC4Dx COM  | tc4dx             | tricore |
 | E3650               | e3650             | aarch32 |
+| iMX8MP Verdin       | imx8mp-verdin     | aarch64 |
 
 |                  | DEMO             |
 | ---------------- | ---------------- |
@@ -309,8 +311,8 @@ Build the firmware and deploy the system according to the target platform:
 | qemu-riscv32-virt | x         | x              |              |                  |                  |
 | rh850-u2a16       | x         |                |              |                  |                  |
 | tc4dx             | x         |                |              |                  |                  |
-| e3650             | x         |                |              |                  |
-
+| e3650             | x         |                |              |                  |                  |
+| imx8mp-verdin     | x         | x              |              |                  |                  |
 
 ---
 
