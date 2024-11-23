@@ -1,0 +1,81 @@
+/dts-v1/;
+
+/ {
+	#address-cells = <0x2>;
+	#size-cells = <0x2>;
+
+	cpus {
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		timebase-frequency = <10000000>;
+
+		cpu@0 {
+			device_type = "cpu";
+			reg = <0x0>;
+			status = "okay";
+			compatible = "riscv";
+			riscv,isa = "rv64imafdcsu";
+			mmu-type = "riscv,sv48";
+
+			cpu0_intc: interrupt-controller {
+				#interrupt-cells = <0x1>;
+				interrupt-controller;
+				compatible = "riscv,cpu-intc";
+			};
+		};
+	};
+
+	memory@10000000 {
+		device_type = "memory";
+		reg = <0x0 0x10000000 0x0 0x40000000
+			   0x0 0x53000000 0x0 0x02000000>;
+	};
+	
+	reserved-memory {
+		#address-cells = <0x2>;
+		#size-cells = <0x2>;
+		ranges;
+	
+		reserved1: buffer@53000000 {
+		    compatible = "restricted-dma-pool";			
+		    reg = <0x0 0x53000000 0x0 0x1000000>;
+		};
+
+		reserved2: buffer@54000000 {
+		    compatible = "restricted-dma-pool";			
+		    reg = <0x0 0x54000000 0x0 0x1000000>;
+		};
+    };
+
+	plic: interrupt-controller@c000000 {
+		riscv,ndev = <60>;
+		reg = <0x0 0xc000000 0x0 0x4000000>;
+		interrupts-extended = <
+			&cpu0_intc 11 &cpu0_intc 9 
+		>;
+		interrupt-controller;
+		compatible = "riscv,plic0";
+		#interrupt-cells = <0x1>;
+	};
+
+	virtio@a003e00 {
+		interrupt-parent = <&plic>;
+		interrupts = <0x2f>;
+		reg = <0x0 0xa003e00 0x0 0x200>;
+		compatible = "virtio,mmio";
+		memory-region = <&reserved1>;	
+	};
+
+	virtio@a003c00 {
+		interrupt-parent = <&plic>;
+		interrupts = <0x2e>;
+		reg = <0x0 0xa003c00 0x0 0x200>;
+		compatible = "virtio,mmio";
+		memory-region = <&reserved2>;	
+	};
+
+	chosen {
+		bootargs = "ip=192.168.42.17";
+	};
+
+};

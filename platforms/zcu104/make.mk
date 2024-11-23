@@ -7,8 +7,14 @@ prebuilt_images_version:=xilinx_v2023.1
 instuctions:=$(bao_demos)/platforms/$(PLATFORM)/README.md
 bao_uboot_image:=$(wrkdir_demo_imgs)/bao.img
 
-$(prebuilt_images_src):
+include $(bao_demos)/platforms/uboot.mk
+uboot_image:=$(wrkdir_plat_imgs)/u-boot.bin
+uboot_zcu_defconfig:=xilinx_zynqmp_virt_defconfig
+$(eval $(call build-uboot, $(uboot_image), $(uboot_zcu_defconfig)))
+
+$(prebuilt_images_src): $(uboot_image)
 	@git clone --depth 1 --branch $(prebuilt_images_version) $(prebuilt_images_repo) $@
+	@cp $(wrkdir_plat_imgs)/u-boot.elf $@/$(PLATFORM)-zynqmp/
 
 $(boot_bin): $(prebuilt_images_src)
 	@cd $</$(PLATFORM)-zynqmp && bootgen -arch zynqmp -image bootgen.bif -w -o $@

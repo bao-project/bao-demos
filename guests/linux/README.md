@@ -43,7 +43,8 @@ platform specific config to be used by buildroot:
 ```
 export BAO_DEMOS_LINUX_CFG_FRAG=$(ls $BAO_DEMOS_LINUX/configs/base.config\
     $BAO_DEMOS_LINUX/configs/$ARCH.config\
-    $BAO_DEMOS_LINUX/configs/$PLATFORM.config 2> /dev/null)
+    $BAO_DEMOS_LINUX/configs/$PLATFORM.config\
+    $BAO_DEMOS_LINUX/configs/$DEMO.config 2> /dev/null)
 ```
 
 ## Use Buildroot to build Linux with a built-in initramfs

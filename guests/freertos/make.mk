@@ -1,6 +1,11 @@
 freertos_src:=$(wrkdir_src)/freertos
 freertos_repo:=https://github.com/bao-project/freertos-over-bao.git
+
+ifeq ($(DEMO),virtio)
+freertos_branch:=demo-virtio
+else
 freertos_branch:=demo
+endif
 
 $(freertos_src):
 	git clone --recursive --shallow-submodules --branch $(freertos_branch) \

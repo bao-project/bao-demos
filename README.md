@@ -8,7 +8,7 @@ systems and targeting several supported platforms. The available demos are:
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
 * [Dual-Guest Linux+Zephyr](demos/linux+zephyr/README.md)
 * [Dual-Guest Zephyr+Baremetal](demos/zephyr+baremetal/README.md)
-
+* [VirtIO Demo](demos/virtio/README.md)
 
 ---
 
@@ -36,6 +36,16 @@ sudo apt install build-essential bison flex git libssl-dev ninja-build \
     gettext-base curl xterm cmake python3-pip xilinx-bootgen
 
 pip3 install pykwalify packaging pyelftools
+```
+
+If you intend to run the [VirtIO](demos/virtio/README.md) demo, you need to install some Rust dependencies:
+```
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+rustup install stable
+rustup target add aarch64-unknown-linux-gnu
+rustup target add riscv64gc-unknown-linux-gnu
+rustup target add arm-unknown-linux-gnueabi
+sudo apt install gcc-aarch64-linux-gnu gcc-riscv64-linux-gnu gcc-arm-linux-gnueabi
 ```
 
 ## 0. Download and setup the toolchain
@@ -251,22 +261,23 @@ Build the firmware and deploy the system according to the target platform:
 | Linux+FreeRTOS   | linux+freertos   |
 | Linux+Zephyr     | linux+zephyr     |
 | Zephyr+Baremetal | zephyr+baremetal |
+| VirtIO | virtio |
 
 ## Appendix II
 
-|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal |
-| ----------------- | --------- | -------------- | ------------ | ---------------- |
-| zcu102            | x         | x              |              |                  |
-| zcu104            | x         | x              |              |                  |
-| imx8qm            | x         | x              |              |                  |
-| tx2               | x         | x              |              |                  |
-| rpi4              | x         | x              | x            |                  |
-| qemu-aarch64-virt | x         | x              | x            |                  |
-| fvp-a-aarch64     | x         | x              | x            | x                |
-| fvp-a-aarch32     | x         | x              | x            | x                |
-| fvp-r-aarch64     | x         | x              | x            | x                |
-| fvp-r-aarch32     | x         |                |              | x                |
-| qemu-riscv64-virt | x         | x              |              |                  |
+|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal | virtio |
+| ----------------- | --------- | -------------- | ------------ | ---------------- | ---------------- | 
+| zcu102            | x         | x              |              |                  | x                |
+| zcu104            | x         | x              |              |                  | x                |
+| imx8qm            | x         | x              |              |                  |                  |
+| tx2               | x         | x              |              |                  |                  |
+| rpi4              | x         | x              | x            |                  |                  |
+| qemu-aarch64-virt | x         | x              | x            |                  | x                |
+| fvp-a-aarch64     | x         | x              | x            | x                |                  |
+| fvp-a-aarch32     | x         | x              | x            | x                |                  |
+| fvp-r-aarch64     | x         | x              | x            | x                |                  |
+| fvp-r-aarch32     | x         |                |              | x                |                  |
+| qemu-riscv64-virt | x         | x              |              |                  | x                |
 
 
 ---
