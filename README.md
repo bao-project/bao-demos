@@ -187,6 +187,7 @@ Build guests according to the target demo:
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
 * [Dual-Guest Linux+Zephyr](demos/linux+zephyr/README.md)
 * [Dual-Guest Zephyr+Baremetal](demos/zephyr+baremetal/README.md)
+* [Dual-Guest Torizon OS+FreeRTOS](demos/torizonos+freertos/README.md)
 
 
 ### B.4) Build Bao
@@ -293,26 +294,26 @@ Build the firmware and deploy the system according to the target platform:
 
 ## Appendix II
 
-|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal | virtio |
-| ----------------- | --------- | -------------- | ------------ | ---------------- | ---------------- |
-| zcu102            | x         | x              |              |                  | x                |
-| zcu104            | x         | x              |              |                  | x                |
-| imx8qm            | x         | x              |              |                  |                  |
-| s32g3             | x         | x              |              |                  |                  |
-| tx2               | x         | x              |              |                  |                  |
-| rpi4              | x         | x              | x            |                  | x                |
-| qemu-aarch64-virt | x         | x              | x            |                  | x                |
-| fvp-a             | x         | x              | x            | x                |                  |
-| fvp-a-aarch32     | x         | x              | x            | x                |                  |
-| fvp-r             | x         | x              | x            | x                |                  |
-| fvp-r-aarch32     | x         |                |              | x                |                  |
-| s32z270           | x         |                |              | x                |                  |
-| qemu-riscv64-virt | x         | x              |              |                  | x                |
-| qemu-riscv32-virt | x         | x              |              |                  |                  |
-| rh850-u2a16       | x         |                |              |                  |                  |
-| tc4dx             | x         |                |              |                  |                  |
-| e3650             | x         |                |              |                  |                  |
-| imx8mp-verdin     | x         | x              |              |                  |                  |
+|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal | virtio | torizonos+freertos |
+| ----------------- | --------- | -------------- | ------------ | ---------------- | ------ | ------------------ |
+| zcu102            | x         | x              |              |                  | x      |                    |
+| zcu104            | x         | x              |              |                  | x      |                    |
+| imx8qm            | x         | x              |              |                  |        |                    |
+| s32g3             | x         | x              |              |                  |        |                    |
+| tx2               | x         | x              |              |                  |        |                    |
+| rpi4              | x         | x              | x            |                  | x      |                    |
+| qemu-aarch64-virt | x         | x              | x            |                  | x      |                    |
+| fvp-a             | x         | x              | x            | x                |        |                    |
+| fvp-a-aarch32     | x         | x              | x            | x                |        |                    |
+| fvp-r             | x         | x              | x            | x                |        |                    |
+| fvp-r-aarch32     | x         |                |              | x                |        |                    |
+| s32z270           | x         |                |              | x                |        |                    |
+| qemu-riscv64-virt | x         | x              |              |                  | x      |                    |
+| qemu-riscv32-virt | x         | x              |              |                  |        |                    |
+| rh850-u2a16       | x         |                |              |                  |        |                    |
+| tc4dx             | x         |                |              |                  |        |                    |
+| e3650             | x         |                |              |                  |        |                    |
+| imx8mp-verdin     | x         | x              |              |                  |        | x                  |
 
 ---
 
