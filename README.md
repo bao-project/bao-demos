@@ -191,7 +191,7 @@ Build guests according to the target demo:
 
 ### B.4) Build Bao
 
-Clone Bao's repo to the the working directory:
+Clone Bao's repo to the working directory:
 
 ```
 export BAO_DEMOS_BAO=$BAO_DEMOS_WRKDIR_SRC/bao

@@ -2,7 +2,7 @@
 
 ## 1) Setup firmware
 
-Creat a directory to put the imx build tools:
+Create a directory to put the imx build tools:
 
 ```
 export BAO_DEMOS_NXP_TOOLS=$BAO_DEMOS_WRKDIR_SRC/nxp-tools
@@ -21,7 +21,7 @@ chmod +x imx-sc-firmware-1.5.0.bin
 
 ### 1.2) SECO
 
-Download the and install the seco binary:
+Download and install the seco binary:
 
 ```
 wget -P $BAO_DEMOS_NXP_TOOLS\
@@ -147,7 +147,7 @@ umount $BAO_DEMOS_SDCARD
 <!--- instruction#2 -->
 ## 3) Setup board
 
-Make sure you have the board configured to boot from SD card. Checkout out the
+Make sure you have the board configured to boot from SD card. Check out the
 [Get Started with the i.MX 8QuadMax MEK](https://www.nxp.com/document/guide/get-started-with-the-i-mx-8quadmax-mek:GS-iMX-8QM-MEK) 
 guide for more information on the boot switch setup.
 
