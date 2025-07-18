@@ -5,7 +5,8 @@ zephyr_image:=$(wrkdir_demo_imgs)/zephyr.bin
 $(eval $(call build-zephyr, $(zephyr_image)))
 
 baremetal_image:=$(wrkdir_demo_imgs)/baremetal.bin
-baremetal_args:=DEMO_IPC=y
+baremetal_args:=APP_SRC_DIR=$(bao_demos)/demos/zephyr+baremetal/baremetal-app
+
 ifeq ($(ARCH_PROFILE),armv8-r)
 baremetal_args+=MEM_BASE=0x10000000
 fvpr_image_data:=$(baremetal_image)@0x10000000 $(zephyr_image)@0x24000000
