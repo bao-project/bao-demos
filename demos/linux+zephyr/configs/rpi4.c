@@ -1,7 +1,7 @@
 #include <config.h>
 
-VM_IMAGE(linux_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/linux.bin));
-VM_IMAGE(zephyr_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/zephyr.bin));
+VM_IMAGE(linux_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/linux.bin))
+VM_IMAGE(zephyr_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/zephyr.bin))
 
 struct config config = {
 
@@ -11,7 +11,7 @@ struct config config = {
     },
     
     .vmlist_size = 2,
-    .vmlist = {
+    .vmlist = (struct vm_config[]) {
         { 
             .image = {
                 .base_addr = 0x20000000,
@@ -22,7 +22,7 @@ struct config config = {
             .entry = 0x20000000,
 
             .platform = {
-                .cpu_num = 3,
+                .cpu_num = 2,
                 
                 .region_num = 1,
                 .regions =  (struct vm_mem_region[]) {
@@ -81,7 +81,7 @@ struct config config = {
             .entry = 0x80000000,
 
             .platform = {
-                .cpu_num = 1,
+                .cpu_num = 2,
                 
                 .region_num = 1,
                 .regions =  (struct vm_mem_region[]) {
