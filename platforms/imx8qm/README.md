@@ -67,7 +67,7 @@ Download and build it:
 
 ```
 git clone https://github.com/bao-project/arm-trusted-firmware.git\
-    $BAO_DEMOS_ATF --branch bao/demo --depth 1
+    $BAO_DEMOS_ATF --branch bao/demo-next --depth 1
 cd $BAO_DEMOS_ATF
 make PLAT=imx8qm bl31
 ```

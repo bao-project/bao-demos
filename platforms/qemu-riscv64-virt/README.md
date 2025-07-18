@@ -27,7 +27,7 @@ sudo make install
 ```
 export BAO_DEMOS_OPENSBI=$BAO_DEMOS_WRKDIR_SRC/opensbi
 git clone https://github.com/bao-project/opensbi.git $BAO_DEMOS_OPENSBI\
-    --depth 1 --branch bao/demo
+    --depth 1 --branch bao/demo-next
 make -C $BAO_DEMOS_OPENSBI PLATFORM=generic \
     FW_PAYLOAD=y \
     FW_PAYLOAD_FDT_ADDR=0x80100000\
