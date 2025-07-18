@@ -45,15 +45,15 @@ architecture:
 
 a) For Armv8 Aarch64, use the **aarch64-none-elf-** toolchain.
 
-Download it from the [Arm Developer's][arm-toolchains]  website.
+Download it from the [Arm Developer's website][aarch64-toolchains].
 
 b) For Armv7 or Armv8 Aarch32, use the **arm-none-eabi-** toolchain.
 
-Download it from the [Arm Developer's][arm-toolchains]  website.
+Download it from the [Arm Developer's website][aarch32-toolchains].
 
-c) For RISC-V, use the **riscv64-unknown-elf-** toolchain.
+c) For RISC-V (both RV64 and RV32), use the **riscv64-unknown-elf-** toolchain.
 
-Download it from [SiFive's Freedom Tools][riscv-toolchains] github repository.
+Download it from [Bao's Project RISC-V Toolchain repo](riscv-toolchains).
 
 Install the toolchain. Then, set the **CROSS_COMPILE** environment variable 
 with the reference toolchain prefix path:
@@ -280,12 +280,12 @@ Build the firmware and deploy the system according to the target platform:
 
 | Tool                    | Version |
 | ----------------------- | ------- |
-| arm-none-eabi-gcc       | 11.3.1  |
-| aarch64-none-elf-gcc    | 11.2.1  |
-| riscv64-unknown-elf-gcc | 10.2.0  |
+| arm-none-eabi-gcc       | 14.2.1  |
+| aarch64-none-elf-gcc    | 14.2.1  |
+| riscv64-unknown-elf-gcc | 13.2.0  |
 | make                    | 4.2.1   |
 | dtc                     | 1.5.0   |
-| gcc                     | 9.3.0   |
+| gcc                     | 11.4.0  |
 | mkimage                 | 20.10   |
 | cmake                   | 3.20.0  |
 | ninja                   | 1.10.1  |
@@ -293,5 +293,6 @@ Build the firmware and deploy the system according to the target platform:
 
 <!-- Links -->
 
-[arm-toolchains]: https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
-[riscv-toolchains]: https://github.com/sifive/freedom-tools/releases
+[aarch64-toolchains]: https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf.tar.xz
+[aarch32-toolchains]: https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz
+[riscv-toolchains]: https://github.com/bao-project/bao-riscv-toolchain/releases/download/gc891d8dc23e/riscv-unknown-linux-gnu-13.2.0-ubuntu-22.04.tar.gz
