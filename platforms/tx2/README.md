@@ -19,7 +19,7 @@ Download and build TF-A:
 ```
 export BAO_DEMOS_ATF=$BAO_DEMOS_WRKDIR_SRC/arm-trusted-firmware 
 git clone https://github.com/bao-project/arm-trusted-firmware.git\
-    $BAO_DEMOS_ATF --branch bao/demo --depth 1
+    $BAO_DEMOS_ATF --branch bao/demo-next --depth 1
 cd $BAO_DEMOS_ATF
 make PLAT=tegra TARGET_SOC=t186 bl31
 ```

@@ -179,7 +179,7 @@ Clone Bao's repo to the working directory:
 ```
 export BAO_DEMOS_BAO=$BAO_DEMOS_WRKDIR_SRC/bao
 git clone https://github.com/bao-project/bao-hypervisor $BAO_DEMOS_BAO\
-    --branch demo
+    --branch demo-next
 ```
 
 Copy your config to the working directory:

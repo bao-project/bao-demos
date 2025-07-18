@@ -63,7 +63,7 @@ cp $BAO_DEMOS_UBOOT/u-boot.bin $BAO_DEMOS_WRKDIR/imgs/$PLATFORM
 ```
 export BAO_DEMOS_ATF=$BAO_DEMOS_WRKDIR_SRC/arm-trusted-firmware
 git clone https://github.com/bao-project/arm-trusted-firmware.git\
-   $BAO_DEMOS_ATF --branch bao/demo --depth 1
+   $BAO_DEMOS_ATF --branch bao/demo-next --depth 1
 cd $BAO_DEMOS_ATF
 make PLAT=qemu bl1 fip BL33=$BAO_DEMOS_WRKDIR/imgs/$PLATFORM/u-boot.bin\
    QEMU_USE_GIC_DRIVER=QEMU_GICV3
