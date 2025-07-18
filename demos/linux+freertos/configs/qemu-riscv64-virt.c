@@ -1,7 +1,7 @@
 #include <config.h>
 
-VM_IMAGE(linux_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/linux.bin));
-VM_IMAGE(freertos_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/freertos.bin));
+VM_IMAGE(linux_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/linux.bin))
+VM_IMAGE(freertos_image, XSTR(BAO_DEMOS_WRKDIR_IMGS/freertos.bin))
 
 struct config config = {
     
@@ -13,7 +13,7 @@ struct config config = {
     },
     
     .vmlist_size = 2,
-    .vmlist = {
+    .vmlist = (struct vm_config[]) {
         { 
             .image = {
                 .base_addr = 0x90200000,
@@ -60,7 +60,7 @@ struct config config = {
                 },
 
                 .arch = {
-                    .plic_base = 0xc000000,
+                    .irqc.plic.base = 0xc000000,
                 }
             },
         },
@@ -107,7 +107,7 @@ struct config config = {
                 },
 
                 .arch = {
-                    .plic_base = 0xc000000,
+                    .irqc.plic.base = 0xc000000,
                 }
             },
         },
