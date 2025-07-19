@@ -41,6 +41,12 @@
 			compatible = "arm,cortex-a72";
 			reg = <0>;
 		};
+
+		cpu@1 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a72";
+			reg = <0x1>;
+		};
 	};
 
 	timer {

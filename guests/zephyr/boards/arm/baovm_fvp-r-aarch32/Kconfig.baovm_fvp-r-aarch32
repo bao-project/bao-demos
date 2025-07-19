@@ -2,6 +2,5 @@
 # Copyright (c) 2022 IoT.bzh
 # SPDX-License-Identifier: Apache-2.0
 
-config BOARD_FVP_BASER_AEMV8R_AARCH32
-	bool "Bao VM for FVP BaseR AEMv8R AArch32 simulation board"
-	depends on SOC_FVP_AEMV8R_AARCH32
+config BOARD_BAOVM_FVP_R_AARCH32
+	select SOC_FVP_AEMV8R_AARCH32
