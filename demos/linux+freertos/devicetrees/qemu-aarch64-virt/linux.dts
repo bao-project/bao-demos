@@ -24,9 +24,10 @@
 		};
 
 		cpu@2 {
-			reg = <0x2>;
-			compatible = "arm,cortex-a53";
+			compatible = "arm,cortex-a53", "arm,armv8";
 			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x2>;
 		};
 
 	};
