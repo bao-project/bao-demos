@@ -28,7 +28,7 @@ sudo make install
 ```
 export BAO_DEMOS_UBOOT=$BAO_DEMOS_WRKDIR_SRC/u-boot
 git clone https://github.com/u-boot/u-boot.git $BAO_DEMOS_UBOOT --depth 1\
-   --branch v2022.10
+   --branch v2025.07
 cd $BAO_DEMOS_UBOOT
 make qemu_arm64_defconfig
 ```
@@ -37,6 +37,7 @@ Now you need to set the Kconfig options:
 
 * CONFIG_TFABOOT=y
 * CONFIG_SYS_TEXT_BASE=0x60000000
+* CONFIG_AUTOBOOT=n
 
 You can do it via using an interface such as `menuconfig` or just write them 
 directly to the config file:
@@ -44,6 +45,7 @@ directly to the config file:
 ```
 echo "CONFIG_TFABOOT=y" >> .config
 echo "CONFIG_SYS_TEXT_BASE=0x60000000" >> .config
+echo "CONFIG_AUTOBOOT=n\n" >> $BAO_DEMOS_UBOOT/.config
 ```
 
 Then build it:
