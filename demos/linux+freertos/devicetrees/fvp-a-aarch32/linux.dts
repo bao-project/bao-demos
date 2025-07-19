@@ -32,7 +32,7 @@
 	};
 
 	psci {
-		compatible = "arm,psci-0.1";
+		compatible = "arm,psci-0.2";
 		method = "smc";
 	};
 
@@ -92,6 +92,6 @@
 
 	chosen {
         bootargs = "earlycon console=ttyAMA0,115200n8 ip=192.168.42.15 carrier_timeout=0";
-	    stdout-path = "/pl011@1c090000";
+	    stdout-path = "/pl011@1c0a0000";
 	};
 };
