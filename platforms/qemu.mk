@@ -1,6 +1,6 @@
 qemu_arch:=$(ARCH)
 qemu_repo:=https://github.com/qemu/qemu.git
-qemu_version:=v7.2.0
+qemu_version:=v10.0.2 
 qemu_cmd:=qemu-system-$(qemu_arch)
 
 ifeq ($(shell which $(qemu_cmd)),)

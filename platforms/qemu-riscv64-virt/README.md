@@ -15,7 +15,7 @@ make sure you are using version 7.2.0 or higher. If so, you can skip this step.
 ```
 export BAO_DEMOS_QEMU=$BAO_DEMOS_WRKDIR_SRC/qemu-$ARCH
 git clone https://github.com/qemu/qemu.git $BAO_DEMOS_QEMU --depth 1\
-   --branch v7.2.0
+   --branch v10.0.2 
 cd $BAO_DEMOS_QEMU
 ./configure --target-list=riscv64-softmmu --enable-slirp
 make -j$(nproc)
