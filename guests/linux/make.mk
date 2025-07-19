@@ -1,5 +1,5 @@
 linux_repo?=https://github.com/torvalds/linux.git
-linux_version?=v6.1
+linux_version?=v6.15
 linux_src:=$(wrkdir_src)/linux-$(linux_version)
 linux_cfg_frag:=$(wildcard $(bao_demos)/guests/linux/configs/base.config\
 	$(bao_demos)/guests/linux/configs/$(ARCH).config\
@@ -11,7 +11,7 @@ $(linux_src):
 	git -C $(linux_src) apply $(linux_patches)
 
 buildroot_repo:=https://github.com/buildroot/buildroot.git
-buildroot_version:=2022.11
+buildroot_version:=2025.05
 buildroot_src:=$(wrkdir_src)/buildroot-$(ARCH)-$(linux_version)
 buildroot_defcfg:=$(bao_demos)/guests/linux/buildroot/$(ARCH).config
 
