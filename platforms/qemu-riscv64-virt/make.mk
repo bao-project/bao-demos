@@ -3,7 +3,7 @@ ARCH:=riscv64
 include $(bao_demos)/platforms/qemu.mk
 include $(bao_demos)/platforms/opensbi.mk
 
-opensbi_image:=$(wrkdir_demo_imgs)/opensbi.elf
+opensbi_image:=$(wrkdir_demo_imgs)/opensbi.bin
 $(eval $(call build-opensbi-payload, $(opensbi_image), $(bao_image)))
 
 platform: $(opensbi_image)

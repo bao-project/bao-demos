@@ -62,6 +62,11 @@ with the reference toolchain prefix path:
 export CROSS_COMPILE=/path/to/toolchain/install/dir/bin/your-toolchain-prefix-
 ```
 
+For RISC-V, also set:
+```
+export OPENSBI_CROSS_COMPILE=/path/to/toolchain/install/dir/bin/riscv64-unknown-linux-gnu-
+```
+
 ## 1. Setup base environment
 
 Clone this repo and cd to it:
