@@ -19,7 +19,7 @@ For all other platforms clone the latest mainline Linux release:
 
 ```
 export BAO_DEMOS_LINUX_REPO=https://github.com/torvalds/linux.git
-export BAO_DEMOS_LINUX_VERSION=v6.1
+export BAO_DEMOS_LINUX_VERSION=v6.15
 ```
 
 Setup an environment variable pointing to Linux's source code:
@@ -61,7 +61,7 @@ Clone the latest buildroot at the latest stable version:
 
 ```
 git clone https://github.com/buildroot/buildroot.git $BAO_DEMOS_BUILDROOT\
-    --depth 1 --branch 2022.11
+    --depth 1 --branch 2025.05
 cd $BAO_DEMOS_BUILDROOT
 ```
 
