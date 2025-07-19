@@ -1,0 +1,9 @@
+board:
+  name: baovm_qemu-aarch64-virt
+  full_name: QEMU Emulation for ARM Cortex-A53
+  vendor: arm
+  socs:
+  - name: qemu_cortex_a53
+    variants:
+    - name: smp
+    - name: xip
