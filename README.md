@@ -283,11 +283,11 @@ Build the firmware and deploy the system according to the target platform:
 | arm-none-eabi-gcc       | 14.2.1  |
 | aarch64-none-elf-gcc    | 14.2.1  |
 | riscv64-unknown-elf-gcc | 13.2.0  |
-| make                    | 4.2.1   |
-| dtc                     | 1.5.0   |
+| make                    | 4.3     |
+| dtc                     | 1.6.1   |
 | gcc                     | 11.4.0  |
-| mkimage                 | 20.10   |
-| cmake                   | 3.20.0  |
+| mkimage                 | 2022.01 |
+| cmake                   | 3.22.1  |
 | ninja                   | 1.10.1  |
 
 
