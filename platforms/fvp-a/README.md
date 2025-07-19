@@ -7,14 +7,14 @@
 **NOTE**
 
 If you already have FVP_Base_RevC-2xAEMvA installed please make sure you are
-using version 11.21.15 or higher. If so, you can skip this step
+using version 11.28_23 or higher. If so, you can skip this step
 
 ---
 
 Download and extract the model:
 
 ```
-curl -L https://developer.arm.com/-/media/Files/downloads/ecosystem-models/FVP_Base_RevC-2xAEMvA_11.21_15_Linux64.tgz | tar xz -C $BAO_DEMOS_WRKDIR_PLAT
+curl -L https://developer.arm.com/-/cdn-downloads/permalink/FVPs-Architecture/FM-11.28/FVP_Base_RevC-2xAEMvA_11.28_23_Linux64.tgz | tar xz -C $BAO_DEMOS_WRKDIR_PLAT
 export PATH=$PATH:$BAO_DEMOS_WRKDIR_PLAT/Base_RevC_AEMvA_pkg/models/Linux64_GCC-9.3
 ```
 
@@ -73,6 +73,10 @@ cp build/fvp/release/fip.bin $BAO_DEMOS_WRKDIR/imgs/$PLATFORM
 
 ```
 FVP_Base_RevC-2xAEMvA \
+    -C cluster0.NUM_CORES=4 \
+	-C cache_state_modelled=0 \
+	-C bp.refcounter.use_real_time=1 \
+	-C bp.exclusive_monitor.monitor_access_level=1 \
 	-C cluster0.supports_multi_threading=0 \
 	-C cluster0.mpidr_layout=0 \
 	-C cluster1.NUM_CORES=0 \

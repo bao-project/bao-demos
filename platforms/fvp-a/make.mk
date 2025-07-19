@@ -52,6 +52,7 @@ platform: $(bao_image) $(atf_fip) $(atf_bl1)
 # significantly
 fvp_args+= -C cluster0.NUM_CORES=4 \
 	-C cache_state_modelled=0 \
+	-C bp.refcounter.use_real_time=1 \
 	-C bp.exclusive_monitor.monitor_access_level=1 \
 	-C cluster0.supports_multi_threading=0 \
 	-C cluster0.mpidr_layout=0 \
