@@ -20,12 +20,31 @@ export PATH=$PATH:$BAO_DEMOS_WRKDIR_PLAT/Base_RevC_AEMvA_pkg/models/Linux64_GCC-
 
 ## 2) Build U-boot
 
+Download and configure it:
+
 ```
 export BAO_DEMOS_UBOOT=$BAO_DEMOS_WRKDIR_SRC/u-boot
 git clone https://github.com/u-boot/u-boot.git $BAO_DEMOS_UBOOT --depth 1\
-   --branch v2022.10
+   --branch v2025.07
 cd $BAO_DEMOS_UBOOT
 make vexpress_aemv8a_semi_defconfig
+```
+
+Now you need to set the Kconfig options:
+
+* CONFIG_AUTOBOOT=n
+
+You can do it via using an interface such as `menuconfig` or just write them 
+directly to the config file:
+
+```
+echo "CONFIG_AUTOBOOT=n\n" >> $BAO_DEMOS_UBOOT/.config
+```
+
+And build it:
+
+
+```
 make -j$(nproc)
 ```
 

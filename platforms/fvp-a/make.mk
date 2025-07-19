@@ -26,7 +26,9 @@ else
 include $(bao_demos)/platforms/uboot.mk
 uboot_defconfig:=vexpress_aemv8a_semi_defconfig
 uboot_image:=$(wrkdir_plat_imgs)/u-boot.bin
-$(eval $(call build-uboot, $(uboot_image), $(uboot_defconfig)))
+
+uboot_cfg_frag:="CONFIG_AUTOBOOT=n\n"
+$(eval $(call build-uboot, $(uboot_image), $(uboot_defconfig), $(uboot_cfg_frag)))
 
 atf_bl33:=$(uboot_image)
 

@@ -15,9 +15,20 @@ git clone https://github.com/raspberrypi/firmware.git $BAO_DEMOS_FW\
 ```
 export BAO_DEMOS_UBOOT=$BAO_DEMOS_WRKDIR_SRC/u-boot
 git clone https://github.com/u-boot/u-boot.git $BAO_DEMOS_UBOOT\
-    --depth 1 --branch v2022.10
+    --depth 1 --branch v2025.07
 cd $BAO_DEMOS_UBOOT
 make rpi_4_defconfig
+```
+
+Now you need to set the Kconfig options:
+
+* CONFIG_AUTOBOOT=n
+
+You can do it via using an interface such as `menuconfig` or just write them 
+directly to the config file:
+
+```
+echo "CONFIG_AUTOBOOT=n\n" >> $BAO_DEMOS_UBOOT/.config
 ```
 
 Then build it:
