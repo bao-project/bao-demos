@@ -14,6 +14,7 @@ $(strip $1): $(strip $2) $(opensbi_src)
 	$(MAKE) -C $(opensbi_src) \
 		CROSS_COMPILE=$(OPENSBI_CROSS_COMPILE) \
 		PLATFORM=generic \
+		PLATFORM_RISCV_XLEN=$(strip $3) \
 		FW_PAYLOAD=y \
 		FW_PAYLOAD_FDT_ADDR=0x80100000\
 		FW_PAYLOAD_PATH=$(strip $2)
