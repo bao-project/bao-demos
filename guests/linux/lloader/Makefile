@@ -15,7 +15,10 @@ CROSS_COMPILE?=arm-none-eabi-
 OPTIONS=-march=armv7-a
 else ifeq ($(ARCH), riscv64)
 CROSS_COMPILE?=riscv64-unknown-elf-
-OPTIONS=-mcmodel=medany
+OPTIONS=-mcmodel=medany -march=rv64imac -mabi=lp64
+else ifeq ($(ARCH), riscv32)
+CROSS_COMPILE?=riscv32-unknown-elf-
+OPTIONS=-mcmodel=medany -march=rv32imac -mabi=ilp32
 else
 $(error unkown architecture $(ARCH))
 endif
