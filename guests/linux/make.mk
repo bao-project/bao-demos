@@ -14,6 +14,8 @@ buildroot_repo:=https://github.com/buildroot/buildroot.git
 buildroot_version:=2025.05
 buildroot_src:=$(wrkdir_src)/buildroot-$(ARCH)-$(linux_version)
 buildroot_defcfg:=$(bao_demos)/guests/linux/buildroot/$(ARCH).config
+buildroot_external:=$(bao_demos)/guests/linux/buildroot/external
+buildroot_overlay:=$(bao_demos)/guests/linux/buildroot/overlay
 
 $(buildroot_src):
 	git clone --depth 1 --branch $(buildroot_version) $(buildroot_repo)\
@@ -22,6 +24,8 @@ $(buildroot_src):
 buildroot_image:=$(buildroot_src)/output/images/Image-$(PLATFORM)
 export LINUX_OVERRIDE_SRCDIR=$(linux_src) 
 export BAO_DEMOS_LINUX_CFG_FRAG=$(linux_cfg_frag)
+export BAO_DEMOS_BUILDROOT_OVERLAY:=$(buildroot_overlay)
+export BR2_EXTERNAL=$(buildroot_external)
 
 linux $(buildroot_image): $(linux_patches) $(linux_cfg_frag) $(buildroot_defcfg) | $(linux_src) $(buildroot_src) 
 	$(MAKE) -C $(buildroot_src) defconfig BR2_DEFCONFIG=$(buildroot_defcfg)

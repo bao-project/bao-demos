@@ -55,6 +55,7 @@ export BAO_DEMOS_BUILDROOT=$BAO_DEMOS_WRKDIR_SRC/\
 buildroot-$ARCH-$BAO_DEMOS_LINUX_VERSION
 export BAO_DEMOS_BUILDROOT_DEFCFG=$BAO_DEMOS_LINUX/buildroot/$ARCH.config
 export LINUX_OVERRIDE_SRCDIR=$BAO_DEMOS_LINUX_SRC
+export BR2_EXTERNAL=$BAO_DEMOS_BUILDROOT/external
 ```
 
 Clone the latest buildroot at the latest stable version:
