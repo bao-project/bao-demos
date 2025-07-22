@@ -1,0 +1,18 @@
+#!/bin/sh
+
+case "$1" in
+    start)
+        echo "Loading bao-ipc kernel module..."
+        /sbin/modprobe ipc
+        ;;
+    stop)
+        echo "Unloading bao-ipc kernel module..."
+        /sbin/rmmod ipc
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
+
+exit 0

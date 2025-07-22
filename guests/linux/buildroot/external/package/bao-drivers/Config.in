@@ -1,0 +1,5 @@
+config BR2_PACKAGE_BAO_DRIVERS
+    bool "bao-drivers"
+    depends on BR2_LINUX_KERNEL
+    help
+      This package builds Linux Bao's modules for IPC and IODISPATCHER.
