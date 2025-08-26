@@ -41,6 +41,7 @@ void uart_rx_handler() {
     snprintf(msg, MSG_SIZE,
         "zephyr has received %ld uart interrupts!\n", irq_count);
     bao_ipcshmem_write(shmem, msg, strnlen(msg, MSG_SIZE)+1);
+    bao_ipcshmem_notify(shmem);
 }
 
 void shmem_irq_handler(const struct device *dev) {

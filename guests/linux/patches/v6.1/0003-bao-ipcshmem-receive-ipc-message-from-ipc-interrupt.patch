@@ -1,0 +1,60 @@
+From be0d07b654e3e1011e87df84709155683120acd3 Mon Sep 17 00:00:00 2001
+From: Clay Chang <clay.chang@gmail.com>
+Date: Mon, 17 Jul 2023 18:49:55 +0800
+Subject: [PATCH 3/3] bao-ipcshmem: receive ipc message from ipc interrupt
+
+---
+ drivers/bao/bao-ipcshmem.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/drivers/bao/bao-ipcshmem.c b/drivers/bao/bao-ipcshmem.c
+index e9cc304ea..9af4f6e37 100644
+--- a/drivers/bao/bao-ipcshmem.c
++++ b/drivers/bao/bao-ipcshmem.c
+@@ -181,6 +181,15 @@ static struct file_operations bao_ipcshmem_fops = {
+     .release = bao_ipcshmem_release_fops
+ };
+ 
++static irqreturn_t ipc_message_handler(int irq, void *data)
++{
++    struct bao_ipcshmem *bao = (struct bao_ipcshmem *)data;
++
++    pr_info("ipc message: %s", (char *)bao->read_base);
++
++    return IRQ_HANDLED;
++}
++
+ int bao_ipcshmem_register(struct platform_device *pdev)
+ {
+     int ret = 0;
+@@ -194,6 +203,7 @@ int bao_ipcshmem_register(struct platform_device *pdev)
+     bool rd_in_range, wr_in_range, disjoint;
+     void* shmem_base_addr = NULL;
+     int id = -1;
++    unsigned int irq;
+     struct bao_ipcshmem *bao;
+ 
+     r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -241,6 +251,13 @@ int bao_ipcshmem_register(struct platform_device *pdev)
+     bao->write_base = shmem_base_addr + write_offset;
+     bao->physical_base = (void *)r->start;
+ 
++    irq = platform_get_irq(pdev, 0);
++    ret = devm_request_irq(&pdev->dev, irq, ipc_message_handler, IRQF_TRIGGER_RISING, bao->label, (void *)bao);
++    if (ret != 0) {
++        pr_err("failed to request irq: ret=%d\n", ret);
++        goto err_unmap;
++    }
++
+     cdev_init(&bao->cdev, &bao_ipcshmem_fops);
+     bao->cdev.owner = owner;
+ 
+@@ -322,4 +339,5 @@ module_exit(bao_ipcshmem_exit);
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("David Cerdeira");
+ MODULE_AUTHOR("José Martins");
++MODULE_AUTHOR("Clay Chang");
+ MODULE_DESCRIPTION("bao ipc through shared-memory sample driver");
+-- 
+2.34.1
+
