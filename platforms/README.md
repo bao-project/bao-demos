@@ -21,3 +21,6 @@ well as RISC-V using RV64:
 
 #### RH850 platforms:
 * [RH850 U2A16](rh850-u2a16/README.md)
+
+#### Tricore platforms:
+* [TC4Dx COM](platforms/tc4dx/README.md)
