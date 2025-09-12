@@ -9,6 +9,6 @@ baremetal_bin:=$(baremetal_src)/build/$(PLATFORM)/baremetal.bin
 
 define build-baremetal
 $(strip $1): $(baremetal_src)
-	$(MAKE) -C $(baremetal_src) PLATFORM=$(PLATFORM) $(strip $2) 
+	$(MAKE) -C $(baremetal_src) PLATFORM=$(PLATFORM) $(strip $2)
 	cp $(baremetal_bin) $$@
 endef

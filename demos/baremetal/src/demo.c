@@ -48,7 +48,6 @@ void main(void){
 
         irq_set_handler(UART_IRQ_ID, uart_rx_handler);
         irq_set_handler(TIMER_IRQ_ID, timer_handler);
-        irq_set_handler(IPI_IRQ_ID, ipi_handler);
 
         uart_enable_rxirq();
 
@@ -56,10 +55,10 @@ void main(void){
         irq_enable(TIMER_IRQ_ID);
         irq_set_prio(TIMER_IRQ_ID, TIMER_IRQ_PRIO);
 
+        timer_enable();
+
         irq_enable(UART_IRQ_ID);
         irq_set_prio(UART_IRQ_ID, UART_IRQ_PRIO);
-
-        timer_enable();
 
         master_done = true;
     }
