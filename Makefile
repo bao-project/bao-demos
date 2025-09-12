@@ -24,7 +24,7 @@ endif
 ifndef DEMO
  $(error No target DEMO defined.)
 endif
-    
+
 ifeq ($(wildcard $(demo_dir)),)
  $(error Target demo $(DEMO) is not supported)
 endif
@@ -33,7 +33,7 @@ ifeq ($(wildcard $(demo_dir)/configs/$(PLATFORM).c $(demo_dir)/configs/$(PLATFOR
  $(error The $(DEMO) demo is not supported by the $(PLATFORM) platform)
 endif
 
-endif 
+endif
 
 # utility functions
 
@@ -69,7 +69,7 @@ environment+=BAO_DEMOS_WRKDIR_IMGS=$(wrkdir_demo_imgs)
 environment+=BAO_DEMOS_SDCARD_DEV=/dev/yoursdcarddev
 environment+=BAO_DEMOS_SDCARD=/media/$$USER/boot
 
-all: platform 
+all: platform
 
 bao_repo:=https://github.com/bao-project/bao-hypervisor
 bao_version:=v2.0-rc5
@@ -98,7 +98,7 @@ $(bao_cfg): | $(bao_cfg_repo)
 		cp -L $(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM).c $(bao_cfg); \
 	fi
 
-bao $(bao_image): $(guest_images) $(bao_cfg) $(bao_src) 
+bao $(bao_image): $(guest_images) $(bao_cfg) $(bao_src)
 	$(MAKE) -C $(bao_src)\
 		PLATFORM=$(PLATFORM)\
 		CONFIG_REPO=$(bao_cfg_repo)\
