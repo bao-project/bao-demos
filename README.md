@@ -51,9 +51,13 @@ b) For Armv7 or Armv8 Aarch32, use the **arm-none-eabi-** toolchain.
 
 Download it from the [Arm Developer's website][aarch32-toolchains].
 
-c) For RISC-V (both RV64 and RV32), use the **riscv64-unknown-elf-** toolchain.
+c) For RISC-V RV64, use the **riscv64-unknown-elf-** toolchain.
 
-Download it from [Bao's Project RISC-V Toolchain repo](riscv-toolchains).
+Download it from [Bao's Project RISC-V Toolchain repo][riscv64-toolchain].
+
+d) For RISC-V RV32, use the **riscv32-unknown-elf-** toolchain.
+
+Download it from [Bao's Project RISC-V Toolchain repo][riscv32-toolchain].
 
 Install the toolchain. Then, set the **CROSS_COMPILE** environment variable 
 with the reference toolchain prefix path:
@@ -298,4 +302,6 @@ Build the firmware and deploy the system according to the target platform:
 
 [aarch64-toolchains]: https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf.tar.xz
 [aarch32-toolchains]: https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz
-[riscv-toolchains]: https://github.com/bao-project/bao-riscv-toolchain/releases/download/gc891d8dc23e/riscv-unknown-linux-gnu-13.2.0-ubuntu-22.04.tar.gz
+[riscv64-toolchain]: https://github.com/bao-project/bao-riscv-toolchain/releases/download/gc891d8dc23e/riscv64-unknown-elf.tar.gz
+[riscv32-toolchain]: https://github.com/bao-project/bao-riscv-toolchain/releases/download/gc891d8dc23e/riscv32-unknown-elf.tar.gz
+
