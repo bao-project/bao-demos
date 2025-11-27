@@ -29,7 +29,7 @@ bao's final image to it:
 
 ```
 cp $BAO_DEMOS_WRKDIR_PLAT/BOOT.BIN $BAO_DEMOS_SDCARD
-cp $BAO_DEMOS_WRKDIR_IMGS/bao.img $BAO_DEMOS_SDCARD
+cp $BAO_DEMOS_WRKDIR_IMGS/bao.bin $BAO_DEMOS_SDCARD
 umount $BAO_DEMOS_SDCARD
 ```
 
@@ -66,7 +66,7 @@ Quickly press any key to skip autoboot. If not possibly press `ctrl-c` until
 you get the u-boot prompt. Then load the bao image, and jump to it:
 
 ```
-fatload mmc 0 0x200000 bao.img; bootm start 0x200000; bootm loados; bootm go
+fatload mmc 0 0x200000 bao.bin; go 0x200000
 ```
 
 You should see the firmware, bao and its guests printing on the UARTs.
