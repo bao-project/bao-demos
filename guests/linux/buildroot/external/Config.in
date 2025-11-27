@@ -1,1 +1,2 @@
 source "$BR2_EXTERNAL_BAO_DEMOS_PATH/package/bao-drivers/Config.in"
+source "$BR2_EXTERNAL_BAO_DEMOS_PATH/package/bao-virtio-dm/Config.in"

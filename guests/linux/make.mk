@@ -4,11 +4,6 @@ linux_src:=$(wrkdir_src)/linux-$(linux_version)
 linux_cfg_frag:=$(wildcard $(bao_demos)/guests/linux/configs/base.config\
 	$(bao_demos)/guests/linux/configs/$(ARCH).config\
 	$(bao_demos)/guests/linux/configs/$(PLATFORM).config)
-linux_patches:=$(wildcard $(bao_demos)/guests/linux/patches/$(linux_version)/*.patch)
-
-$(linux_src):
-	git clone --depth 1 --branch $(linux_version) $(linux_repo) $(linux_src)
-	git -C $(linux_src) apply $(linux_patches)
 
 buildroot_repo:=https://github.com/buildroot/buildroot.git
 buildroot_version:=2025.05
@@ -16,6 +11,19 @@ buildroot_src:=$(wrkdir_src)/buildroot-$(ARCH)-$(linux_version)
 buildroot_defcfg:=$(bao_demos)/guests/linux/buildroot/$(ARCH).config
 buildroot_external:=$(bao_demos)/guests/linux/buildroot/external
 buildroot_overlay:=$(bao_demos)/guests/linux/buildroot/overlay
+
+ifeq ($(DEMO),virtio)
+linux_cfg_frag+=$(bao_demos)/guests/linux/configs/virtio.config
+$(shell grep -qxF "BR2_PACKAGE_BAO_VIRTIO_DM=y" $(buildroot_defcfg) || echo "BR2_PACKAGE_BAO_VIRTIO_DM=y" >> $(buildroot_defcfg))
+$(shell grep -qxF "BR2_PACKAGE_HOST_RUSTC=y" $(buildroot_defcfg) || echo "BR2_PACKAGE_HOST_RUSTC=y" >> $(buildroot_defcfg))
+$(shell grep -qxF "BR2_PACKAGE_HOST_RUST_BIN=y" $(buildroot_defcfg) || echo "BR2_PACKAGE_HOST_RUST_BIN=y" >> $(buildroot_defcfg))
+endif
+
+linux_patches:=$(wildcard $(bao_demos)/guests/linux/patches/$(linux_version)/*.patch)
+
+$(linux_src):
+	git clone --depth 1 --branch $(linux_version) $(linux_repo) $(linux_src)
+	git -C $(linux_src) apply $(linux_patches)
 
 $(buildroot_src):
 	git clone --depth 1 --branch $(buildroot_version) $(buildroot_repo)\
