@@ -8,7 +8,7 @@ systems and targeting several supported platforms. The available demos are:
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
 * [Dual-Guest Linux+Zephyr](demos/linux+zephyr/README.md)
 * [Dual-Guest Zephyr+Baremetal](demos/zephyr+baremetal/README.md)
-
+* [VirtIO Demo](demos/virtio/README.md)
 
 ---
 
@@ -262,23 +262,24 @@ Build the firmware and deploy the system according to the target platform:
 | Linux+FreeRTOS   | linux+freertos   |
 | Linux+Zephyr     | linux+zephyr     |
 | Zephyr+Baremetal | zephyr+baremetal |
+| VirtIO | virtio |
 
 ## Appendix II
 
-|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal |
-| ----------------- | --------- | -------------- | ------------ | ---------------- |
-| zcu102            | x         | x              |              |                  |
-| zcu104            | x         | x              |              |                  |
-| imx8qm            | x         | x              |              |                  |
-| tx2               | x         | x              |              |                  |
-| rpi4              | x         | x              | x            |                  |
-| qemu-aarch64-virt | x         | x              | x            |                  |
-| fvp-a-aarch64     | x         | x              | x            | x                |
-| fvp-a-aarch32     | x         | x              | x            | x                |
-| fvp-r-aarch64     | x         | x              | x            | x                |
-| fvp-r-aarch32     | x         |                |              | x                |
-| qemu-riscv64-virt | x         | x              |              |                  |
-| qemu-riscv32-virt | x         | x              |              |                  |
+|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal | virtio |
+| ----------------- | --------- | -------------- | ------------ | ---------------- | ---------------- | 
+| zcu102            | x         | x              |              |                  | x                |
+| zcu104            | x         | x              |              |                  | x                |
+| imx8qm            | x         | x              |              |                  |                  |
+| tx2               | x         | x              |              |                  |                  |
+| rpi4              | x         | x              | x            |                  | x                |
+| qemu-aarch64-virt | x         | x              | x            |                  | x                |
+| fvp-a-aarch64     | x         | x              | x            | x                |                  |
+| fvp-a-aarch32     | x         | x              | x            | x                |                  |
+| fvp-r-aarch64     | x         | x              | x            | x                |                  |
+| fvp-r-aarch32     | x         |                |              | x                |                  |
+| qemu-riscv64-virt | x         | x              |              |                  | x                |
+| qemu-riscv32-virt | x         | x              |              |                  |                  |
 
 
 ---
