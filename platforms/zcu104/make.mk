@@ -10,7 +10,13 @@ bao_uboot_image:=$(wrkdir_demo_imgs)/bao.img
 $(prebuilt_images_src):
 	@git clone --depth 1 --branch $(prebuilt_images_version) $(prebuilt_images_repo) $@
 
-$(boot_bin): $(prebuilt_images_src)
+include $(bao_demos)/platforms/uboot.mk
+uboot_image:=$(wrkdir_plat_imgs)/u-boot.bin
+uboot_zcu_defconfig:=xilinx_zynqmp_virt_defconfig
+$(eval $(call build-uboot, $(uboot_image), $(uboot_zcu_defconfig)))
+
+$(boot_bin): $(prebuilt_images_src) $(uboot_image)
+	cp -fv $(wrkdir_plat_imgs)/u-boot.elf $</$(PLATFORM)-zynqmp
 	@cd $</$(PLATFORM)-zynqmp && bootgen -arch zynqmp -image bootgen.bif -w -o $@
 
 $(bao_uboot_image): $(bao_image)
