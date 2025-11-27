@@ -1,0 +1,9 @@
+config BR2_PACKAGE_BAO_VIRTIO_DM
+    bool "bao-virtio-dm"
+    depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+    select BR2_PACKAGE_HOST_RUST_BIN
+    help
+      The Bao virtio device model (Rust).
+
+      This package builds the bao-virtio-dm Rust crate
+      using the vendored Cargo dependencies in the source tree.
