@@ -91,8 +91,8 @@ umount $BAO_DEMOS_SDCARD
 
 Insert the sd card in the board's sd slot.
 
-Connect to the TX2's UART using a USB-to-TTL adapter. Use a terminal 
-application such as `screen`. For example:
+Connect to the TX2's UART using a USB-to-TTL adapter (J21 connector - P23(TX), P24(RX)). Use a
+terminal application such as `screen`. For example:
 
 ```
 screen /dev/ttyUSB0 115200
