@@ -1,5 +1,5 @@
 uboot_repo:=https://github.com/u-boot/u-boot.git
-uboot_version:=v2025.07
+uboot_version:=v2025.10
 uboot_src:=$(wrkdir_src)/u-boot
 
 $(uboot_src):
