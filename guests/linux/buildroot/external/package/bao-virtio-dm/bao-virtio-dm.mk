@@ -14,7 +14,8 @@ BAO_VIRTIO_DM_DEPENDENCIES = host-rustc
 
 BAO_VIRTIO_DM_CARGO_ENV = \
 			  CARGO_HOME=$(HOST_DIR)/share/cargo \
-			  RUST_TARGET_PATH=$(HOST_DIR)/etc/rustc
+			  RUST_TARGET_PATH=$(HOST_DIR)/etc/rustc \
+			  CARGO_TARGET_$(call UPPERCASE,$(subst -,_,$(BAO_VIRTIO_DM_TARGET)))_LINKER=$(TARGET_CC)
 
 BAO_VIRTIO_DM_BIN_DIR = target/$(BAO_VIRTIO_DM_TARGET)/release
 
