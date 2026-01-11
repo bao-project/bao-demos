@@ -7,6 +7,8 @@ linux_frontend2_image=$(wrkdir_demo_imgs)/linux_frontend2.bin
 linux_frontend1_dts=$(bao_demos)/demos/$(DEMO)/devicetrees/$(PLATFORM)/linux-frontend1.dts
 linux_frontend2_dts=$(bao_demos)/demos/$(DEMO)/devicetrees/$(PLATFORM)/linux-frontend2.dts
 
+export PATH:=$(BAO_DEMOS_BUILDROOT)/output/host/bin/:${PATH}
+
 $(eval $(call build-linux, $(linux_frontend1_image), $(linux_frontend1_dts)))
 $(eval $(call build-linux, $(linux_frontend2_image), $(linux_frontend2_dts)))
 
