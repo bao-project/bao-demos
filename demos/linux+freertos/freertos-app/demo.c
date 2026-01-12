@@ -59,8 +59,8 @@ void vTask(void *pvParameters)
 
 #define SHMEM_IRQ_ID (52)
 
-char* const freertos_message = (char*)0x70000000;
-char* const linux_message    = (char*)0x70002000;
+char* const freertos_message = (char*)SHMEM_BASE;
+char* const linux_message    = (char*)(SHMEM_BASE + 0x2000);
 const size_t shmem_channel_size = 0x2000;
 
 
