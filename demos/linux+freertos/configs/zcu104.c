@@ -106,7 +106,7 @@ struct config config = {
                .ipc_num = 1,
                 .ipcs = (struct ipc[]) {
                     {
-                        .base = 0x70000000,
+                        .base = 0xf0000000,
                         .size = 0x00010000,
                         .shmem_id = 0,
                         .interrupt_num = 1,

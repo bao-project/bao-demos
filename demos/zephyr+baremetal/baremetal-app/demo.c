@@ -20,8 +20,8 @@
  
  #define SHMEM_IRQ_ID (52)
  
- char* const baremetal_message = (char*)0x70000000;
- char* const zephyr_message    = (char*)0x70002000;
+char* const baremetal_message = (char*)SHMEM_BASE;
+char* const zephyr_message    = (char*)(SHMEM_BASE + 0x2000);
  const size_t shmem_channel_size = 0x2000;
  
  void shmem_update_msg(int irq_count) {
