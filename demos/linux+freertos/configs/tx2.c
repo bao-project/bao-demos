@@ -22,7 +22,7 @@ struct config config = {
             },
 
             .entry = 0x90000000,
-            .cpu_affinity = 0b111110,
+            .cpu_affinity = 0x3E,
 
             .platform = {
                 .cpu_num = 5,
