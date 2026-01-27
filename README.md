@@ -247,6 +247,7 @@ Build the firmware and deploy the system according to the target platform:
 * [FVP-A Aarch32](platforms/fvp-a-aarch32/README.md)
 * [FVP-R Aarch32](platforms/fvp-r-aarch32/README.md)
 * [NXP S32Z270](platforms/s32z270/README.md)
+* [E3650](platforms/e3650/README.md)
 
 #### RISC-V platforms:
 * [QEMU virt](platforms/qemu-riscv64-virt/README.md)
@@ -278,6 +279,7 @@ Build the firmware and deploy the system according to the target platform:
 | QEMU RV32 virt      | qemu-riscv32-virt | riscv32 |
 | RH850-U2A16         | rh850-u2a16       | rh850   |
 | Infineon TC4Dx COM  | tc4dx             | tricore |
+| E3650               | e3650             | aarch32 |
 
 |                  | DEMO             |
 | ---------------- | ---------------- |
@@ -307,6 +309,7 @@ Build the firmware and deploy the system according to the target platform:
 | qemu-riscv32-virt | x         | x              |              |                  |                  |
 | rh850-u2a16       | x         |                |              |                  |                  |
 | tc4dx             | x         |                |              |                  |                  |
+| e3650             | x         |                |              |                  |
 
 
 ---
