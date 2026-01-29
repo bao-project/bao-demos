@@ -59,6 +59,10 @@ d) For RISC-V RV32, use the **riscv32-unknown-elf-** toolchain.
 
 Download it from [Bao's Project RISC-V Toolchain repo][riscv32-toolchain].
 
+e) For RH850, use the **v850-elf-** toolchain.
+
+Download it from [Bao's Project V850 Toolchain repo][v850-toolchain].
+
 Install the toolchain. Then, set the **CROSS_COMPILE** environment variable 
 with the reference toolchain prefix path:
 
@@ -241,6 +245,9 @@ Build the firmware and deploy the system according to the target platform:
 #### RISC-V platforms:
 * [QEMU virt](platforms/qemu-riscv64-virt/README.md)
 
+#### RH850 platforms:
+* [RH850 U2A16](platforms/rh850-u2a16/README.md)
+
 ---
 
 ## Appendix I
@@ -259,6 +266,7 @@ Build the firmware and deploy the system according to the target platform:
 | FVP-R AArch32       | fvp-r-aarch32     | aarch32 |
 | QEMU RV64 virt      | qemu-riscv64-virt | riscv64 |
 | QEMU RV32 virt      | qemu-riscv32-virt | riscv32 |
+| RH850-U2A16         | rh850-u2a16       | rh850   |
 
 
 |                  | DEMO             |
@@ -285,6 +293,7 @@ Build the firmware and deploy the system according to the target platform:
 | fvp-r-aarch32     | x         |                |              | x                |                  |
 | qemu-riscv64-virt | x         | x              |              |                  | x                |
 | qemu-riscv32-virt | x         | x              |              |                  |                  |
+| rh850-u2a16       | x         |                |              |                  |                  |
 
 
 ---
@@ -296,6 +305,7 @@ Build the firmware and deploy the system according to the target platform:
 | arm-none-eabi-gcc       | 14.2.1  |
 | aarch64-none-elf-gcc    | 14.2.1  |
 | riscv64-unknown-elf-gcc | 13.2.0  |
+| v850-elf-gcc            | 14.2.0  |
 | make                    | 4.3     |
 | dtc                     | 1.6.1   |
 | gcc                     | 11.4.0  |
@@ -310,4 +320,5 @@ Build the firmware and deploy the system according to the target platform:
 [aarch32-toolchains]: https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz
 [riscv64-toolchain]: https://github.com/bao-project/bao-riscv-toolchain/releases/download/gc891d8dc23e/riscv64-unknown-elf.tar.gz
 [riscv32-toolchain]: https://github.com/bao-project/bao-riscv-toolchain/releases/download/gc891d8dc23e/riscv32-unknown-elf.tar.gz
+[v850-toolchain]: https://github.com/bao-project/gcc-v850-elf-toolchain/releases/download/v14.2.0/gcc-14.2.0-v850-elf.tar.gz
 
