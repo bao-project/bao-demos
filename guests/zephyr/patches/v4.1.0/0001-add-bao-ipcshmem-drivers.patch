@@ -314,7 +314,7 @@ new file mode 100644
 index 00000000000..ed7cedef9aa
 --- /dev/null
 +++ b/dts/bindings/virtualization/bao,ipcshmem.yaml
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,19 @@
 +description: Bao IPC Shared Memory
 +
 +compatible: "bao,ipcshmem"
@@ -330,6 +330,10 @@ index 00000000000..ed7cedef9aa
 +    type: array
 +  id:
 +    type: int
++  zephyr,memory-region:
++   type: string
++  zephyr,memory-attr:
++   type: int
 diff --git a/include/zephyr/drivers/virtualization/bao_ipcshmem.h b/include/zephyr/drivers/virtualization/bao_ipcshmem.h
 new file mode 100644
 index 00000000000..5f6e6fe957c
