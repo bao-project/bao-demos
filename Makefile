@@ -95,7 +95,7 @@ endif
 
 $(bao_cfg): | $(bao_cfg_repo)
 	if [ -d "$(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM)" ]; then \
-		cp -rL $(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM)/* $(bao_cfg_repo)/; \
+		cp -r $(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM) $(bao_cfg_repo)/$(DEMO); \
 	else \
 		cp -L $(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM).c $(bao_cfg); \
 	fi
