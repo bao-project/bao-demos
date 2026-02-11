@@ -1,0 +1,7 @@
+# Copyright (c) 2021 Arm Limited (or its affiliates). All rights reserved.
+# Copyright (c) 2022 IoT.bzh
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_BAOVM_S32Z270
+	bool
+	select SOC_S32Z270_RTU0 if BOARD_BAOVM_S32Z270_S32Z270_RTU0

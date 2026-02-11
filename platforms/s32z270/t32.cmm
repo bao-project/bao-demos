@@ -1,0 +1,281 @@
+; Variables
+ENTRY &baoBin &guest1 &guest2
+&thumbBit="0"
+&spltLckBit="1"
+&rtu="0"
+
+IF ("&rtu"=="0")
+(
+  &rtuStartAddr = 0x32100000
+  &cfgCoreAddr = 0x76120000
+)
+ELSE
+(
+  &rtuStartAddr = 0x7D900000
+  &cfgCoreAddr = 0x76920000
+)
+
+; Initialize debugger
+System.Down
+Break.Reset
+System.Reset
+
+IF ("&rtu"=="0")
+(
+  System.CPU S32Z270-R52-RTU0
+)
+ELSE
+(
+  System.CPU S32Z270-R52-RTU1
+)
+
+System.Config Core 1. 1.
+Core.Assign 1. 2. 3. 4.
+System.Mode Prepare
+
+; Early initializations
+; Disable Functional Reset Escalation Threshold
+Data.Set EAXI:0x41850014 %LE %Long 0x0
+Data.Set EAXI:0x41850018 %LE %Long 0x0
+Data.Set EAXI:0x4185001C %LE %Long 0x0
+
+; Configure Miscellaneous Debug Module AP (MDM-AP) for RTU's
+Data.Set DP:0x1C100c0 %LE %Long 0x3cf3cf00
+Data.Set DP:0x1C100c8 %LE %Long 0x3cf3cf00
+
+; RTU subsystems out of reset logic
+GOSUB EnableRTU0
+GOSUB EnableRTU1
+
+; Init RTU SRAM
+DO ~~/demo/arm/hardware/s32z27/misc/s32z27_init_rtu&(rtu)_sram.cmm
+
+; Set reset value for TE bit and split-lock mode
+Data.Set EZAXI:&cfgCoreAddr %Long 0yXXXXxxxxXXXXxxxxXXXXxxxxXXXXx&(thumbBit)x&(spltLckBit)  ; CFG_CORE
+
+; Write loop to self instruction
+Data.Set EAXI:&rtuStartAddr %Long 0xFFFEF7FF
+
+
+IF ("&rtu"=="0")
+(
+  GOSUB EnableR52_0_0
+)
+ELSE
+(
+  GOSUB EnableR52_1_0
+)
+
+System.Mode.Attach
+
+IF STATE.RUN()
+  Break
+
+; ===================================================================
+; LOADERS
+; ===================================================================
+;BAO HYPERVISOR
+Data.LOAD.Binary "&baoBin" &rtuStartAddr /Name BAO
+
+IF ("&guest1"!="")
+(
+  ; GUEST 1
+  Data.LOAD.Binary "&guest1" 0x32200000 /Name Guest1
+)
+
+IF ("&guest2"!="")
+(
+  ; GUEST 2
+  Data.LOAD.Binary "&guest2" 0x32300000 /Name Guest2
+)
+
+; ===================================================================
+; BREAKPOINTS
+; ===================================================================
+;Break.Set \\BAO\init\init /Onchip /Program
+
+; ===================================================================
+; WINDOWS SETUP
+; ===================================================================
+Do "platforms/s32z270/windows.cmm"
+
+; ===================================================================
+; Variables Watch
+; ===================================================================
+Var.DelWatch
+;Var.AddWatch (struct cpu*)&_dmem_phys_beg
+
+; ===================================================================
+; SET PC
+; ===================================================================
+SYStem.MemAccess.AXI
+
+SYStem.CONFIG.AHBAP1.Base DP:0x1C80000
+SYStem.CONFIG.APBAP1.Base DP:0x1C30000
+SYStem.CONFIG.AXIAP1.Base DP:0x1C21000
+
+Register.Set PC 0x32100000 /CORE 0.
+
+ENDDO
+
+; ===================================================================
+; FUNCTIONS
+; ===================================================================
+EnableRTU0:
+(
+  ; RTU0 subsystem out of reset logic (MC_ME)
+  Data.Set EAXI:0x41900300 %LE %Long 0x5
+  Data.Set EAXI:0x41900304 %LE %Long 0x1
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  WAIT 100ms
+
+  ; Deactivate RTU fencing logic (GPR3)
+  Data.Set EAXI:0x4186005c %LE %Long 0x0
+
+  ; Enable the interconnect interface of reset domain
+  Data.Set EAXI:0x41890004 %LE %Long 0x80000000
+  Data.Set EAXI:0x41890004 %LE %Long 0x80000007
+
+  ; Assert reset (RGM)
+  Data.Set EAXI:0x41850048 %LE %Long 0x1E
+
+  ; Clear OSSE bit and set clock update (MC_ME)
+  Data.Set EAXI:0x41900300 %LE %Long 0x1
+  Data.Set EAXI:0x41900304 %LE %Long 0x4
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  WAIT 200ms
+
+  RETURN
+)
+
+EnableRTU1:
+(
+  ; RTU1 subsystem out of reset logic (MC_ME)
+  Data.Set EAXI:0x41900500 %LE %Long 0x5
+  Data.Set EAXI:0x41900504 %LE %Long 0x1
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  WAIT 100ms
+
+  ; Deactivate RTU fencing logic (GPR3)
+  Data.Set EAXI:0x41860064 %LE %Long 0x0
+
+  ; Enable the interconnect interface of reset domain
+  Data.Set EAXI:0x418A0004 %LE %Long 0x80000000
+  Data.Set EAXI:0x418A0004 %LE %Long 0x80000007
+
+  ; Assert reset (RGM)
+  Data.Set EAXI:0x41850050 %LE %Long 0x1E
+
+  ; Clear OSSE bit and set clock update (MC_ME)
+  Data.Set EAXI:0x41900500 %LE %Long 0x1
+  Data.Set EAXI:0x41900504 %LE %Long 0x4
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  WAIT 200ms
+
+  ; Enable RTU1 NIC
+  Data.Set EAXI:0x75400000 %LE %Long 0x2    ; RTUM_NIC
+  Data.Set EAXI:0x75500000 %LE %Long 0x2    ; RTUF_NIC
+  Data.Set EAXI:0x75600000 %LE %Long 0x2    ; RTUP_NIC
+  Data.Set EAXI:0x75700000 %LE %Long 0x2    ; RTUE_NIC
+
+  RETURN
+)
+
+; EnableR52_<core>_<rtu> - routines for waking up the RTU cores:
+; - set boot address (MC_ME_PRTNy_COREx_ADDR)
+; - enable core clock
+; - trigger the clock update
+; - store key for starting the hw process
+; - force core reset
+
+EnableR52_0_0:
+(
+  Data.Set EAXI:0x4190034C %LE %Long &rtuStartAddr
+  Data.Set EAXI:0x41900340 %LE %Long 0x1
+  Data.Set EAXI:0x41900344 %LE %Long 0x1
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  Data.Set EAXI:0x41850048 %LE %Long 0x1C
+  RETURN
+)
+
+EnableR52_0_1:
+(
+  Data.Set EAXI:0x4190036C %LE %Long &rtuStartAddr
+  Data.Set EAXI:0x41900360 %LE %Long 0x1
+  Data.Set EAXI:0x41900364 %LE %Long 0x1
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  Data.Set EAXI:0x41850048 %LE %Long 0x18
+  RETURN
+)
+
+EnableR52_0_2:
+(
+  Data.Set EAXI:0x4190038C %LE %Long &rtuStartAddr
+  Data.Set EAXI:0x41900380 %LE %Long 0x1
+  Data.Set EAXI:0x41900384 %LE %Long 0x1
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  Data.Set EAXI:0x41850048 %LE %Long 0x10
+  RETURN
+)
+
+EnableR52_0_3:
+(
+  Data.Set EAXI:0x419003AC %LE %Long &rtuStartAddr
+  Data.Set EAXI:0x419003A0 %LE %Long 0x1
+  Data.Set EAXI:0x419003A4 %LE %Long 0x1
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  Data.Set EAXI:0x41850048 %LE %Long 0x0
+  RETURN
+)
+
+EnableR52_1_0:
+(
+  Data.Set EAXI:0x4190054C %LE %Long &rtuStartAddr
+  Data.Set EAXI:0x41900540 %LE %Long 0x1
+  Data.Set EAXI:0x41900544 %LE %Long 0x1
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  Data.Set EAXI:0x41850050 %LE %Long 0x1C
+  RETURN
+)
+
+EnableR52_1_1:
+(
+  Data.Set EAXI:0x4190056C %LE %Long &rtuStartAddr
+  Data.Set EAXI:0x41900560 %LE %Long 0x1
+  Data.Set EAXI:0x41900564 %LE %Long 0x1
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  Data.Set EAXI:0x41850050 %LE %Long 0x18
+  RETURN
+)
+
+EnableR52_1_2:
+(
+  Data.Set EAXI:0x4190058C %LE %Long &rtuStartAddr
+  Data.Set EAXI:0x41900580 %LE %Long 0x1
+  Data.Set EAXI:0x41900584 %LE %Long 0x1
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  Data.Set EAXI:0x41850050 %LE %Long 0x10
+  RETURN
+)
+
+EnableR52_1_3:
+(
+  Data.Set EAXI:0x419005A0 %LE %Long 0x1
+  Data.Set EAXI:0x419005A4 %LE %Long 0x1
+  Data.Set EAXI:0x41900000 %LE %Long 0x5AF0
+  Data.Set EAXI:0x41900000 %LE %Long 0xA50F
+  Data.Set EAXI:0x419005AC %LE %Long &rtuStartAddr
+  Data.Set EAXI:0x41850050 %LE %Long 0x0
+  RETURN
+)
