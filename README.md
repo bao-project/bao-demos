@@ -236,6 +236,7 @@ Build the firmware and deploy the system according to the target platform:
 #### AArch64 platforms:
 * [Xilinx ZCU102/4](platforms/zcu104/README.md)
 * [NXP i.MX8QM](platforms/imx8qm/README.md)
+* [NXP S32G3](platforms/s32g3/README.md)
 * [Nvidia TX2](platforms/tx2/README.md)
 * [Raspberry 4 Model B](platforms/rpi4/README.md)
 * [QEMU virt](platforms/qemu-aarch64-virt/README.md)
@@ -263,6 +264,7 @@ Build the firmware and deploy the system according to the target platform:
 | Xilinx ZCU102       | zcu102            | aarch64 |
 | Xilinx ZCU104       | zcu104            | aarch64 |
 | NXP i.MX8QM         | imx8qm            | aarch64 |
+| NXP S32G3           | s32g3             | aarch64 |
 | Nvidia TX2          | tx2               | aarch64 |
 | Raspberry 4 Model B | rpi4              | aarch64 |
 | QEMU Aarch64 virt   | qemu-aarch64-virt | aarch64 |
@@ -290,6 +292,7 @@ Build the firmware and deploy the system according to the target platform:
 | zcu102            | x         | x              |              |                  | x                |
 | zcu104            | x         | x              |              |                  | x                |
 | imx8qm            | x         | x              |              |                  |                  |
+| s32g3             | x         | x              |              |                  |                  |
 | tx2               | x         | x              |              |                  |                  |
 | rpi4              | x         | x              | x            |                  | x                |
 | qemu-aarch64-virt | x         | x              | x            |                  | x                |

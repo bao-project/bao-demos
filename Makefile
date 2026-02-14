@@ -88,8 +88,10 @@ endif
 
 guests: $(guest_images)
 
+ifndef BAO_SRC_DEFINED
 $(bao_src):
 	git clone --branch $(bao_version) $(bao_repo) $(bao_src)
+endif
 
 $(bao_cfg): | $(bao_cfg_repo)
 	if [ -d "$(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM)" ]; then \
