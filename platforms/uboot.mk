@@ -1,6 +1,6 @@
-uboot_repo:=https://github.com/u-boot/u-boot.git
-uboot_version:=v2025.10
-uboot_src:=$(wrkdir_src)/u-boot
+uboot_repo?:=https://github.com/u-boot/u-boot.git
+uboot_version?:=v2025.10
+uboot_src:=$(wrkdir_src)/u-boot-$(uboot_version)
 
 $(uboot_src):
 	git clone --depth 1 --branch $(uboot_version) $(uboot_repo) $(uboot_src)
@@ -15,6 +15,7 @@ $(strip $1): $(uboot_src)
 	$(MAKE) -C $(uboot_src) -j$(nproc) 
 	cp $(uboot_src)/u-boot.bin $$@
 	[ -f $(uboot_src)/u-boot.elf ] && cp $(uboot_src)/u-boot.elf $(wrkdir_plat_imgs)/u-boot.elf 2>/dev/null || true
+	[ -f $(uboot_src)/u-boot-nodtb.bin ] && cp $(uboot_src)/u-boot-nodtb.bin $(wrkdir_plat_imgs)/$(DEMO)/u-boot-nodtb.bin 2>/dev/null || true
 endef
 
 u-boot: $(wrkdir_plat_imgs)/u-boot.bin

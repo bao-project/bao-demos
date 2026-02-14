@@ -6,6 +6,7 @@ well as RISC-V using RV64:
 #### AArch64 platforms:
 * [Xilinx ZCU102/4](zcu104/README.md)
 * [NXP i.MX8QM](imx8qm/README.md)
+* [NXP S32G3](s32g3/README.md)
 * [Nvidia TX2](tx2/README.md)
 * [Raspberry 4 Model B](rpi4/README.md)
 * [QEMU virt](qemu-aarch64-virt/README.md)

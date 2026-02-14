@@ -1,0 +1,106 @@
+From 3cb97daad4b7e74bb703e2af7296e674d3fbf0a7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jo=C3=A3o=20Peixoto?= <joaopeixotooficial@gmail.com>
+Date: Thu, 12 Feb 2026 11:31:32 +0000
+Subject: [PATCH 1/2] feat(armv8): add configurable SMC passthrough
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Introduce a generic SMC passthrough mechanism for ARMv8 guests, allowing
+specific SMC function IDs to be forwarded to the underlying firmware
+(e.g. ARM Trusted Firmware) based on per-platform configuration.
+
+A new smc_passthrough platform configuration is added to explicitly list
+SMCs that should bypass the hypervisor and be executed by the firmware,
+with return values propagated back to the guest.
+
+Signed-off-by: João Peixoto <joaopeixotooficial@gmail.com>
+---
+ src/arch/armv8/aborts.c      | 33 ++++++++++++++++++++++++++++++++-
+ src/arch/armv8/inc/arch/vm.h |  5 +++++
+ 2 files changed, 37 insertions(+), 1 deletion(-)
+
+diff --git a/src/arch/armv8/aborts.c b/src/arch/armv8/aborts.c
+index c488212..3dfe545 100644
+--- a/src/arch/armv8/aborts.c
++++ b/src/arch/armv8/aborts.c
+@@ -6,6 +6,7 @@
+ #include <arch/aborts.h>
+ #include <arch/sysregs.h>
+ #include <arch/smcc.h>
++#include <arch/smc.h>
+ #include <cpu.h>
+ #include <vm.h>
+ #include <emul.h>
+@@ -14,6 +15,26 @@
+ 
+ typedef void (*abort_handler_t)(unsigned long, unsigned long, unsigned long, unsigned long);
+ 
++static unsigned int smc_passthrough_handler(void)
++{
++    struct smc_res res = {0};
++    unsigned int ret = 0;
++
++    unsigned long smc_fid = vcpu_readreg(cpu()->vcpu, 0);
++    unsigned long x1 = vcpu_readreg(cpu()->vcpu, 1);
++    unsigned long x2 = vcpu_readreg(cpu()->vcpu, 2);
++    unsigned long x3 = vcpu_readreg(cpu()->vcpu, 3);
++
++    ret = (unsigned int)smc_call(smc_fid, x1, x2, x3, &res);
++
++    vcpu_writereg(cpu()->vcpu, 0, res.x0);
++    vcpu_writereg(cpu()->vcpu, 1, res.x1);
++    vcpu_writereg(cpu()->vcpu, 2, res.x2);
++    vcpu_writereg(cpu()->vcpu, 3, res.x3);
++
++    return ret;
++}
++
+ static void aborts_data_lower(unsigned long iss, unsigned long far, unsigned long il,
+     unsigned long ec)
+ {
+@@ -84,6 +105,8 @@ static inline void syscall_handler(unsigned long iss, unsigned long far, unsigne
+     unsigned long fid = vcpu_readreg(cpu()->vcpu, 0);
+ 
+     long ret = SMCC_E_NOT_SUPPORTED;
++    bool handled = false;
++
+     switch (fid & ~SMCC_FID_FN_NUM_MSK) {
+         case SMCC32_FID_STD_SRVC:
+         case SMCC64_FID_STD_SRVC:
+@@ -94,7 +117,15 @@ static inline void syscall_handler(unsigned long iss, unsigned long far, unsigne
+             ret = hypercall(fid & SMCC_FID_FN_NUM_MSK);
+             break;
+         default:
+-            WARNING("Unknown system call fid 0x%x", fid);
++            for (unsigned long i = 0; i < cpu()->vcpu->vm->config->platform.arch.smc_passthrough.num; i++) {
++                if (fid == cpu()->vcpu->vm->config->platform.arch.smc_passthrough.smcs[i]) {
++                    ret = smc_passthrough_handler();
++                    handled = true;
++                    break;
++                }
++            }
++            if (!handled)
++                WARNING("Unknown system call fid 0x%x", fid);
+     }
+ 
+     vcpu_writereg(cpu()->vcpu, 0, (unsigned long)ret);
+diff --git a/src/arch/armv8/inc/arch/vm.h b/src/arch/armv8/inc/arch/vm.h
+index 1aa584d..f52f5b9 100644
+--- a/src/arch/armv8/inc/arch/vm.h
++++ b/src/arch/armv8/inc/arch/vm.h
+@@ -33,6 +33,11 @@ struct arch_vm_platform {
+         }* groups;
+     } smmu;
+ #endif
++
++    struct {
++        size_t num;
++        size_t* smcs;
++    } smc_passthrough;
+ };
+ 
+ struct vm_arch {
+-- 
+2.43.0
+
