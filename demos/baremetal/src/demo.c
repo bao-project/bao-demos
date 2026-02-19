@@ -26,6 +26,7 @@ void uart_rx_handler(){
 }
 
 void ipi_handler(){
+    irq_clear_ipi();
     printf("cpu%d: %s\n", get_cpuid(), __func__);
     irq_send_ipi(1ull << (get_cpuid() + 1));
 }
@@ -53,17 +54,20 @@ void main(void){
 
         timer_set(TIMER_INTERVAL);
         irq_enable(TIMER_IRQ_ID);
-        irq_set_prio(TIMER_IRQ_ID, IRQ_MAX_PRIO);
+        irq_set_prio(TIMER_IRQ_ID, TIMER_IRQ_PRIO);
+
+        irq_enable(UART_IRQ_ID);
+        irq_set_prio(UART_IRQ_ID, UART_IRQ_PRIO);
 
         timer_enable();
 
         master_done = true;
     }
 
-    irq_enable(UART_IRQ_ID);
-    irq_set_prio(UART_IRQ_ID, IRQ_MAX_PRIO);
+    irq_set_handler(IPI_IRQ_ID, ipi_handler);
+
     irq_enable(IPI_IRQ_ID);
-    irq_set_prio(IPI_IRQ_ID, IRQ_MAX_PRIO);
+    irq_set_prio(IPI_IRQ_ID, IPI_IRQ_PRIO);
 
     while(!master_done);
     spin_lock(&print_lock);
