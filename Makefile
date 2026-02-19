@@ -29,7 +29,7 @@ ifeq ($(wildcard $(demo_dir)),)
  $(error Target demo $(DEMO) is not supported)
 endif
 
-ifeq ($(wildcard $(demo_dir)/configs/$(PLATFORM).c),)
+ifeq ($(wildcard $(demo_dir)/configs/$(PLATFORM).c $(demo_dir)/configs/$(PLATFORM)),)
  $(error The $(DEMO) demo is not supported by the $(PLATFORM) platform)
 endif
 
@@ -92,7 +92,11 @@ $(bao_src):
 	git clone --branch $(bao_version) $(bao_repo) $(bao_src)
 
 $(bao_cfg): | $(bao_cfg_repo)
-	cp -L $(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM).c $(bao_cfg)
+	if [ -d "$(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM)" ]; then \
+		cp -rL $(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM)/* $(bao_cfg_repo)/; \
+	else \
+		cp -L $(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM).c $(bao_cfg); \
+	fi
 
 bao $(bao_image): $(guest_images) $(bao_cfg) $(bao_src) 
 	$(MAKE) -C $(bao_src)\
