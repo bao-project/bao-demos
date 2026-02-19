@@ -195,8 +195,13 @@ Copy your config to the working directory:
 
 ```
 mkdir -p $BAO_DEMOS_WRKDIR_IMGS/config
-cp -L $BAO_DEMOS/demos/$DEMO/configs/$PLATFORM.c\
-    $BAO_DEMOS_WRKDIR_IMGS/config/$DEMO.c
+if [ -d "$BAO_DEMOS/demos/$DEMO/configs/$PLATFORM" ]; then
+    cp -r "$BAO_DEMOS/demos/$DEMO/configs/$PLATFORM"/*\
+    "$BAO_DEMOS_WRKDIR_IMGS/config/"
+else
+    cp -L "$BAO_DEMOS/demos/$DEMO/configs/$PLATFORM.c"\
+        "$BAO_DEMOS_WRKDIR_IMGS/config/$DEMO.c"
+fi
 ```
 
 Build it:
