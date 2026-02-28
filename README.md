@@ -242,6 +242,7 @@ Build the firmware and deploy the system according to the target platform:
 * [QEMU virt](platforms/qemu-aarch64-virt/README.md)
 * [FVP-A Aarch64](platforms/fvp-a/README.md)
 * [FVP-R Aarch64](platforms/fvp-r/README.md)
+* [BeagleBone AI-64](platforms/beaglebone-ai64/README.md)
 
 #### AArch32 platforms:
 * [FVP-A Aarch32](platforms/fvp-a-aarch32/README.md)
@@ -278,6 +279,7 @@ Build the firmware and deploy the system according to the target platform:
 | QEMU RV32 virt      | qemu-riscv32-virt | riscv32 |
 | RH850-U2A16         | rh850-u2a16       | rh850   |
 | Infineon TC4Dx COM  | tc4dx             | tricore |
+| BeagleBone AI-64    | beaglebone-ai64   | aarch64 |
 
 |                  | DEMO             |
 | ---------------- | ---------------- |
@@ -307,26 +309,26 @@ Build the firmware and deploy the system according to the target platform:
 | qemu-riscv32-virt | x         | x              |              |                  |                  |
 | rh850-u2a16       | x         |                |              |                  |                  |
 | tc4dx             | x         |                |              |                  |                  |
-
+| beaglebone-ai64   | x         |                |              |                  |                  |
 
 ---
 
 ## Appendix III
 
-| Tool                    | Version |
-| ----------------------- | ------- |
-| arm-none-eabi-gcc       | 14.2.1  |
-| aarch64-none-elf-gcc    | 14.2.1  |
-| riscv64-unknown-elf-gcc | 13.2.0  |
-| v850-elf-gcc            | 14.2.0  |
-| tricore-elf-gcc         | 11.3.1  |
-| make                    | 4.3     |
-| dtc                     | 1.6.1   |
-| gcc                     | 11.4.0  |
-| mkimage                 | 2022.01 |
-| cmake                   | 3.22.1  |
-| ninja                   | 1.10.1  |
-
+| Tool                      | Version |
+| ------------------------- | ------- |
+| arm-none-eabi-gcc         | 14.2.1  |
+| aarch64-none-elf-gcc      | 14.2.1  |
+| riscv64-unknown-elf-gcc   | 13.2.0  |
+| v850-elf-gcc              | 14.2.0  |
+| tricore-elf-gcc           | 11.3.1  |
+| make                      | 4.3     |
+| dtc                       | 1.6.1   |
+| gcc                       | 11.4.0  |
+| mkimage                   | 2022.01 |
+| cmake                     | 3.22.1  |
+| ninja                     | 1.10.1  |
+| arm-none-linux-gnueabihf  | 14.2.1  |
 
 <!-- Links -->
 
