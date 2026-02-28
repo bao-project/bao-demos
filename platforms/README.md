@@ -12,6 +12,7 @@ well as RISC-V using RV64:
 * [QEMU virt](qemu-aarch64-virt/README.md)
 * [FVP-A Aarch64](fvp-a/README.md)
 * [FVP-R Aarch64](fvp-r/README.md)
+* [BeagleBone AI-64](beaglebone-ai64/README.md)
 
 #### AArch32 platforms:
 * [FVP-A Aarch32](fvp-a-aarch32/README.md)
