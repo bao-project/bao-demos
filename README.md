@@ -219,6 +219,7 @@ Build the firmware and deploy the system according to the target platform:
 * [QEMU virt](platforms/qemu-aarch64-virt/README.md)
 * [FVP-A Aarch64](platforms/fvp-a/README.md)
 * [FVP-R Aarch64](platforms/fvp-r/README.md)
+* [BeagleBone AI-64](platforms/beaglebone-ai64/README.md)
 
 #### AArch32 platforms:
 * [FVP-A Aarch32](platforms/fvp-a-aarch32/README.md)
@@ -244,6 +245,7 @@ Build the firmware and deploy the system according to the target platform:
 | FVP-A AArch32       | fvp-a-aarch32     | aarch32 |
 | FVP-R AArch32       | fvp-r-aarch32     | aarch32 |
 | QEMU RV64 virt      | qemu-riscv64-virt | riscv64 |
+| BeagleBone AI-64    | beaglebone-ai64   | aarch64 |
 
 |                  | DEMO             |
 | ---------------- | ---------------- |
@@ -267,23 +269,25 @@ Build the firmware and deploy the system according to the target platform:
 | fvp-r-aarch64     | x         | x              | x            | x                |
 | fvp-r-aarch32     | x         |                |              | x                |
 | qemu-riscv64-virt | x         | x              |              |                  |
+| beaglebone-ai64   |           |                |              |                  |
 
 
 ---
 
 ## Appendix III
 
-| Tool                    | Version |
-| ----------------------- | ------- |
-| arm-none-eabi-gcc       | 11.3.1  |
-| aarch64-none-elf-gcc    | 11.2.1  |
-| riscv64-unknown-elf-gcc | 10.2.0  |
-| make                    | 4.2.1   |
-| dtc                     | 1.5.0   |
-| gcc                     | 9.3.0   |
-| mkimage                 | 20.10   |
-| cmake                   | 3.20.0  |
-| ninja                   | 1.10.1  |
+| Tool                     | Version |
+| ------------------------ | ------- |
+| arm-none-eabi-gcc        | 11.3.1  |
+| aarch64-none-elf-gcc     | 11.2.1  |
+| riscv64-unknown-elf-gcc  | 10.2.0  |
+| make                     | 4.2.1   |
+| dtc                      | 1.5.0   |
+| gcc                      | 9.3.0   |
+| mkimage                  | 20.10   |
+| cmake                    | 3.20.0  |
+| ninja                    | 1.10.1  |
+| arm-none-linux-gnueabihf | 11.3.1  |
 
 
 <!-- Links -->
