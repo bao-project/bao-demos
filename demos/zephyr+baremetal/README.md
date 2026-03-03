@@ -36,12 +36,16 @@ Configure the baremetal app for communication:
 export BAREMETAL_PARAMS="DEMO_IPC=y"
 ```
 
-If you are targetting an MPU platform (i.e. fvp-r), set:
+If you are targetting an Arm MPU platform set, you need to set the images variable:
+
+For FVP-R:
 
 ```
 export FVPR_VM_IMAGES="$BAO_DEMOS_WRKDIR_IMGS/zephyr.bin@0x24000000 \
     $BAO_DEMOS_WRKDIR_IMGS/baremetal.bin@0x10000000"
 ```
+
+For MPS3-AN536:
 
 To build the baremetal app, in case you are targeting an MPU platform (e.g.
 fvp-r), set:

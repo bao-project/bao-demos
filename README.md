@@ -1,7 +1,7 @@
 # Bao Hypervisor Demo Guide
 
-This tutorial provides a step-by-step guide on how to run different demo
-configurations of the Bao hypervisor featuring multiple guest operating
+This tutorial provides a step-by-step guide on how to run different demo 
+configurations of the Bao hypervisor featuring multiple guest operating 
 systems and targeting several supported platforms. The available demos are:
 
 * [Single-guest Baremetal](demos/baremetal/README.md)
@@ -14,17 +14,17 @@ systems and targeting several supported platforms. The available demos are:
 
 **NOTE**
 
-This tutorial assumes you are running a standard Linux distro (e.g.
+This tutorial assumes you are running a standard Linux distro (e.g. 
 Debian) and using bash.
 
-If you have any doubts, questions, feedback, or suggestions regarding
-this guide, please raise an issue in GitHub or contact us via
+If you have any doubts, questions, feedback, or suggestions regarding 
+this guide, please raise an issue in GitHub or contact us via 
 info@bao-project.org.
 
-If you run into any problem while following this guide, we ask you to raise
+If you run into any problem while following this guide, we ask you to raise 
 an issue on Github, but first please make sure you are using the same or
-newer/compatible versions of the tools and software listed in
-[Appendix III](#Appendix-III) (not all are needed for all target platforms).
+newer/compatible versions of the tools and software listed in 
+[Appendix III](#Appendix-III) (not all are needed for all target platforms). 
 
 ---
 
@@ -40,7 +40,7 @@ pip3 install pykwalify packaging pyelftools
 
 ## 0. Download and setup the toolchain
 
-Download the latest bare-metal cross-compile toolchain for your target
+Download the latest bare-metal cross-compile toolchain for your target 
 architecture:
 
 a) For Armv8 Aarch64, use the **aarch64-none-elf-** toolchain.
@@ -59,15 +59,7 @@ d) For RISC-V RV32, use the **riscv32-unknown-elf-** toolchain.
 
 Download it from [Bao's Project RISC-V Toolchain repo][riscv32-toolchain].
 
-e) For RH850, use the **v850-elf-** toolchain.
-
-Download it from [Bao's Project V850 Toolchain repo][v850-toolchain].
-
-f) For Tricore, use the **tricore-elf-** toolchain.
-
-Download it from [Bao Project's Mirror][tricore-toolchain].
-
-Install the toolchain. Then, set the **CROSS_COMPILE** environment variable
+Install the toolchain. Then, set the **CROSS_COMPILE** environment variable 
 with the reference toolchain prefix path:
 
 ```
@@ -111,50 +103,50 @@ Just execute:
 make -j$(nproc)
 ```
 
-And all the needed source and images will be automatically downloaded and built.
-The makefiles will also print some instructions for you to carry out when it is
-not possible to automate a given step for some reason (e.g. download behind
+And all the needed source and images will be automatically downloaded and built. 
+The makefiles will also print some instructions for you to carry out when it is 
+not possible to automate a given step for some reason (e.g. download behind 
 authentication wall). It will also print the instructions on how to deploy the
-images on your target platform. To quiet instructions pass `NO_INSTRUCTIONS=1`
+images on your target platform. To quiet instructions pass `NO_INSTRUCTIONS=1` 
 to make.
 
 ---
 
 **WARNING**
 
-The makefiles will automatically accept end-user license agreements (EULAs) on
-your behalf for some of the downloaded firmware. If you wish to be prompted
+The makefiles will automatically accept end-user license agreements (EULAs) on 
+your behalf for some of the downloaded firmware. If you wish to be prompted 
 to accept them manually, pass `ALWAYS_ASK=1` to make.
 
 ---
 
-If you are targetting an emulator platform like QEMU, after building
+If you are targetting an emulator platform like QEMU, after building 
 you can start it with:
 
 ```
 make run
 ```
 
-In this case, if you don't have qemu for the target architecture installed,
+In this case, if you don't have qemu for the target architecture installed, 
 it will build it for you.
 
 ---
 
 **NOTE**
 
-These makefiles are intended **ONLY to automate** this guide's steps; not to be
+These makefiles are intended **ONLY to automate** this guide's steps; not to be 
 used as any kind of build system during development.
 
 ---
 
 ## B) Follow the step-by-step guide
 
-As an alternative, we provide a step-by-step guide that you can follow to build
+As an alternative, we provide a step-by-step guide that you can follow to build 
 all the necessary software and deploy it to your target platform.
 
 ### B.1) Setup ARCH manually
 
-Setup the *ARCH* environment variable manually according to
+Setup the *ARCH* environment variable manually according to 
 [Appendix I](#Appendix-I). For example, for the ZCU102 platform:
 
 ```
@@ -250,11 +242,6 @@ Build the firmware and deploy the system according to the target platform:
 #### RISC-V platforms:
 * [QEMU virt](platforms/qemu-riscv64-virt/README.md)
 
-#### RH850 platforms:
-* [RH850 U2A16](platforms/rh850-u2a16/README.md)
-
-#### Tricore platforms:
-* [TC4Dx COM](platforms/tc4dx/README.md)
 ---
 
 ## Appendix I
@@ -274,8 +261,7 @@ Build the firmware and deploy the system according to the target platform:
 | FVP-R AArch32       | fvp-r-aarch32     | aarch32 |
 | QEMU RV64 virt      | qemu-riscv64-virt | riscv64 |
 | QEMU RV32 virt      | qemu-riscv32-virt | riscv32 |
-| RH850-U2A16         | rh850-u2a16       | rh850   |
-| Infineon TC4Dx COM  | tc4dx             | tricore |
+
 
 |                  | DEMO             |
 | ---------------- | ---------------- |
@@ -288,7 +274,7 @@ Build the firmware and deploy the system according to the target platform:
 ## Appendix II
 
 |                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal | virtio |
-| ----------------- | --------- | -------------- | ------------ | ---------------- | ---------------- |
+| ----------------- | --------- | -------------- | ------------ | ---------------- | ---------------- | 
 | zcu102            | x         | x              |              |                  | x                |
 | zcu104            | x         | x              |              |                  | x                |
 | imx8qm            | x         | x              |              |                  |                  |
@@ -300,10 +286,9 @@ Build the firmware and deploy the system according to the target platform:
 | fvp-a-aarch32     | x         | x              | x            | x                |                  |
 | fvp-r-aarch64     | x         | x              | x            | x                |                  |
 | fvp-r-aarch32     | x         |                |              | x                |                  |
+| mps-an536         | x         | x              |              | x                |                  |
 | qemu-riscv64-virt | x         | x              |              |                  | x                |
 | qemu-riscv32-virt | x         | x              |              |                  |                  |
-| rh850-u2a16       | x         |                |              |                  |                  |
-| tc4dx             | x         |                |              |                  |                  |
 
 
 ---
@@ -315,8 +300,6 @@ Build the firmware and deploy the system according to the target platform:
 | arm-none-eabi-gcc       | 14.2.1  |
 | aarch64-none-elf-gcc    | 14.2.1  |
 | riscv64-unknown-elf-gcc | 13.2.0  |
-| v850-elf-gcc            | 14.2.0  |
-| tricore-elf-gcc         | 11.3.1  |
 | make                    | 4.3     |
 | dtc                     | 1.6.1   |
 | gcc                     | 11.4.0  |
@@ -331,6 +314,4 @@ Build the firmware and deploy the system according to the target platform:
 [aarch32-toolchains]: https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz
 [riscv64-toolchain]: https://github.com/bao-project/bao-riscv-toolchain/releases/download/gc891d8dc23e/riscv64-unknown-elf.tar.gz
 [riscv32-toolchain]: https://github.com/bao-project/bao-riscv-toolchain/releases/download/gc891d8dc23e/riscv32-unknown-elf.tar.gz
-[v850-toolchain]: https://github.com/bao-project/gcc-v850-elf-toolchain/releases/download/v14.2.0/gcc-14.2.0-v850-elf.tar.gz
-[tricore-toolchain]: https://github.com/bao-project/bao-tricore-toolchain/releases/download/aurixgcc_09-2025_Linux_x86-x64/aurixgcc_09-2025_Linux_x86-x64.tar.xz
 
