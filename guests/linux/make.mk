@@ -23,7 +23,9 @@ linux_patches:=$(wildcard $(bao_demos)/guests/linux/patches/$(linux_version)/*.p
 
 $(linux_src):
 	git clone --depth 1 --branch $(linux_version) $(linux_repo) $(linux_src)
+ifneq ($(strip $(linux_patches)),)
 	git -C $(linux_src) apply $(linux_patches)
+endif
 
 $(buildroot_src):
 	git clone --depth 1 --branch $(buildroot_version) $(buildroot_repo)\
