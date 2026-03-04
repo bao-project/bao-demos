@@ -298,9 +298,9 @@ Build the firmware and deploy the system according to the target platform:
 | tx2               | x         | x              |              |                  |                  |
 | rpi4              | x         | x              | x            |                  | x                |
 | qemu-aarch64-virt | x         | x              | x            |                  | x                |
-| fvp-a-aarch64     | x         | x              | x            | x                |                  |
+| fvp-a             | x         | x              | x            | x                |                  |
 | fvp-a-aarch32     | x         | x              | x            | x                |                  |
-| fvp-r-aarch64     | x         | x              | x            | x                |                  |
+| fvp-r             | x         | x              | x            | x                |                  |
 | fvp-r-aarch32     | x         |                |              | x                |                  |
 | s32z270           | x         |                |              | x                |                  |
 | qemu-riscv64-virt | x         | x              |              |                  | x                |
