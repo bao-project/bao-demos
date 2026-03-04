@@ -39,9 +39,8 @@ TX2's [L4T Driver Package (BSP)][tegra-bsp]. Then extract it:
 export BAO_DEMOS_NVIDIA_TOOLS=$BAO_DEMOS_WRKDIR_SRC/nvidia-tools
 mkdir -p $BAO_DEMOS_NVIDIA_TOOLS
 wget -P $BAO_DEMOS_NVIDIA_TOOLS/\
-    https://developer.nvidia.com/embedded/l4t/r32_release_v5.1/\
-r32_release_v5.1/t186/tegra186_linux_r32.5.1_aarch64.tbz2
-tar xfvm $BAO_DEMOS_NVIDIA_TOOLS/tegra186_linux_r32.5.1_aarch64.tbz2\
+    https://developer.nvidia.com/downloads/embedded/l4t/r32_release_v7.6/t186/jetson_linux_r32.7.6_aarch64.tbz2
+tar xfvm $BAO_DEMOS_NVIDIA_TOOLS/jetson_linux_r32.7.6_aarch64.tbz2\
     -C $BAO_DEMOS_NVIDIA_TOOLS
 ```
 
