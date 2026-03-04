@@ -99,8 +99,8 @@ struct config config = {
                         .gicr_addr = 0x50900000,
                     },
                     .smc_passthrough = {
-                        .num = 3,
-                        .smcs = (size_t[]) {0xc20000fe, 0x80000000, 0x80000001}
+                        .num = 4,
+                        .smcs = (size_t[]) {0xc20000fe, 0x80000000, 0x80000001, 0x84000050}
                     }
                 }
             }
