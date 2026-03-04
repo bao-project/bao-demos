@@ -1,5 +1,5 @@
 atf_repo?=https://github.com/bao-project/arm-trusted-firmware.git
-atf_version?=bao/demo-next
+atf_version?=bao/demo
 atf_src:=$(wrkdir_src)/arm-trusted-firmware-$(ARCH)-$(atf_version)
 
 # Default build mode
