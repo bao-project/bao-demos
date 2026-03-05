@@ -6,9 +6,9 @@ systems and targeting several supported platforms. The available demos are:
 
 * [Single-guest Baremetal](demos/baremetal/README.md)
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
-* [Dual-Guest Linux+Zephyr](demos/linux+zephyr/README.md)
-* [Dual-Guest Zephyr+Baremetal](demos/zephyr+baremetal/README.md)
-* [VirtIO Demo](demos/virtio/README.md)
+* [Dual-guest Linux+Zephyr](demos/linux+zephyr/README.md)
+* [Dual-guest Zephyr+Baremetal](demos/zephyr+baremetal/README.md)
+* [Four-guest VirtIO Demo](demos/virtio/README.md)
 
 ---
 
