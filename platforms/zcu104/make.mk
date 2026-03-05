@@ -19,11 +19,7 @@ $(boot_bin): $(prebuilt_images_src) $(uboot_image)
 	cp -fv $(wrkdir_plat_imgs)/u-boot.elf $</$(PLATFORM)-zynqmp
 	@cd $</$(PLATFORM)-zynqmp && bootgen -arch zynqmp -image bootgen.bif -w -o $@
 
-$(bao_uboot_image): $(bao_image)
-	@mkimage -n bao_uboot -A arm64 -O linux -C none -T kernel -a 0x200000\
-		-e 0x200000 -d $(bao_image) $@
- 
-platform: $(bao_image) $(boot_bin) $(bao_uboot_image) 
+platform: $(bao_image) $(boot_bin)
 	$(call print-instructions, $(instuctions), 1, false)
 	$(call print-instructions, $(instuctions), 2, false)
 	$(call print-instructions, $(instuctions), 3, true)

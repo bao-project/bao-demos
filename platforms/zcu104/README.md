@@ -12,17 +12,8 @@ cd $BAO_DEMOS_WRKDIR_SRC/zcu-firmware/$PLATFORM-zynqmp &&
     bootgen -arch zynqmp -image bootgen.bif -w -o $BAO_DEMOS_WRKDIR_PLAT/BOOT.BIN
 ```
 
-## 2) Prepare a U-boot image
-
-Run mkimage to create the final system image:
-
-```
-mkimage -n bao_uboot -A arm64 -O linux -C none -T kernel -a 0x200000\
-    -e 0x200000 -d $BAO_DEMOS_WRKDIR_IMGS/bao.bin $BAO_DEMOS_WRKDIR_IMGS/bao.img
-```
-
 <!--- instruction#1 -->
-## 3) Setup SD card
+## 2) Setup SD card
 
 After [preparing your sd card](../../platforms/sdcard.md), copy the firmware and 
 bao's final image to it:
@@ -34,7 +25,7 @@ umount $BAO_DEMOS_SDCARD
 ```
 
 <!--- instruction#2 -->
-## 4) Setup board
+## 3) Setup board
 
 First make sure you have the board configured to boot from the SD card. If you 
 are not sure how, check the MPSoC Device Configuration section in the board's 
@@ -60,7 +51,7 @@ screen /dev/ttyUSB1 115200
 Turn on/reset your board.
 
 <!--- instruction#3 -->
-## 5) Run u-boot commands
+## 4) Run u-boot commands
 
 Quickly press any key to skip autoboot. If not possibly press `ctrl-c` until 
 you get the u-boot prompt. Then load the bao image, and jump to it:
