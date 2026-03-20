@@ -1,0 +1,152 @@
+From a25559cde559e6fc0e41026a8367f4d71357fc86 Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Mon, 6 Feb 2023 19:20:41 +0000
+Subject: [PATCH 2/3] add smc support for aarch32-r
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+---
+ arch/arm/core/cortex_a_r/CMakeLists.txt |  1 +
+ arch/arm/core/cortex_a_r/Kconfig        |  7 ++++
+ arch/arm/core/cortex_a_r/smccc-call.S   | 41 ++++++++++++++++++++
+ include/zephyr/arch/arm/arm-smccc.h     | 51 +++++++++++++++++++++++++
+ 4 files changed, 100 insertions(+)
+ create mode 100644 arch/arm/core/cortex_a_r/smccc-call.S
+ create mode 100644 include/zephyr/arch/arm/arm-smccc.h
+
+diff --git a/arch/arm/core/cortex_a_r/CMakeLists.txt b/arch/arm/core/cortex_a_r/CMakeLists.txt
+index 8b0dac374e..78271d9a2a 100644
+--- a/arch/arm/core/cortex_a_r/CMakeLists.txt
++++ b/arch/arm/core/cortex_a_r/CMakeLists.txt
+@@ -25,3 +25,4 @@ zephyr_library_sources_ifdef(CONFIG_USERSPACE thread.c)
+ zephyr_library_sources_ifdef(CONFIG_SEMIHOST semihost.c)
+ zephyr_library_sources_ifdef(CONFIG_THREAD_LOCAL_STORAGE __aeabi_read_tp.S)
+ zephyr_library_sources_ifdef(CONFIG_ARCH_CACHE cache.c)
++zephyr_library_sources_ifdef(CONFIG_HAS_ARM_SMCCC smccc-call.S)
+diff --git a/arch/arm/core/cortex_a_r/Kconfig b/arch/arm/core/cortex_a_r/Kconfig
+index 10bf721a87..c43a6e586d 100644
+--- a/arch/arm/core/cortex_a_r/Kconfig
++++ b/arch/arm/core/cortex_a_r/Kconfig
+@@ -127,9 +127,16 @@ config ARMV7_R_FP
+ 	  This option signifies the use of an ARMv7-R processor
+ 	  implementation supporting the Floating-Point Extension.
+ 
++config HAS_ARM_SMCCC
++	bool
++	help
++	  Include support for the Secure Monitor Call (SMC) and Hypervisor
++	  Call (HVC) instructions on Armv7 and above architectures.
++
+ config AARCH32_ARMV8_R
+ 	bool
+ 	select ATOMIC_OPERATIONS_BUILTIN
++    select HAS_ARM_SMCCC
+ 	help
+ 	  This option signifies the use of an ARMv8-R AArch32 processor
+ 	  implementation.
+diff --git a/arch/arm/core/cortex_a_r/smccc-call.S b/arch/arm/core/cortex_a_r/smccc-call.S
+new file mode 100644
+index 0000000000..f655def9b2
+--- /dev/null
++++ b/arch/arm/core/cortex_a_r/smccc-call.S
+@@ -0,0 +1,41 @@
++/*
++ * Copyright (c) 2019 Carlo Caione <ccaione@baylibre.com>
++ *
++ * SPDX-License-Identifier: Apache-2.0
++ */
++
++/*
++ * This file implements the common calling mechanism to be used with the Secure
++ * Monitor Call (SMC) and Hypervisor Call (HVC).
++ *
++ * See https://developer.arm.com/docs/den0028/latest
++ */
++
++#include <zephyr/toolchain.h>
++#include <zephyr/linker/sections.h>
++#include <zephyr/arch/cpu.h>
++#include <offsets_short.h>
++
++.macro SMCCC instr
++	\instr  #0
++    ldr      r4, [sp, #0x10]
++    strd     r0, r1, [r4], #8
++    strd     r2, r3, [r4], #8
++	bx lr
++.endm
++
++/*
++ * The SMC instruction is used to generate a synchronous exception that is
++ * handled by Secure Monitor code running in EL3.
++ */
++GTEXT(arm_smccc_smc)
++SECTION_FUNC(TEXT, arm_smccc_smc)
++	SMCCC	smc
++
++/*
++ * The HVC instruction is used to generate a synchronous exception that is
++ * handled by a hypervisor running in EL2.
++ */
++GTEXT(arm_smccc_hvc)
++SECTION_FUNC(TEXT, arm_smccc_hvc)
++	SMCCC	hvc
+diff --git a/include/zephyr/arch/arm/arm-smccc.h b/include/zephyr/arch/arm/arm-smccc.h
+new file mode 100644
+index 0000000000..e702ce2280
+--- /dev/null
++++ b/include/zephyr/arch/arm/arm-smccc.h
+@@ -0,0 +1,51 @@
++/*
++ * Copyright 2020 Carlo Caione <ccaione@baylibre.com>
++ *
++ * SPDX-License-Identifier: Apache-2.0
++ */
++
++#ifndef ZEPHYR_INCLUDE_ARCH_ARM_SMCCC_H_
++#define ZEPHYR_INCLUDE_ARCH_ARM_SMCCC_H_
++
++/*
++ * Result from SMC/HVC call
++ * @a0-a7 result values from registers 0 to 7
++ */
++struct arm_smccc_res {
++	unsigned long a0;
++	unsigned long a1;
++	unsigned long a2;
++	unsigned long a3;
++};
++
++typedef struct arm_smccc_res arm_smccc_res_t;
++
++enum arm_smccc_conduit {
++	SMCCC_CONDUIT_NONE,
++	SMCCC_CONDUIT_SMC,
++	SMCCC_CONDUIT_HVC,
++};
++
++/*
++ * @brief Make HVC calls
++ *
++ * @param a0 function identifier
++ * @param a1-a7 parameters registers
++ * @param res results
++ */
++void arm_smccc_hvc(unsigned long a0, unsigned long a1,
++		   unsigned long a2, unsigned long a3,
++		   struct arm_smccc_res *res);
++
++/*
++ * @brief Make SMC calls
++ *
++ * @param a0 function identifier
++ * @param a1-a7 parameters registers
++ * @param res results
++ */
++void arm_smccc_smc(unsigned long a0, unsigned long a1,
++		   unsigned long a2, unsigned long a3,
++		   struct arm_smccc_res *res);
++
++#endif /* ZEPHYR_INCLUDE_ARCH_ARM_SMCCC_H_ */
+-- 
+2.34.1
+

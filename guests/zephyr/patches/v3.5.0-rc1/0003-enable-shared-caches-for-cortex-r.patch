@@ -1,0 +1,81 @@
+From 170e90c28c7055298d4d23c8505c13918c8bfdaa Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Sat, 1 Apr 2023 21:23:31 +0100
+Subject: [PATCH 3/3] enable shared caches for cortex-r
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+---
+ arch/arm/core/mpu/arm_mpu.c              | 2 +-
+ arch/arm64/core/cortex_r/arm_mpu.c       | 2 +-
+ include/zephyr/arch/arm/mpu/arm_mpu_v8.h | 8 ++++----
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/core/mpu/arm_mpu.c b/arch/arm/core/mpu/arm_mpu.c
+index 9b2feffe5e..d49a7b6306 100644
+--- a/arch/arm/core/mpu/arm_mpu.c
++++ b/arch/arm/core/mpu/arm_mpu.c
+@@ -230,7 +230,7 @@ void arm_core_mpu_enable(void)
+ 	uint32_t val;
+ 
+ 	val = __get_SCTLR();
+-	val |= SCTLR_MPU_ENABLE;
++	val |= SCTLR_MPU_ENABLE | SCTLR_C_BIT | SCTLR_I_BIT;
+ 	__set_SCTLR(val);
+ 
+ 	/* Make sure that all the registers are set before proceeding */
+diff --git a/arch/arm64/core/cortex_r/arm_mpu.c b/arch/arm64/core/cortex_r/arm_mpu.c
+index e303a7c037..c0d2395590 100644
+--- a/arch/arm64/core/cortex_r/arm_mpu.c
++++ b/arch/arm64/core/cortex_r/arm_mpu.c
+@@ -96,7 +96,7 @@ FUNC_NO_STACK_PROTECTOR void arm_core_mpu_enable(void)
+ 	uint64_t val;
+ 
+ 	val = read_sctlr_el1();
+-	val |= SCTLR_M_BIT;
++	val |= SCTLR_M_BIT | SCTLR_C_BIT | SCTLR_I_BIT;
+ 	write_sctlr_el1(val);
+ 	barrier_dsync_fence_full();
+ 	barrier_isync_fence_full();
+diff --git a/include/zephyr/arch/arm/mpu/arm_mpu_v8.h b/include/zephyr/arch/arm/mpu/arm_mpu_v8.h
+index cf60cca99d..f797ab6682 100644
+--- a/include/zephyr/arch/arm/mpu/arm_mpu_v8.h
++++ b/include/zephyr/arch/arm/mpu/arm_mpu_v8.h
+@@ -198,7 +198,7 @@
+ #define REGION_RAM_ATTR(limit)						    \
+ 	{								    \
+ 		.rbar = NOT_EXEC |					    \
+-			P_RW_U_NA_Msk | NON_SHAREABLE_Msk, /* AP, XN, SH */ \
++			P_RW_U_NA_Msk | INNER_SHAREABLE_Msk, /* AP, XN, SH */ \
+ 		/* Cache-ability */					    \
+ 		.mair_idx = MPU_MAIR_INDEX_SRAM,			    \
+ 		.r_limit = limit - 1,  /* Region Limit */		    \
+@@ -206,7 +206,7 @@
+ 
+ #define REGION_RAM_TEXT_ATTR(limit)					    \
+ 	{								    \
+-		.rbar = P_RO_U_RO_Msk | NON_SHAREABLE_Msk, /* AP, XN, SH */ \
++		.rbar = P_RO_U_RO_Msk | INNER_SHAREABLE_Msk, /* AP, XN, SH */ \
+ 		/* Cache-ability */					    \
+ 		.mair_idx = MPU_MAIR_INDEX_SRAM,			    \
+ 		.r_limit = limit - 1,  /* Region Limit */		    \
+@@ -215,7 +215,7 @@
+ #define REGION_RAM_RO_ATTR(limit)					    \
+ 	{								    \
+ 		.rbar = NOT_EXEC |					    \
+-			P_RO_U_RO_Msk | NON_SHAREABLE_Msk, /* AP, XN, SH */ \
++			P_RO_U_RO_Msk | INNER_SHAREABLE_Msk, /* AP, XN, SH */ \
+ 		/* Cache-ability */					    \
+ 		.mair_idx = MPU_MAIR_INDEX_SRAM,			    \
+ 		.r_limit = limit - 1,  /* Region Limit */		    \
+@@ -266,7 +266,7 @@
+ #define REGION_RAM_ATTR(base, size) \
+ 	{\
+ 		.rbar = IF_ENABLED(CONFIG_XIP, (NOT_EXEC |)) \
+-			P_RW_U_NA_Msk | NON_SHAREABLE_Msk, /* AP, XN, SH */ \
++			P_RW_U_NA_Msk | INNER_SHAREABLE_Msk, /* AP, XN, SH */ \
+ 		/* Cache-ability */ \
+ 		.mair_idx = MPU_MAIR_INDEX_SRAM, \
+ 		.r_limit = REGION_LIMIT_ADDR(base, size),  /* Region Limit */ \
+-- 
+2.34.1
+

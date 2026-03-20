@@ -9,8 +9,8 @@ $(atf_image): $(atf_src)
 nvidia_tools:=$(wrkdir_src)/nvidia-tools
 nvidia_tools_flash:=$(nvidia_tools)/Linux_for_Tegra/
 wrkdirs+=$(nvidia_tools)
-nvidia_tools_flash_link:=https://developer.nvidia.com/embedded/l4t/r32_release_v5.1/r32_release_v5.1/t186/tegra186_linux_r32.5.1_aarch64.tbz2
-nvidia_tools_flash_ar:=$(nvidia_tools)/tegra186_linux_r32.5.1_aarch64.tbz2
+nvidia_tools_flash_link:=https://developer.nvidia.com/downloads/embedded/l4t/r32_release_v7.6/t186/jetson_linux_r32.7.6_aarch64.tbz2
+nvidia_tools_flash_ar:=$(nvidia_tools)/jetson_linux_r32.7.6_aarch64.tbz2
 
 environment+=BAO_DEMOS_NVIDIA_TOOLS=$(nvidia_tools)
 

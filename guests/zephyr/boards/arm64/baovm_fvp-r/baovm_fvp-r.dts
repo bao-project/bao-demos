@@ -8,6 +8,7 @@
 // #include <arm64/fvp/fvp-aemv8r.dtsi>
 #include <mem.h>
 #include <zephyr/dt-bindings/interrupt-controller/arm-gic.h>
+#include <zephyr/dt-bindings/memory-attr/memory-attr-arm.h>
 
 / {
 	model = "Bao VM for FVP BaseR AEMv8R";
@@ -77,7 +78,7 @@
     	interrupt-parent = <&gic>;
 
 		gic: interrupt-controller@af000000 {
-			compatible = "arm,gic";
+			compatible = "arm,gic-v3", "arm,gic";
 			reg = <0xaf000000 0x10000>,
 			      <0xaf100000 0x200000>;
 			interrupt-controller;
@@ -102,7 +103,21 @@
 
 		dram0: memory@24000000 {
 			compatible = "mmio-dram";
-			reg = <0x24000000 DT_SIZE_M((512*3)-64)>;
+			reg = <0x24000000 DT_SIZE_M(64)>;
+		};
+
+		baoipc_region: memory@70000000 {
+			compatible = "zephyr,memory-region";
+			reg = <0x70000000 0x00010000>;
+			zephyr,memory-region = "BAOIPC";
+			zephyr,memory-attr = <( DT_MEM_ARM(ATTR_MPU_RAM) )>;
+		};
+
+		device_region: memory@9a000000 {
+			compatible = "zephyr,memory-region", "mmio-dram";
+			reg = <0x9a000000 0x66000000>;
+			zephyr,memory-region = "DEVICE_REGION";
+			zephyr,memory-attr = <( DT_MEM_ARM(ATTR_MPU_IO) )>;
 		};
 	};
 };

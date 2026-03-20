@@ -24,16 +24,16 @@ endif
 ifndef DEMO
  $(error No target DEMO defined.)
 endif
-    
+
 ifeq ($(wildcard $(demo_dir)),)
  $(error Target demo $(DEMO) is not supported)
 endif
 
-ifeq ($(wildcard $(demo_dir)/configs/$(PLATFORM).c),)
+ifeq ($(wildcard $(demo_dir)/configs/$(PLATFORM).c $(demo_dir)/configs/$(PLATFORM)),)
  $(error The $(DEMO) demo is not supported by the $(PLATFORM) platform)
 endif
 
-endif 
+endif
 
 # utility functions
 
@@ -69,10 +69,10 @@ environment+=BAO_DEMOS_WRKDIR_IMGS=$(wrkdir_demo_imgs)
 environment+=BAO_DEMOS_SDCARD_DEV=/dev/yoursdcarddev
 environment+=BAO_DEMOS_SDCARD=/media/$$USER/boot
 
-all: platform 
+all: platform
 
 bao_repo:=https://github.com/bao-project/bao-hypervisor
-bao_version:=demo
+bao_version:=v2.0.0
 bao_src:=$(wrkdir_src)/bao
 bao_cfg_repo:=$(wrkdir_demo_imgs)/config
 wrkdirs+=$(bao_cfg_repo)
@@ -88,13 +88,19 @@ endif
 
 guests: $(guest_images)
 
+ifndef BAO_SRC_DEFINED
 $(bao_src):
 	git clone --branch $(bao_version) $(bao_repo) $(bao_src)
+endif
 
 $(bao_cfg): | $(bao_cfg_repo)
-	cp -L $(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM).c $(bao_cfg)
+	if [ -d "$(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM)" ]; then \
+		cp -r $(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM) $(bao_cfg_repo)/$(DEMO); \
+	else \
+		cp -L $(bao_demos)/demos/$(DEMO)/configs/$(PLATFORM).c $(bao_cfg); \
+	fi
 
-bao $(bao_image): $(guest_images) $(bao_cfg) $(bao_src) 
+bao $(bao_image): $(guest_images) $(bao_cfg) $(bao_src)
 	$(MAKE) -C $(bao_src)\
 		PLATFORM=$(PLATFORM)\
 		CONFIG_REPO=$(bao_cfg_repo)\
@@ -114,10 +120,10 @@ platform: $(bao_image)
 guests_clean bao_clean platform_clean:
 
 clean: guests_clean bao_clean platform_clean
-	-@rm -rf $(wrkdir)/imgs/$(PLAT)/$(DEMO)
+	-@rm -rf $(wrkdir)/imgs/$(PLATFORM)/$(DEMO)
 
 distclean:
 	rm -rf $(wrkdir)
 
-.PHONY: all clean guests bao paltform
+.PHONY: all clean guests bao platform
 .NOTPARALLEL:

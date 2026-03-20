@@ -7,25 +7,44 @@
 **NOTE**
 
 If you already have FVP_Base_RevC-2xAEMvA installed please make sure you are
-using version 11.21.15 or higher. If so, you can skip this step
+using version 11.28_23 or higher. If so, you can skip this step
 
 ---
 
 Download and extract the model:
 
 ```
-curl -L https://developer.arm.com/-/media/Files/downloads/ecosystem-models/FVP_Base_RevC-2xAEMvA_11.21_15_Linux64.tgz | tar xz -C $BAO_DEMOS_WRKDIR_PLAT
+curl -L https://developer.arm.com/-/cdn-downloads/permalink/FVPs-Architecture/FM-11.28/FVP_Base_RevC-2xAEMvA_11.28_23_Linux64.tgz | tar xz -C $BAO_DEMOS_WRKDIR_PLAT
 export PATH=$PATH:$BAO_DEMOS_WRKDIR_PLAT/Base_RevC_AEMvA_pkg/models/Linux64_GCC-9.3
 ```
 
 ## 2) Build U-boot
 
+Download and configure it:
+
 ```
 export BAO_DEMOS_UBOOT=$BAO_DEMOS_WRKDIR_SRC/u-boot
 git clone https://github.com/u-boot/u-boot.git $BAO_DEMOS_UBOOT --depth 1\
-   --branch v2022.10
+   --branch v2025.07
 cd $BAO_DEMOS_UBOOT
 make vexpress_aemv8a_semi_defconfig
+```
+
+Now you need to set the Kconfig options:
+
+* CONFIG_AUTOBOOT=n
+
+You can do it via using an interface such as `menuconfig` or just write them 
+directly to the config file:
+
+```
+echo "CONFIG_AUTOBOOT=n\n" >> $BAO_DEMOS_UBOOT/.config
+```
+
+And build it:
+
+
+```
 make -j$(nproc)
 ```
 
@@ -41,7 +60,7 @@ cp $BAO_DEMOS_UBOOT/u-boot.bin $BAO_DEMOS_WRKDIR/imgs/$PLATFORM
 ```
 export BAO_DEMOS_ATF=$BAO_DEMOS_WRKDIR_SRC/arm-trusted-firmware-$(ARCH)
 git clone https://github.com/bao-project/arm-trusted-firmware.git\
-   $BAO_DEMOS_ATF --branch bao/demo --depth 1
+   $BAO_DEMOS_ATF --branch bao/demo-next --depth 1
 cd $BAO_DEMOS_ATF
 make PLAT=fvp bl1 fip BL33=$BAO_DEMOS_WRKDIR/imgs/$PLATFORM/u-boot.bin \
     QEMU_USE_GIC_DRIVER=QEMU_GICV3 ARCH=$ARCH
@@ -54,6 +73,10 @@ cp build/fvp/release/fip.bin $BAO_DEMOS_WRKDIR/imgs/$PLATFORM
 
 ```
 FVP_Base_RevC-2xAEMvA \
+    -C cluster0.NUM_CORES=4 \
+	-C cache_state_modelled=0 \
+	-C bp.refcounter.use_real_time=1 \
+	-C bp.exclusive_monitor.monitor_access_level=1 \
 	-C cluster0.supports_multi_threading=0 \
 	-C cluster0.mpidr_layout=0 \
 	-C cluster1.NUM_CORES=0 \

@@ -1,0 +1,10 @@
+board:
+  name: baovm_fvp-a
+  full_name: BASE RevC AEMv8A Fixed Virtual Platforms
+  vendor: arm
+  socs:
+  - name: fvp_base_revc_2xaemv8a
+    variants:
+    - name: smp
+      variants:
+      - name: ns

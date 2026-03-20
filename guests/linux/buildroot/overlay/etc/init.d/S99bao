@@ -1,0 +1,22 @@
+#!/bin/sh
+
+case "$1" in
+    start)
+        echo "Loading bao-ipc kernel module..."
+        /sbin/modprobe bao-ipc
+        echo "Loading bao-iodispatcher kernel module..."
+        /sbin/modprobe bao-iodispatcher
+        ;;
+    stop)
+        echo "Unloading bao-ipc kernel module..."
+        /sbin/rmmod bao-ipc
+        echo "Unloading bao-iodispatcher kernel module..."
+        /sbin/rmmod bao-iodispatcher
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
+
+exit 0

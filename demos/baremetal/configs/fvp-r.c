@@ -4,7 +4,7 @@
 struct config config = {
 
     .vmlist_size = 1,
-    .vmlist = {
+    .vmlist = (struct vm_config[]) {
         {
             .image = VM_IMAGE_LOADED(0x10000000, 0x10000000, 100*1024),
 

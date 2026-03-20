@@ -8,6 +8,7 @@ platform: $(bao_image)
 
 fvp_args:= \
 	-C cache_state_modelled=0 \
+	-C bp.refcounter.use_real_time=1 \
 	-C bp.exclusive_monitor.monitor_access_level=1 \
 	-C cci400.force_on_from_start=1 \
 	-C gic_distributor.has-two-security-states=0 \

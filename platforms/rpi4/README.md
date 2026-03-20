@@ -2,7 +2,7 @@
 
 ## 1) Get firmware
 
-Download the lastest firmware files for Raspberry Pi:
+Download the latest firmware files for Raspberry Pi:
 
 ```
 export BAO_DEMOS_FW=$BAO_DEMOS_WRKDIR_PLAT/firmware 
@@ -15,9 +15,20 @@ git clone https://github.com/raspberrypi/firmware.git $BAO_DEMOS_FW\
 ```
 export BAO_DEMOS_UBOOT=$BAO_DEMOS_WRKDIR_SRC/u-boot
 git clone https://github.com/u-boot/u-boot.git $BAO_DEMOS_UBOOT\
-    --depth 1 --branch v2022.10
+    --depth 1 --branch v2025.07
 cd $BAO_DEMOS_UBOOT
 make rpi_4_defconfig
+```
+
+Now you need to set the Kconfig options:
+
+* CONFIG_AUTOBOOT=n
+
+You can do it via using an interface such as `menuconfig` or just write them 
+directly to the config file:
+
+```
+echo "CONFIG_AUTOBOOT=n\n" >> $BAO_DEMOS_UBOOT/.config
 ```
 
 Then build it:
@@ -37,7 +48,7 @@ cp $BAO_DEMOS_UBOOT/u-boot.bin $BAO_DEMOS_WRKDIR_PLAT
 ```
 export BAO_DEMOS_ATF=$BAO_DEMOS_WRKDIR_SRC/arm-trusted-firmware 
 git clone https://github.com/bao-project/arm-trusted-firmware.git\
-    $BAO_DEMOS_ATF --branch bao/demo --depth 1
+    $BAO_DEMOS_ATF --branch bao/demo-next --depth 1
 cd $BAO_DEMOS_ATF
 make PLAT=rpi4
 ```
@@ -91,7 +102,7 @@ you get the u-boot prompt. Then load the bao image, and jump to it:
 fatload mmc 0 0x200000 bao.bin; go 0x200000
 ```
 
-You should see the firmare, bao and its guests printing on the UART.
+You should see the firmware, bao and its guests printing on the UART.
 
 At this point, depending on your demo, you might be able connect to one of the 
 guests via ssh by connecting to the board's ethernet RJ45 socket.

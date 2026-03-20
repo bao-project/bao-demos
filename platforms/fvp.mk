@@ -1,9 +1,9 @@
 ifeq ($(ARCH_PROFILE), armv8-r)
-fvp_link:=https://developer.arm.com/-/media/Files/downloads/ecosystem-models/FVP_Base_AEMv8R_11.21_15_Linux64.tgz
+fvp_link:=https://developer.arm.com/-/cdn-downloads/permalink/FVPs-Architecture/FM-11.28/FVP_Base_AEMv8R_11.28_23_Linux64.tgz
 fvp_cmd:=FVP_BaseR_AEMv8R
 fvp_path:=AEMv8R_base_pkg/models/Linux64_GCC-9.3/
 else
-fvp_link:=https://developer.arm.com/-/media/Files/downloads/ecosystem-models/FVP_Base_RevC-2xAEMvA_11.21_15_Linux64.tgz
+fvp_link:=https://developer.arm.com/-/cdn-downloads/permalink/FVPs-Architecture/FM-11.28/FVP_Base_RevC-2xAEMvA_11.28_23_Linux64.tgz
 fvp_cmd:=FVP_Base_RevC-2xAEMvA
 fvp_path:=Base_RevC_AEMvA_pkg/models/Linux64_GCC-9.3/
 endif

@@ -1,0 +1,6 @@
+board:
+  name: baovm_rpi4
+  full_name: Raspberry Pi 4 Model B (Cortex-A72)
+  vendor: raspberrypi
+  socs:
+  - name: bcm2711

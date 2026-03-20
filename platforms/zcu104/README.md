@@ -1,49 +1,31 @@
 # Xilinx ZCU10X
 
-<!--- instruction#1 -->
 ## 1) Get firmware
 
-Download latest pre-built Zynq UltraScale+ MPSoC Firmware for your target 
-platform (you will need to sign-in to Xilinx account and provide further 
-personal information) to $BAO_DEMOS_WRKDIR_SRC:
-
-* [ZCU102](https://www.xilinx.com/member/forms/download/xef.html?filename=2022.2_zcu102_release.tar.xz)
-* [ZCU104](https://www.xilinx.com/member/forms/download/xef.html?filename=2022.2_zcu104_release.tar.xz)
-
-<!--- instruction#end -->
-
-Extract it  to $BAO_DEMOS_WRKDIR_SRC: 
+Download latest pre-built Zynq UltraScale+ MPSoC Firmware and use *bootgen*
+to build the firmware binary:
 
 ```
-tar xvfm $BAO_DEMOS_WRKDIR_SRC/2020.2-$PLATFORM-release.tar.xz\
-    -C $BAO_DEMOS_WRKDIR_PLAT --wildcards "*BOOT.BIN" --strip-components=1
+git clone https://github.com/Xilinx/soc-prebuilt-firmware.git --depth 1 \
+    --branch xilinx_v2023.1 $BAO_DEMOS_WRKDIR_SRC/zcu-firmware
+cd $BAO_DEMOS_WRKDIR_SRC/zcu-firmware/$PLATFORM-zynqmp && 
+    bootgen -arch zynqmp -image bootgen.bif -w -o $BAO_DEMOS_WRKDIR_PLAT/BOOT.BIN
 ```
 
-Alternatively, you can [build the firmware from scratch][firmware-from-scratch]. 
-
-## 2) Prepare a U-boot image
-
-Run mkimage to create the final system image:
-
-```
-mkimage -n bao_uboot -A arm64 -O linux -C none -T kernel -a 0x200000\
-    -e 0x200000 -d $BAO_DEMOS_WRKDIR_IMGS/bao.bin $BAO_DEMOS_WRKDIR_IMGS/bao.img
-```
-
-<!--- instruction#2 -->
-## 3) Setup SD card
+<!--- instruction#1 -->
+## 2) Setup SD card
 
 After [preparing your sd card](../../platforms/sdcard.md), copy the firmware and 
 bao's final image to it:
 
 ```
 cp $BAO_DEMOS_WRKDIR_PLAT/BOOT.BIN $BAO_DEMOS_SDCARD
-cp $BAO_DEMOS_WRKDIR_IMGS/bao.img $BAO_DEMOS_SDCARD
+cp $BAO_DEMOS_WRKDIR_IMGS/bao.bin $BAO_DEMOS_SDCARD
 umount $BAO_DEMOS_SDCARD
 ```
 
-<!--- instruction#3 -->
-## 4) Setup board
+<!--- instruction#2 -->
+## 3) Setup board
 
 First make sure you have the board configured to boot from the SD card. If you 
 are not sure how, check the MPSoC Device Configuration section in the board's 
@@ -68,17 +50,17 @@ screen /dev/ttyUSB1 115200
 
 Turn on/reset your board.
 
-<!--- instruction#4 -->
-## 5) Run u-boot commands
+<!--- instruction#3 -->
+## 4) Run u-boot commands
 
 Quickly press any key to skip autoboot. If not possibly press `ctrl-c` until 
 you get the u-boot prompt. Then load the bao image, and jump to it:
 
 ```
-fatload mmc 0 0x200000 bao.img; bootm start 0x200000; bootm loados; bootm go
+fatload mmc 0 0x200000 bao.bin; go 0x200000
 ```
 
-You should see the firmare, bao and its guests printing on the UARTs.
+You should see the firmware, bao and its guests printing on the UARTs.
 
 At this point, depending on your demo, you might be able connect to one of the 
 guests via ssh by connecting to the board's ethernet RJ45 socket.

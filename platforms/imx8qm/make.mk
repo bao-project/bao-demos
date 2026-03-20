@@ -24,7 +24,8 @@ $(seco):
 include $(bao_demos)/platforms/uboot.mk
 uboot_image:=$(wrkdir_demo_imgs)/u-boot.bin
 uboot_defconfig:=imx8qm_mek_defconfig
-$(eval $(call build-uboot, $(uboot_image), $(uboot_defconfig)))
+uboot_cfg_frag:="CONFIG_AUTOBOOT=n\n"
+$(eval $(call build-uboot, $(uboot_image), $(uboot_defconfig), $(uboot_cfg_frag)))
 
 include $(bao_demos)/platforms/atf.mk
 atf_image:=$(wrkdir_demo_imgs)/bl31.bin

@@ -1,0 +1,387 @@
+From 48283f9d251d5e74f51b00ca47e7d6829a5a5605 Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Sat, 4 Feb 2023 16:54:22 +0000
+Subject: [PATCH 1/3] add bao ipcshmem drivers
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+---
+ drivers/virtualization/CMakeLists.txt         |   3 +
+ drivers/virtualization/Kconfig                |  17 +++
+ drivers/virtualization/bao_ipcshmem.c         | 108 ++++++++++++++++++
+ .../virtualization/bao_ipcshmem_internal.h    |  28 +++++
+ drivers/virtualization/bao_ipcshmem_shell.c   |  97 ++++++++++++++++
+ dts/bindings/virtualization/bao,ipcshmem.yaml |  15 +++
+ .../drivers/virtualization/bao_ipcshmem.h     |  46 ++++++++
+ 7 files changed, 314 insertions(+)
+ create mode 100644 drivers/virtualization/bao_ipcshmem.c
+ create mode 100644 drivers/virtualization/bao_ipcshmem_internal.h
+ create mode 100644 drivers/virtualization/bao_ipcshmem_shell.c
+ create mode 100644 dts/bindings/virtualization/bao,ipcshmem.yaml
+ create mode 100644 include/zephyr/drivers/virtualization/bao_ipcshmem.h
+
+diff --git a/drivers/virtualization/CMakeLists.txt b/drivers/virtualization/CMakeLists.txt
+index c16ed84e31..6150c91e69 100644
+--- a/drivers/virtualization/CMakeLists.txt
++++ b/drivers/virtualization/CMakeLists.txt
+@@ -10,3 +10,6 @@ zephyr_library_sources_ifdef(CONFIG_IVSHMEM		virt_ivshmem.c)
+ zephyr_library_sources_ifdef(CONFIG_IVSHMEM_SHELL	virt_ivshmem_shell.c)
+ 
+ zephyr_library_sources_ifdef(CONFIG_USERSPACE		virt_ivshmem_handlers.c)
++
++zephyr_library_sources_ifdef(CONFIG_BAO_IPCSHMEM     bao_ipcshmem.c)
++zephyr_library_sources_ifdef(CONFIG_BAO_IPCSHMEM_SHELL bao_ipcshmem_shell.c)
+diff --git a/drivers/virtualization/Kconfig b/drivers/virtualization/Kconfig
+index 4f32552f09..a0dac412e1 100644
+--- a/drivers/virtualization/Kconfig
++++ b/drivers/virtualization/Kconfig
+@@ -12,6 +12,23 @@ menuconfig VIRTUALIZATION
+ 
+ if VIRTUALIZATION
+ 
++config BAO_IPCSHMEM
++    bool "BAO IPC shared memory driver"
++    depends on VIRTUALIZATION
++    help
++      This will enable support of BAO IPC shared memory driver.
++
++if BAO_IPCSHMEM
++
++config BAO_IPCSHMEM_SHELL
++    bool "BAO IPC shared memory shell module"
++    depends on SHELL
++    select DYNAMIC_INTERRUPTS
++    help
++      This is mostly a module to help getting info the BAO IPC shared memory.
++
++endif # BAO_IPCSHMEM
++
+ config IVSHMEM
+ 	bool "Inter-VM shared memory device (ivshmem)"
+ 	depends on PCIE
+diff --git a/drivers/virtualization/bao_ipcshmem.c b/drivers/virtualization/bao_ipcshmem.c
+new file mode 100644
+index 0000000000..a323cf0ca5
+--- /dev/null
++++ b/drivers/virtualization/bao_ipcshmem.c
+@@ -0,0 +1,108 @@
++#include <zephyr/drivers/virtualization/bao_ipcshmem.h>
++#include "bao_ipcshmem_internal.h"
++
++#include <zephyr/irq.h>
++#include <zephyr/arch/arm64/arm-smccc.h>
++
++#include <stdio.h>
++#include <string.h>
++
++#define ARM_SMCCC_OWNER_VENDOR_HYP	6
++#define ARM_SMCCC_FAST_CALL	    1UL
++#define ARM_SMCCC_SMC_64		1
++#define ARM_SMCCC_SMC_32		0
++#if defined(CONFIG_ARM64)
++#define ARM_SMCCC_SMC  ARM_SMCCC_SMC_64
++#elif defined(CONFIG_ARM)
++#define ARM_SMCCC_SMC  ARM_SMCCC_SMC_32
++#else
++#error "Bao IPC Shared Memory: unsupported architecture"
++#endif
++#define ARM_SMCCC_CALL_VAL(type, calling_convention, owner, func_id) \
++    (((type) << 31) | ((calling_convention) << 30) | \
++     ((owner) << 24) | ((func_id) & 0xffff))
++#define BAO_IPC_HC_ID 1
++#define BAO_SHMEMIPC_SMCCC_VAL ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, \
++    ARM_SMCCC_SMC, ARM_SMCCC_OWNER_VENDOR_HYP, BAO_IPC_HC_ID)
++
++static void shmem_read(const struct device *dev, char *buf, size_t n) {
++    size_t size = MIN(SHMEM_CONFIG(dev)->read_buf_size, n);
++    memcpy(buf, SHMEM_DATA(dev)->read_buf, size);
++}
++
++static void shmem_write(const struct device *dev, const char *buf, size_t n) {
++    size_t size = MIN(SHMEM_CONFIG(dev)->write_buf_size, n);
++    snprintf(SHMEM_DATA(dev)->write_buf, size, "%s", buf);
++}
++
++static void shmem_notify(const struct device *dev) {
++    unsigned shmem_id = SHMEM_CONFIG(dev)->id;
++    struct arm_smccc_res hvc_res;
++    unsigned notification_id = 0; // we assume only one notification
++    arm_smccc_hvc(BAO_SHMEMIPC_SMCCC_VAL, shmem_id, notification_id,
++        0, 0, 0, 0, 0, &hvc_res);
++}
++
++static unsigned shmem_id(const struct device *dev) {
++    return SHMEM_CONFIG(dev)->id;
++}
++
++static void shmem_irq_enable(const struct device *dev) {
++    irq_enable(SHMEM_CONFIG(dev)->irq);
++}
++
++static void shmem_irq_set_callback(const struct device *dev,
++    bao_ipcshmem_callback_t callback)
++{
++    irq_connect_dynamic(SHMEM_CONFIG(dev)->irq, 0,
++        (void (*)(const void*))callback, dev, 0);
++}
++
++static struct bao_ipcshmem_api shmem_api = {
++    .read = shmem_read,
++    .write = shmem_write,
++    .notify = shmem_notify,
++    .id = shmem_id,
++    .irq_set_enable = shmem_irq_enable,
++    .irq_set_callback = shmem_irq_set_callback,
++};
++
++static int shmemipc_init(const struct device *dev) {
++
++    struct shmem_config *config = SHMEM_CONFIG(dev);
++    struct shmem_data *data = SHMEM_DATA(dev);
++
++    DEVICE_MMIO_MAP(dev, K_MEM_CACHE_WB | K_MEM_PERM_RW);
++
++    data->read_buf = (char*)(DEVICE_MMIO_GET(dev) + config->read_buf_off);
++    data->write_buf = (char*)(DEVICE_MMIO_GET(dev) + config->write_buf_off);
++
++    memset(data->read_buf, 0, config->read_buf_size);
++    memset(data->write_buf, 0, config->write_buf_size);
++
++    return 0;
++}
++
++#define BAO_IPCSHMEM_INSTANTIATE(inst) \
++    struct shmem_data shmem_data_##inst; \
++    struct shmem_config shmem_config_##inst = { \
++         DEVICE_MMIO_ROM_INIT(DT_DRV_INST(inst)), \
++        .read_buf_off = DT_PROP_BY_IDX(DT_DRV_INST(inst), read_channel, 0), \
++        .read_buf_size = DT_PROP_BY_IDX(DT_DRV_INST(inst), read_channel, 1), \
++        .write_buf_off = DT_PROP_BY_IDX(DT_DRV_INST(inst), write_channel, 0), \
++        .write_buf_size = DT_PROP_BY_IDX(DT_DRV_INST(inst), write_channel, 1), \
++        .irq = DT_IRQN(DT_DRV_INST(inst)), \
++        .id = DT_PROP(DT_DRV_INST(inst), id), \
++    }; \
++    DEVICE_DT_DEFINE( \
++        DT_INST(inst, DT_DRV_COMPAT), \
++        shmemipc_init, \
++        NULL, \
++        &shmem_data_##inst, \
++        &shmem_config_##inst, \
++        POST_KERNEL, \
++        1, \
++        &shmem_api, \
++    );
++
++DT_INST_FOREACH_STATUS_OKAY(BAO_IPCSHMEM_INSTANTIATE)
+diff --git a/drivers/virtualization/bao_ipcshmem_internal.h b/drivers/virtualization/bao_ipcshmem_internal.h
+new file mode 100644
+index 0000000000..f32928126e
+--- /dev/null
++++ b/drivers/virtualization/bao_ipcshmem_internal.h
+@@ -0,0 +1,28 @@
++#ifndef BAO_IPCSHMEM_INTERNAL_H_
++#define BAO_IPCSHMEM_INTERNAL_H_
++
++#include <zephyr/device.h>
++
++#define DT_DRV_COMPAT   bao_ipcshmem
++
++struct shmem_data {
++    DEVICE_MMIO_RAM;
++    char* read_buf;
++    char* write_buf;
++};
++
++struct shmem_config {
++    DEVICE_MMIO_ROM;
++    size_t read_buf_off;
++    size_t read_buf_size;
++    size_t write_buf_off;
++    size_t write_buf_size;
++    unsigned irq;
++    unsigned id;
++};
++
++#define SHMEM_CONFIG(dev) ((struct shmem_config*)(dev->config))
++#define SHMEM_DATA(dev) ((struct shmem_data*)(dev->data))
++
++
++#endif /* BAO_IPCSHMEM_INTERNAL_H_ */
+diff --git a/drivers/virtualization/bao_ipcshmem_shell.c b/drivers/virtualization/bao_ipcshmem_shell.c
+new file mode 100644
+index 0000000000..9bb5c73e86
+--- /dev/null
++++ b/drivers/virtualization/bao_ipcshmem_shell.c
+@@ -0,0 +1,97 @@
++#include <zephyr/shell/shell.h>
++#include <zephyr/device.h>
++#include <zephyr/drivers/virtualization/bao_ipcshmem.h>
++#include "bao_ipcshmem_internal.h"
++
++#include <stdlib.h>
++
++static const struct device* shmem_dev_list[] = {
++    DT_FOREACH_STATUS_OKAY(DT_DRV_COMPAT, DEVICE_DT_GET)
++};
++static const size_t shmem_dev_list_size =
++    sizeof(shmem_dev_list)/sizeof(struct device*);
++
++static const struct device* bao_ipcshmem_find_dev(const struct shell *shell,
++    const char* shmem_id_str) {
++    unsigned shmem_id = atoi(shmem_id_str);
++    const struct device* dev = NULL;
++    for (int i = 0; i < shmem_dev_list_size; i++) {
++        const struct device* tmp = shmem_dev_list[i];
++        if (bao_ipcshmem_id(tmp) == shmem_id) {
++            dev = tmp;
++            break;
++        }
++    }
++    if (dev == NULL) {
++        shell_error(shell, "Invalid shmem id: %s", shmem_id_str);
++    }
++    return dev;
++}
++
++#define MSG_SIZE 256
++static char msg[MSG_SIZE];
++
++static int cmd_bao_ipcshmem_read(const struct shell *shell,
++			     size_t argc, char **argv)
++{
++    const struct device* dev = bao_ipcshmem_find_dev(shell, argv[1]);
++    if (dev == NULL) return -EINVAL;
++    bao_ipcshmem_read(dev, msg, MSG_SIZE);
++    msg[MSG_SIZE-1] = '\0';
++    shell_fprintf(shell, SHELL_NORMAL, "%s", msg);
++	return 0;
++}
++
++static int cmd_bao_ipcshmem_write(const struct shell *shell,
++			     size_t argc, char **argv)
++{
++    const struct device* dev = bao_ipcshmem_find_dev(shell, argv[1]);
++    if (dev == NULL) return -EINVAL;
++    size_t len = MIN(MSG_SIZE-2, strlen(argv[2]));
++    memcpy(msg, argv[2], len);
++    msg[len] = '\n';
++    msg[len+1] = '\0';
++    bao_ipcshmem_write(dev, msg, len+2);
++	return 0;
++}
++
++static int cmd_bao_ipcshmem_notify(const struct shell *shell,
++                 size_t argc, char **argv)
++{
++    const struct device* dev = bao_ipcshmem_find_dev(shell, argv[1]);
++    if (dev == NULL) return -EINVAL;
++    bao_ipcshmem_notify(dev);
++    return 0;
++}
++
++static int cmd_bao_ipcshmem_write_notify(const struct shell *shell,
++                 size_t argc, char **argv)
++{
++    const struct device* dev = bao_ipcshmem_find_dev(shell, argv[1]);
++    if (dev == NULL) return -EINVAL;
++    bao_ipcshmem_write(dev, argv[2], strlen(argv[2])+1);
++    bao_ipcshmem_notify(dev);
++    return 0;
++}
++
++SHELL_STATIC_SUBCMD_SET_CREATE(sub_bao_ipcshmem_cmds,
++			       SHELL_CMD_ARG(read, NULL,
++					     "Read bao shared memory contents",
++					     cmd_bao_ipcshmem_read, 2, 0),
++			       SHELL_CMD_ARG(write, NULL,
++					     "Write bao shared memory contents",
++					     cmd_bao_ipcshmem_write, 3, 0),
++			       SHELL_CMD_ARG(notify, NULL,
++					     "Send a notification to the VMs connected to the "
++                         "same bao shared memory",
++					     cmd_bao_ipcshmem_notify, 2, 0),
++			       SHELL_CMD_ARG(write_notify, NULL,
++					     "Write bao shared memory contents and send a "
++                         "nofitication to the VMs connected to the same bao "
++                         "shared memory",
++					     cmd_bao_ipcshmem_write_notify, 3, 0),
++			       SHELL_SUBCMD_SET_END
++		);
++
++SHELL_CMD_REGISTER(baoipc, &sub_bao_ipcshmem_cmds,
++		   "Bao IPC Shared Memory Commands", NULL);
+diff --git a/dts/bindings/virtualization/bao,ipcshmem.yaml b/dts/bindings/virtualization/bao,ipcshmem.yaml
+new file mode 100644
+index 0000000000..ed7cedef9a
+--- /dev/null
++++ b/dts/bindings/virtualization/bao,ipcshmem.yaml
+@@ -0,0 +1,15 @@
++description: Bao IPC Shared Memory
++
++compatible: "bao,ipcshmem"
++
++include: base.yaml
++
++properties:
++  reg:
++    required: true
++  read-channel:
++    type: array
++  write-channel:
++    type: array
++  id:
++    type: int
+diff --git a/include/zephyr/drivers/virtualization/bao_ipcshmem.h b/include/zephyr/drivers/virtualization/bao_ipcshmem.h
+new file mode 100644
+index 0000000000..5f6e6fe957
+--- /dev/null
++++ b/include/zephyr/drivers/virtualization/bao_ipcshmem.h
+@@ -0,0 +1,46 @@
++#ifndef BAO_IPCSHMEM_H_
++#define BAO_IPCSHMEM_H_
++
++#include <zephyr/device.h>
++#include <zephyr/sys/device_mmio.h>
++
++typedef void (*bao_ipcshmem_callback_t)(const struct device *dev);
++
++struct bao_ipcshmem_api {
++    void (*read)(const struct device *dev, char *buf, size_t n);
++    void (*write)(const struct device *dev, const char *write, size_t n);
++    void (*notify)(const struct device *dev);
++    unsigned (*id)(const struct device *dev);
++    void (*irq_set_enable)(const struct device *dev);
++    void (*irq_set_callback)(const struct device *dev, bao_ipcshmem_callback_t callback);
++};
++
++#define BAO_IPCSHMEM_API(dev) ((struct bao_ipcshmem_api *)((dev)->api))
++
++static inline void bao_ipcshmem_write(const struct device *dev, char *buf, size_t n) {
++    BAO_IPCSHMEM_API(dev)->write(dev, buf, n);
++}
++
++static inline void bao_ipcshmem_read(const struct device *dev, char *buf, size_t n) {
++    BAO_IPCSHMEM_API(dev)->read(dev, buf, n);
++}
++
++static inline void bao_ipcshmem_notify(const struct device *dev) {
++    BAO_IPCSHMEM_API(dev)->notify(dev);
++}
++
++static inline unsigned bao_ipcshmem_id(const struct device *dev) {
++    return BAO_IPCSHMEM_API(dev)->id(dev);
++}
++
++static inline void bao_ipcshmem_irq_enable(const struct device *dev) {
++    BAO_IPCSHMEM_API(dev)->irq_set_enable(dev);
++}
++
++static inline void bao_ipcshmem_irq_set_callback(const struct device *dev,
++    bao_ipcshmem_callback_t callback)
++{
++    BAO_IPCSHMEM_API(dev)->irq_set_callback(dev, callback);
++}
++
++#endif /* BAO_IPCSHMEM_H_ */
+-- 
+2.34.1
+

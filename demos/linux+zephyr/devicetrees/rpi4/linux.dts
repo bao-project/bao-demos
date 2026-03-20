@@ -22,14 +22,6 @@
 			enable-method = "psci";
 			reg = <0x1>;
 		};
-
-		cpu@2 {
-			compatible = "arm,armv8";
-			device_type = "cpu";
-			enable-method = "psci";
-			reg = <0x2>;
-		};
-
 	};
 
 	psci {
@@ -37,8 +29,8 @@
 		method = "smc";
 	};
 
-	memory@20000000 {
-		reg = <0x0 0x20000000 0x0 0x40000000>;
+	memory@40000000 {
+		reg = <0x0 0x40000000 0x0 0x40000000>;
 		device_type = "memory";
 	};
 

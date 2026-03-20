@@ -1,0 +1,44 @@
+// t32 Wed Feb 11 13:09:13 2026
+
+B::
+
+TOOLBAR   ON
+STATUSBAR ON
+FramePOS 320.0,2.0769,,,Maximized
+WinPAGE.RESet
+
+WinPAGE.Create P000
+WinCLEAR
+
+WinPOS 214.17 0.0 102. 18. 0. 0. W007
+ws.Var.Local
+
+WinPOS 117.0 42.769 103. 5. 0. 1. W010
+WinTABS 9. 250.
+ws.CORE.List
+
+WinPOS 224.0 21.769 80. 13. 5. 0. W006
+wl.Frame /Locals /Caller
+
+WinPOS 118.0 21.846 102. 17. 0. 0. W004
+ws.per , "MC_ME"
+WinPAN 0. -160.
+
+WinPOS 118.0 51.615 103. 4. 26. 1. W008
+WinTABS 8. 16. 0. 0. 20. 0. 0. 0. 0. 18.
+ws.Break.List
+
+WinPOS 224.17 42.846 79. 12. 0. 0. W005
+wl.Var.Watch
+
+
+WinPOS 118.0 0.0 79. 15. 0. 0. W002
+wl.Register
+
+WinPOS 0.0 0.0 114. 55. 16. 1. W001
+WinTABS 10. 10. 25.
+ws.List
+
+WinPAGE.select P000
+
+ENDDO

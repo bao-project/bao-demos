@@ -1,0 +1,15 @@
+devices:
+  - id: 3
+    type: "net"
+    mmio_addr: 0xa003e00
+    data_plane: virtio
+    tap_name: "tap1"
+    mac_addr: "52:54:00:aa:bb:02"
+  - id: 4
+    type: "block"
+    mmio_addr: 0xa003c00
+    data_plane: virtio
+    file_path: "/etc/ext4_frontend_vm2_image.img"
+    read_only: false
+    root_device: true
+    advertise_flush: false

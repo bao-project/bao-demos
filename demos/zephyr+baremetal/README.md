@@ -13,7 +13,7 @@ peripherals where one is assigned to the baremetal app and the other to Zephyr.
 Each time the baremetal app receives a UART interrupt it will update the shared
 memory region with a message.
 
-Zephyr is configured with its shell enabled plus an aditional 'baoipc' command 
+Zephyr is configured with its shell enabled plus an additional 'baoipc' command
 used for interacting with the baremetal app via the shared memory object. To 
 read the baremetal app message run:
 
@@ -36,15 +36,14 @@ Configure the baremetal app for communication:
 export BAREMETAL_PARAMS="DEMO_IPC=y"
 ```
 
-If you are targetting an MPU platform (i.e. fvp-r), set:
+If you are targeting a fvp-r MPU-based platforms, set:
 
 ```
 export FVPR_VM_IMAGES="$BAO_DEMOS_WRKDIR_IMGS/zephyr.bin@0x24000000 \
     $BAO_DEMOS_WRKDIR_IMGS/baremetal.bin@0x10000000"
 ```
 
-To build the baremetal app, in case you are targeting an MPU platform (e.g.
-fvp-r), set:
+To build the baremetal app, in case you are targeting fvp-r MPU-based platforms, set:
 
 ```
 export BAREMETAL_PARAMS="$BAREMETAL_PARAMS MEM_BASE=0x10000000"

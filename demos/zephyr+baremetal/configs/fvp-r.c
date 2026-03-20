@@ -12,7 +12,7 @@ struct config config = {
     },
 
     .vmlist_size = 2,
-    .vmlist = {
+    .vmlist = (struct vm_config[]) {
         {
             .image = VM_IMAGE_LOADED(0x24000000, 0x24000000, 1 * 1024 * 1024),
 

@@ -1,0 +1,67 @@
+/**
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) Bao Project and Contributors. All rights reserved.
+ */
+#include <platform.h>
+#include <fences.h>
+#include <cpu.h>
+#include <plat/plat_regs.h>
+
+#define SIUL2_0_BASE                (0x40520000UL)
+#define SIUL2_IMCR_UART0_RX_OFF     (47UL)
+
+#define UART0_TX_PIN                (0UL)
+#define UART0_RX_PIN                (1UL)
+
+#define MC_CGM_0_BASE               (0x40030000UL)
+#define MC_CGM_0_MUX_4_CSC_SAFE     (1UL << 3UL)
+#define MC_CGM_0_MUX_4_CSS_SWIP     (1UL << 16UL)
+#define MC_CGM_0_MUX_4_DC_0_DE      (1UL << 31UL)
+
+volatile struct siul2_hw* siul2_0 = (struct siul2_hw*)SIUL2_0_BASE;
+volatile struct mc_cgm_hw* mc_cgm_0 = (struct mc_cgm_hw*)MC_CGM_0_BASE;
+
+static void plat_uart0_iomux(void)
+{
+    /* Configure IOMUX settings for console (UART TX Pin) */
+    /* Map siul2_0 region */
+    mem_alloc_map_dev(&cpu()->as, SEC_HYP_GLOBAL, (uint32_t)INVALID_VA, (uint32_t)SIUL2_0_BASE,
+        NUM_PAGES(sizeof(struct siul2_hw)));
+    /* Configure SIUL2 settings for console (UART TX Pin) */
+    siul2_0->MSCR[UART0_TX_PIN] = SIUL2_MSCR_TX;
+    /* Configure SIUL2 settings for console (UART RX Pin) */
+    siul2_0->MSCR[UART0_RX_PIN] = SIUL2_MSCR_RX;
+    siul2_0->IMCR[SIUL2_IMCR_UART0_RX_OFF] = SIUL2_IMCR_RX;
+
+    /* Unmap siul2_0 region */
+    mem_unmap(&cpu()->as, SIUL2_0_BASE, NUM_PAGES(sizeof(struct siul2_hw)), false);
+}
+
+static void plat_uart0_clock(void)
+{
+    /* Configure clock settings for console */
+    /* Map MC_CGM_0 region */
+    mem_alloc_map_dev(&cpu()->as, SEC_HYP_GLOBAL, (uint32_t)INVALID_VA, (uint32_t)MC_CGM_0_BASE,
+        NUM_PAGES(sizeof(struct mc_cgm_hw)));
+
+    /* Configure clock source for console (FIRC_CLK)*/
+    mc_cgm_0->MUX_4_CSC = MC_CGM_0_MUX_4_CSC_SAFE;
+
+    while ((mc_cgm_0->MUX_4_CSS & MC_CGM_0_MUX_4_CSS_SWIP) != 0)
+        ;
+
+    /* Enable divider */
+    mc_cgm_0->MUX_4_DC_0 = MC_CGM_0_MUX_4_DC_0_DE;
+
+    /* Unmap MC_CGM_0 region */
+    mem_unmap(&cpu()->as, MC_CGM_0_BASE, NUM_PAGES(sizeof(struct mc_cgm_hw)), false);
+}
+
+void platform_config_init(void)
+{
+    if (cpu_is_master()) {
+        /* Configure iomux and clock for baremetal guest (UART0) */
+        plat_uart0_iomux();
+        plat_uart0_clock();
+    }
+}

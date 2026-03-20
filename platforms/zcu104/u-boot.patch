@@ -1,0 +1,18 @@
+diff --git a/board/xilinx/zynqmp/zynqmp.c b/board/xilinx/zynqmp/zynqmp.c
+index 579708d2..d8607eff 100644
+--- a/board/xilinx/zynqmp/zynqmp.c
++++ b/board/xilinx/zynqmp/zynqmp.c
+@@ -227,9 +227,10 @@ unsigned long do_go_exec(ulong (*entry)(int, char * const []), int argc,
+ 	if (current_el() > 1) {
+ 		smp_kick_all_cpus();
+ 		dcache_disable();
+-		armv8_switch_to_el1(0x0, 0, 0, 0, (unsigned long)entry,
+-				    ES_TO_AARCH64);
+-	} else {
++		// armv8_switch_to_el1(0x0, 0, 0, 0, (unsigned long)entry,
++		// 		    ES_TO_AARCH64);
++        entry(0, NULL);
++	} else {
+ 		printf("FAIL: current EL is not above EL1\n");
+ 		ret = EINVAL;
+ 	}

@@ -1,0 +1,8 @@
+board:
+  name: baovm_fvp-r-aarch32
+  full_name: FVP Emulation FVP_BaseR_AEMv8R (SMP)
+  vendor: arm
+  socs:
+  - name: fvp_aemv8r_aarch32
+    variants:
+    - name: 'smp'

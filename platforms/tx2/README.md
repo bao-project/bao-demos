@@ -19,7 +19,7 @@ Download and build TF-A:
 ```
 export BAO_DEMOS_ATF=$BAO_DEMOS_WRKDIR_SRC/arm-trusted-firmware 
 git clone https://github.com/bao-project/arm-trusted-firmware.git\
-    $BAO_DEMOS_ATF --branch bao/demo --depth 1
+    $BAO_DEMOS_ATF --branch bao/demo-next --depth 1
 cd $BAO_DEMOS_ATF
 make PLAT=tegra TARGET_SOC=t186 bl31
 ```
@@ -39,9 +39,8 @@ TX2's [L4T Driver Package (BSP)][tegra-bsp]. Then extract it:
 export BAO_DEMOS_NVIDIA_TOOLS=$BAO_DEMOS_WRKDIR_SRC/nvidia-tools
 mkdir -p $BAO_DEMOS_NVIDIA_TOOLS
 wget -P $BAO_DEMOS_NVIDIA_TOOLS/\
-    https://developer.nvidia.com/embedded/l4t/r32_release_v5.1/\
-r32_release_v5.1/t186/tegra186_linux_r32.5.1_aarch64.tbz2
-tar xfvm $BAO_DEMOS_NVIDIA_TOOLS/tegra186_linux_r32.5.1_aarch64.tbz2\
+    https://developer.nvidia.com/downloads/embedded/l4t/r32_release_v7.6/t186/jetson_linux_r32.7.6_aarch64.tbz2
+tar xfvm $BAO_DEMOS_NVIDIA_TOOLS/jetson_linux_r32.7.6_aarch64.tbz2\
     -C $BAO_DEMOS_NVIDIA_TOOLS
 ```
 
@@ -91,8 +90,8 @@ umount $BAO_DEMOS_SDCARD
 
 Insert the sd card in the board's sd slot.
 
-Connect to the TX2's UART using a USB-to-TTL adapter. Use a terminal 
-application such as `screen`. For example:
+Connect to the TX2's UART using a USB-to-TTL adapter (J21 connector - P23(TX), P24(RX)). Use a
+terminal application such as `screen`. For example:
 
 ```
 screen /dev/ttyUSB0 115200
@@ -109,7 +108,7 @@ You will get u-boot's prompt. Load the bao image, and jump to it:
 fatload mmc 1 0xa0000000 bao.bin; go 0xa0000000
 ```
 
-You should see the firmare, bao and its guests printing on the UART.
+You should see the firmware, bao and its guests printing on the UART.
 
 At this point, depending on your demo, you might be able connect to one of the 
 guests via ssh by connecting to the board's ethernet RJ45 socket.

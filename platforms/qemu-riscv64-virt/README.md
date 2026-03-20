@@ -15,7 +15,7 @@ make sure you are using version 7.2.0 or higher. If so, you can skip this step.
 ```
 export BAO_DEMOS_QEMU=$BAO_DEMOS_WRKDIR_SRC/qemu-$ARCH
 git clone https://github.com/qemu/qemu.git $BAO_DEMOS_QEMU --depth 1\
-   --branch v7.2.0
+   --branch v10.0.2 
 cd $BAO_DEMOS_QEMU
 ./configure --target-list=riscv64-softmmu --enable-slirp
 make -j$(nproc)
@@ -27,7 +27,7 @@ sudo make install
 ```
 export BAO_DEMOS_OPENSBI=$BAO_DEMOS_WRKDIR_SRC/opensbi
 git clone https://github.com/bao-project/opensbi.git $BAO_DEMOS_OPENSBI\
-    --depth 1 --branch bao/demo
+    --depth 1 --branch bao/demo-next
 make -C $BAO_DEMOS_OPENSBI PLATFORM=generic \
     FW_PAYLOAD=y \
     FW_PAYLOAD_FDT_ADDR=0x80100000\
@@ -42,7 +42,8 @@ cp $BAO_DEMOS_OPENSBI/build/platform/generic/firmware/fw_payload.elf\
  qemu-system-riscv64 -nographic\
     -M virt -cpu rv64 -m 4G -smp 4\
     -bios $BAO_DEMOS_WRKDIR_IMGS/opensbi.elf\
-    -device virtio-net-device,netdev=net0 -netdev user,id=net0,hostfwd=tcp:127.0.0.1:5555-:22\
+    -device virtio-net-device,netdev=net0 \
+    -netdev user,id=net0,net=192.168.42.0/24,hostfwd=tcp:127.0.0.1:5555-:22\
     -device virtio-serial-device -chardev pty,id=serial3 -device virtconsole,chardev=serial3 -S
 ```
 

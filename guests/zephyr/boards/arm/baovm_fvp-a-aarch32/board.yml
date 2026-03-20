@@ -1,0 +1,6 @@
+board:
+  name: baovm_fvp-a-aarch32
+  full_name: BASE RevC AEMv8A Fixed Virtual Platforms
+  vendor: arm
+  socs:
+  - name: fvp_aemv8r_aarch32

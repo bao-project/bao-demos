@@ -2,7 +2,7 @@
 
 ## 1) Setup firmware
 
-Creat a directory to put the imx build tools:
+Create a directory to put the imx build tools:
 
 ```
 export BAO_DEMOS_NXP_TOOLS=$BAO_DEMOS_WRKDIR_SRC/nxp-tools
@@ -21,7 +21,7 @@ chmod +x imx-sc-firmware-1.5.0.bin
 
 ### 1.2) SECO
 
-Download the and install the seco binary:
+Download and install the seco binary:
 
 ```
 wget -P $BAO_DEMOS_NXP_TOOLS\
@@ -39,13 +39,29 @@ Setup the u-boot directory variable:
 export BAO_DEMOS_UBOOT=$BAO_DEMOS_WRKDIR_SRC/u-boot
 ```
 
-Download, configure and build it:
+Download, configure it:
 
 ```
 git clone https://github.com/u-boot/u-boot.git $BAO_DEMOS_UBOOT\
-    --depth 1 --branch v2022.10
+    --depth 1 --branch v2025.07
 cd $BAO_DEMOS_UBOOT
 make imx8qm_mek_defconfig
+```
+
+Now you need to set the Kconfig options:
+
+* CONFIG_AUTOBOOT=n
+
+You can do it via using an interface such as `menuconfig` or just write them 
+directly to the config file:
+
+```
+echo "CONFIG_AUTOBOOT=n\n" >> $BAO_DEMOS_UBOOT/.config
+```
+
+And build it:
+
+```
 make -j $(nproc)
 ```
 
@@ -67,7 +83,7 @@ Download and build it:
 
 ```
 git clone https://github.com/bao-project/arm-trusted-firmware.git\
-    $BAO_DEMOS_ATF --branch bao/demo --depth 1
+    $BAO_DEMOS_ATF --branch bao/demo-next --depth 1
 cd $BAO_DEMOS_ATF
 make PLAT=imx8qm bl31
 ```
@@ -131,7 +147,7 @@ umount $BAO_DEMOS_SDCARD
 <!--- instruction#2 -->
 ## 3) Setup board
 
-Make sure you have the board configured to boot from SD card. Checkout out the
+Make sure you have the board configured to boot from SD card. Check out the
 [Get Started with the i.MX 8QuadMax MEK](https://www.nxp.com/document/guide/get-started-with-the-i-mx-8quadmax-mek:GS-iMX-8QM-MEK) 
 guide for more information on the boot switch setup.
 

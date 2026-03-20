@@ -15,11 +15,11 @@ export BAO_DEMOS_LINUX_REPO=https://source.codeaurora.org/external/imx/linux-imx
 export BAO_DEMOS_LINUX_VERSION=rel_imx_5.4.24_2.1.0
 ```
 
-For all other platforms clone the lastest mainline Linux release:
+For all other platforms clone the latest mainline Linux release:
 
 ```
 export BAO_DEMOS_LINUX_REPO=https://github.com/torvalds/linux.git
-export BAO_DEMOS_LINUX_VERSION=v6.1
+export BAO_DEMOS_LINUX_VERSION=v6.15
 ```
 
 Setup an environment variable pointing to Linux's source code:
@@ -43,7 +43,8 @@ platform specific config to be used by buildroot:
 ```
 export BAO_DEMOS_LINUX_CFG_FRAG=$(ls $BAO_DEMOS_LINUX/configs/base.config\
     $BAO_DEMOS_LINUX/configs/$ARCH.config\
-    $BAO_DEMOS_LINUX/configs/$PLATFORM.config 2> /dev/null)
+    $BAO_DEMOS_LINUX/configs/$PLATFORM.config\
+    $BAO_DEMOS_LINUX/configs/$DEMO.config 2> /dev/null)
 ```
 
 ## Use Buildroot to build Linux with a built-in initramfs
@@ -55,13 +56,14 @@ export BAO_DEMOS_BUILDROOT=$BAO_DEMOS_WRKDIR_SRC/\
 buildroot-$ARCH-$BAO_DEMOS_LINUX_VERSION
 export BAO_DEMOS_BUILDROOT_DEFCFG=$BAO_DEMOS_LINUX/buildroot/$ARCH.config
 export LINUX_OVERRIDE_SRCDIR=$BAO_DEMOS_LINUX_SRC
+export BR2_EXTERNAL=$BAO_DEMOS_BUILDROOT/external
 ```
 
 Clone the latest buildroot at the latest stable version:
 
 ```
 git clone https://github.com/buildroot/buildroot.git $BAO_DEMOS_BUILDROOT\
-    --depth 1 --branch 2022.11
+    --depth 1 --branch 2025.05
 cd $BAO_DEMOS_BUILDROOT
 ```
 

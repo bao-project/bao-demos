@@ -15,7 +15,7 @@ make sure you are using version 7.2.0 or higher. If so, you can skip this step.
 ```
 export BAO_DEMOS_QEMU=$BAO_DEMOS_WRKDIR_SRC/qemu-$ARCH
 git clone https://github.com/qemu/qemu.git $BAO_DEMOS_QEMU --depth 1\
-   --branch v7.2.0
+   --branch v10.0.2
 cd $BAO_DEMOS_QEMU
 ./configure --target-list=aarch64-softmmu --enable-slirp
 make -j$(nproc)
@@ -28,7 +28,7 @@ sudo make install
 ```
 export BAO_DEMOS_UBOOT=$BAO_DEMOS_WRKDIR_SRC/u-boot
 git clone https://github.com/u-boot/u-boot.git $BAO_DEMOS_UBOOT --depth 1\
-   --branch v2022.10
+   --branch v2025.07
 cd $BAO_DEMOS_UBOOT
 make qemu_arm64_defconfig
 ```
@@ -37,6 +37,7 @@ Now you need to set the Kconfig options:
 
 * CONFIG_TFABOOT=y
 * CONFIG_SYS_TEXT_BASE=0x60000000
+* CONFIG_AUTOBOOT=n
 
 You can do it via using an interface such as `menuconfig` or just write them 
 directly to the config file:
@@ -44,6 +45,7 @@ directly to the config file:
 ```
 echo "CONFIG_TFABOOT=y" >> .config
 echo "CONFIG_SYS_TEXT_BASE=0x60000000" >> .config
+echo "CONFIG_AUTOBOOT=n\n" >> $BAO_DEMOS_UBOOT/.config
 ```
 
 Then build it:
@@ -63,7 +65,7 @@ cp $BAO_DEMOS_UBOOT/u-boot.bin $BAO_DEMOS_WRKDIR/imgs/$PLATFORM
 ```
 export BAO_DEMOS_ATF=$BAO_DEMOS_WRKDIR_SRC/arm-trusted-firmware
 git clone https://github.com/bao-project/arm-trusted-firmware.git\
-   $BAO_DEMOS_ATF --branch bao/demo --depth 1
+   $BAO_DEMOS_ATF --branch bao/demo-next --depth 1
 cd $BAO_DEMOS_ATF
 make PLAT=qemu bl1 fip BL33=$BAO_DEMOS_WRKDIR/imgs/$PLATFORM/u-boot.bin\
    QEMU_USE_GIC_DRIVER=QEMU_GICV3
@@ -81,7 +83,8 @@ qemu-system-aarch64 -nographic\
    -cpu cortex-a53 -smp 4 -m 4G\
    -bios $BAO_DEMOS_WRKDIR/imgs/$PLATFORM/flash.bin \
    -device loader,file="$BAO_DEMOS_WRKDIR_IMGS/bao.bin",addr=0x50000000,force-raw=on\
-   -device virtio-net-device,netdev=net0 -netdev user,id=net0,hostfwd=tcp:127.0.0.1:5555-:22\
+   -device virtio-net-device,netdev=net0\
+   -netdev user,id=net0,net=192.168.42.0/24,hostfwd=tcp:127.0.0.1:5555-:22\
    -device virtio-serial-device -chardev pty,id=serial3 -device virtconsole,chardev=serial3
 ```
 

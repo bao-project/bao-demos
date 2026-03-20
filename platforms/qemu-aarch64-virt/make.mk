@@ -4,7 +4,7 @@ include $(bao_demos)/platforms/qemu.mk
 
 include $(bao_demos)/platforms/uboot.mk
 uboot_defconfig:=qemu_arm64_defconfig
-uboot_cfg_frag:="CONFIG_SYS_TEXT_BASE=0x60000000\nCONFIG_TFABOOT=y\n"
+uboot_cfg_frag:="CONFIG_SYS_TEXT_BASE=0x60000000\nCONFIG_TFABOOT=y\nCONFIG_AUTOBOOT=n\n"
 uboot_image:=$(wrkdir_plat_imgs)/u-boot.bin
 $(eval $(call build-uboot, $(uboot_image), $(uboot_defconfig), $(uboot_cfg_frag)))
 

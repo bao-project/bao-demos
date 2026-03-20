@@ -1,0 +1,94 @@
+/* Needed for PA0_LIN_0_TX / PA1_LIN_0_RX macros */
+#include <nxp/s32/S32Z27-BGA594-pinctrl.h>
+#include <zephyr/dt-bindings/memory-attr/memory-attr-arm.h>
+/*
+ * Overlay tweaks for S32Z270 DC: add dram2 at 0x32200000 (1 MiB),
+ * and make /chosen use dram2 as sram and a local label cram1 for the
+ * existing cram0 as the flash region.
+ */
+
+/ {
+    chosen {
+        zephyr,sram = &dram2;
+        zephyr,flash = &cram2;
+        zephyr,console = &uart9;
+        zephyr,shell-uart = &uart9;
+    };
+};
+
+&{/soc} {
+    cram2: memory@32300000 {
+        compatible = "mmio-sram";
+        reg = <0x32300000 DT_SIZE_M(1)>;
+        status = "okay";
+    };
+    dram2: memory@31800000 {
+        compatible = "mmio-sram";
+        reg = <0x31800000 DT_SIZE_K(256)>;
+        status = "okay";
+    };
+};
+
+
+/ {
+    bao-ipc@31840000 {
+        compatible = "bao,ipcshmem";
+        reg = <0x31840000 0x0004000>;
+        read-channel = <0x0 0x2000>;
+        write-channel = <0x2000 0x2000>;
+        interrupts = <0 52 1 0>;
+        interrupt-parent = <&gic>;
+        id = <0>;
+        zephyr,memory-region = "RAM";
+        zephyr,memory-attr = <( DT_MEM_ARM(ATTR_MPU_RAM) )>;
+        status = "okay";
+    };
+};
+
+/delete-node/ &{/bao-ipc@70000000};
+
+&clock {
+    status = "disabled";
+};
+
+&uart9 {
+    status = "okay";
+    pinctrl-0 = <&uart9_default>;
+    pinctrl-names = "default";
+};
+
+&canxl0 {
+    status = "disabled";
+};
+
+&s26hs512t {
+    status = "disabled";
+};
+
+&mru0 {
+    status = "disabled";
+};
+
+&mru0 {
+    status = "disabled";
+};
+
+&emdio {
+    status = "disabled";
+};
+
+&phy0 {
+    status = "disabled";
+};
+
+&enetc_psi0 {
+    status = "disabled";
+};
+
+&qspi0 {
+    status = "disabled";
+};
+
+&swt0 {
+    status = "disabled";
+};

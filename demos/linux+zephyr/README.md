@@ -27,7 +27,7 @@ Zephyr message by reading `/dev/baoipc0`:
 cat /dev/baoipc0
 ```
 
-If you are targetting an MPU platform (i.e. fvp-r), set:
+If you are targeting an MPU platform (i.e. fvp-r), set:
 
 ```
 export FVPR_VM_IMAGES="$BAO_DEMOS_WRKDIR_IMGS/zephyr.bin@0x24000000 \

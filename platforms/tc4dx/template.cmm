@@ -1,0 +1,171 @@
+LOCAL &ToolsDir
+&ToolsDir="~~/demo/tricore/hardware/tools/tc4x"
+
+; --------------------------------------------------------------------------------
+; initialize and start the debugger
+;RESet
+
+SYStem.CPU TC4D9XE
+
+CORE.ASSIGN 1. 2. 3. 4. 5. 6.  // assign cores to the SMP system
+
+; disable serial trace until it is configured
+IF Analyzer()
+  Analyzer.DISable
+SYStem.Up
+
+; --------------------------------------------------------------------------------
+; Check PreRequisites
+GOSUB CheckPreRequisites
+
+; --------------------------------------------------------------------------------
+; optional settings:
+SYStem.Option DUALPORT ON
+SETUP.Var %SpotLight
+MAP.BOnchip 0x0--0xffffffff // force onchip-breakpoints
+
+; --------------------------------------------------------------------------------
+; Flash programming
+LOCAL &elfFile &progFlash &bmhdResult
+
+LOCAL &bao_elf &baremetal_elf
+
+
+&bao_elf="@BAO_ELF@"
+&baremetal_elf="@BAREMETAL_ELF@"
+&elfFile="&bao_elf"
+
+; prepare flash programming (declarations)
+DO ~~/demo/tricore/flash/tc4dx.cmm CPU=TC4D9XE PREPARE_HOST
+
+; check if application is already in flash and load symbols
+Data.LOAD.Elf "&elfFile" /DIFF /SingleLineAdjacent
+
+IF FOUND()
+(
+  DIALOG.YESNO "Program Bao into flash memory?"
+  ENTRY &progFlash
+  &progFlash=TRUE()
+)
+ELSE
+(
+  &progFlash=FALSE()
+)
+IF (&progFlash)
+(
+  ; ==== Step 0: Initialize DSPR/PSPR ====
+
+  DO &ToolsDir/meminit_host.cmm "CPU*"
+
+  ; ==== Step 1: Program TriCore code ====
+
+  ; enable flash programming
+  FLASH.ReProgram ALL
+
+  ; load demo application
+  Data.LOAD.Elf "&elfFile"
+
+  FLASH.ReProgram OFF
+
+  ; ==== Step 2: Write boot mode header ====
+
+  PRIVATE &progUcb &ucbDiff &supported &diffAddress &DMU_GP_HOST_CONFIRMA &result
+  &progUcb=TRUE()
+  ; Check if UCB is in state UNLOCKED. Other states are not supported by this script
+  &DMU_GP_HOST_CONFIRMA=Data.Long(ANC:0xF8040530)
+  &supported=(((&DMU_GP_HOST_CONFIRMA)&(0x00030000))==0x00010000)
+
+  IF !&supported
+  (
+    DIALOG.MESSAGE "UCB_RTC_BMHD0 is not in state unlocked or unread"
+  )
+
+  ; Check if we need to program the BMHD
+  &ucbDiff=FALSE()
+
+  IF &supported
+  (
+    Data.LOAD.Elf "&elfFile" ANC:0xAE404800++0x7FF /DIFF
+    &ucbDiff=FOUND()
+  )
+
+  IF (&ucbDiff)
+  (
+    DIALOG.YESNO "Configure UCB_RTC_BMHD0 to start demo application?"
+    ENTRY &progUcb
+  )
+
+  IF (&progUcb)
+  (
+    ; programming UCB_RTC_BMHD0
+    IF (&ucbDiff)
+    (
+      ; activate UCB_RTC_BMHD0 modification
+      DO ~~/demo/tricore/flash/tc4x-ucb.cmm UCB=UCB_RTC_BMHD0 ACTIVATE
+
+      ; load data of UCB_RTC_BMHD0
+      Data.LOAD.Elf "&elfFile" ANC:0xAE404800++0x7FF
+
+      ; Perform a formal verification of the UCB_RTC_BMHD0 content.
+      ; If the content is formally correct then program the changes to the device.
+      ; If the check detected invalid content the flash programming is aborted.
+      ; In any case NOP protection is restored for UCB_RTC_BMHD0 range.
+      DO ~~/demo/tricore/flash/tc4x-ucb.cmm UCB=UCB_RTC_BMHD0 PROGRAM
+      ENTRY &result
+
+      IF ("&result"!="UCBOK")
+        ENDDO
+
+      Data.LOAD.Elf "&elfFile" ANC:0xAE404800++0x7FF /DIFF
+      IF FOUND()
+      (
+        &diffAddress=TRACK.ADDRESS()
+        DIALOG.MESSAGE "File &elfFile has not been fully flashed, difference found at address &diffAddress (BMHD0_COPY)"
+        ENDDO
+      )
+    )
+  )
+  ; ==== Step 3: Verify programming ====
+
+  Data.LOAD.Elf "&elfFile" /DIFF
+  IF FOUND()
+  (
+    ; maybe some sections are still declared as NOP?
+    &diffAddress=TRACK.ADDRESS()
+    DIALOG.MESSAGE "File &elfFile has not been fully flashed, difference found at address &diffAddress (check flash declaration)"
+  )
+)
+; --------------------------------------------------------------------------------
+; configure USR access to read 64-bit STM registers
+Data.USRACCESS 0xC0000000 0xD0000000 1024. ~~/demo/tricore/etc/usraccess/usraccess.gnu.bin
+; start program execution
+
+Data.LOAD.Elf &baremetal_elf /NoCode /NoClear
+
+; --------------------------------------------------------------------------------
+
+ENDDO
+
+
+
+SUBROUTINE CheckPreRequisites
+(
+  PRIVATE &result
+
+  IF SYStem.Mode()<5.
+  (
+    PRINT %ERROR "The communication with the CPU is not established"
+    ENDDO
+  )
+  ; Check CSRM boot mode
+  DO &ToolsDir/check_demo_config.cmm CSRMCFG_is_Default
+  ENTRY &result
+  IF !&result
+    ENDDO
+
+  ; Check Boot Mode Lock
+  DO &ToolsDir/check_demo_config.cmm BML_is_Default
+  ENTRY &result
+  IF !&result
+    ENDDO
+)
