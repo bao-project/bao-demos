@@ -21,4 +21,3 @@ $(pac_image): $(bao_image) $(guest_images) $(pac_tool_dir)/bao_pac.sh
 	$(pac_tool_dir)/bao_pac.sh $(bao_image) $(guest_images)
 
 platform: $(pac_image)
-

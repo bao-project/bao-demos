@@ -8,6 +8,12 @@ To build a demo, use the standard `make` command from the root `bao-demos` direc
 
 ### Prerequisites
 *   `arm-none-eabi-` toolchain (AArch32)
+*   `python3`
+*   `kconfiglib` Python package for the NuttX guest demos
+
+For demos that include NuttX guests, the build system generates local
+wrappers for the upstream `kconfiglib` command-line tools under
+`wrkdir/bin/nuttx-kconfig/bin`.
 
 ### Building Baremetal
 ```bash
