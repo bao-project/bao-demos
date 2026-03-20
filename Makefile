@@ -73,7 +73,7 @@ environment+=BAO_DEMOS_SDCARD=/media/$$USER/boot
 all: platform
 
 bao_repo:=https://github.com/bao-project/bao-hypervisor
-bao_version:=demo-next
+bao_version:=1a78ca35e21f25b1196b8ac11aff59f35427cc8f
 bao_src:=$(wrkdir_src)/bao
 bao_cfg_repo:=$(wrkdir_demo_imgs)/config
 wrkdirs+=$(bao_cfg_repo)
@@ -91,7 +91,8 @@ guests: $(guest_images)
 
 ifndef BAO_SRC_DEFINED
 $(bao_src):
-	git clone --branch $(bao_version) $(bao_repo) $(bao_src)
+	git clone $(bao_repo) $@
+	cd $@ && git checkout $(bao_version)
 endif
 
 $(bao_cfg): | $(bao_cfg_repo)

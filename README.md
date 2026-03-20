@@ -8,6 +8,7 @@ systems and targeting several supported platforms. The available demos are:
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
 * [Dual-guest Linux+Zephyr](demos/linux+zephyr/README.md)
 * [Dual-guest Zephyr+Baremetal](demos/zephyr+baremetal/README.md)
+* [Dual-guest Nuttx+Baremetal](demos/nuttx+baremetal/README.md)
 * [Four-guest VirtIO Demo](demos/virtio/README.md)
 
 ---
@@ -189,6 +190,7 @@ Build guests according to the target demo:
 * [Dual-Guest Linux+Zephyr](demos/linux+zephyr/README.md)
 * [Dual-Guest Zephyr+Baremetal](demos/zephyr+baremetal/README.md)
 * [Dual-Guest Torizon OS+FreeRTOS](demos/torizonos+freertos/README.md)
+* [Dual-Guest Nuttx+Baremetal](demos/nuttx+baremetal/README.md)
 
 
 ### B.4) Build Bao
@@ -197,8 +199,8 @@ Clone Bao's repo to the working directory:
 
 ```
 export BAO_DEMOS_BAO=$BAO_DEMOS_WRKDIR_SRC/bao
-git clone https://github.com/bao-project/bao-hypervisor $BAO_DEMOS_BAO\
-    --branch demo-next
+git clone https://github.com/bao-project/bao-hypervisor $BAO_DEMOS_BAO
+(cd $BAO_DEMOS_BAO && git checkout 1a78ca35e21f25b1196b8ac11aff59f35427cc8f)
 ```
 
 Copy your config to the working directory:
@@ -250,7 +252,7 @@ Build the firmware and deploy the system according to the target platform:
 * [FVP-A Aarch32](platforms/fvp-a-aarch32/README.md)
 * [FVP-R Aarch32](platforms/fvp-r-aarch32/README.md)
 * [NXP S32Z270](platforms/s32z270/README.md)
-* [E3650](platforms/e3650/README.md)
+* [Semidrive E3650](platforms/e3650/README.md)
 
 #### RISC-V platforms:
 * [QEMU virt](platforms/qemu-riscv64-virt/README.md)
@@ -284,7 +286,7 @@ Build the firmware and deploy the system according to the target platform:
 | SpacemiT K3 CoM260  | k3-com260         | riscv64 |
 | RH850-U2A16         | rh850-u2a16       | rh850   |
 | Infineon TC4Dx COM  | tc4dx             | tricore |
-| E3650               | e3650             | aarch32 |
+| Semidrive E3650     | e3650             | aarch32 |
 | iMX8MP Verdin       | imx8mp-verdin     | aarch64 |
 
 |                  | DEMO             |
@@ -293,31 +295,32 @@ Build the firmware and deploy the system according to the target platform:
 | Linux+FreeRTOS   | linux+freertos   |
 | Linux+Zephyr     | linux+zephyr     |
 | Zephyr+Baremetal | zephyr+baremetal |
-| VirtIO | virtio |
+| Nuttx+Baremetal  | nuttx+baremetal  |
+| VirtIO           | virtio           |
 
 ## Appendix II
 
-|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal | virtio | torizonos+freertos |
-| ----------------- | --------- | -------------- | ------------ | ---------------- | ------ | ------------------ |
-| zcu102            | x         | x              |              |                  | x      |                    |
-| zcu104            | x         | x              |              |                  | x      |                    |
-| imx8qm            | x         | x              |              |                  |        |                    |
-| s32g3             | x         | x              |              |                  |        |                    |
-| tx2               | x         | x              |              |                  |        |                    |
-| rpi4              | x         | x              | x            |                  | x      |                    |
-| qemu-aarch64-virt | x         | x              | x            |                  | x      |                    |
-| fvp-a             | x         | x              | x            | x                |        |                    |
-| fvp-a-aarch32     | x         | x              | x            | x                |        |                    |
-| fvp-r             | x         | x              | x            | x                |        |                    |
-| fvp-r-aarch32     | x         |                |              | x                |        |                    |
-| s32z270           | x         |                |              | x                |        |                    |
-| qemu-riscv64-virt | x         | x              |              |                  | x      |                    |
-| qemu-riscv32-virt | x         | x              |              |                  |        |                    |
-| k3-com260         | x         | x              |              |                  |        |                    |
-| rh850-u2a16       | x         |                |              |                  |        |                    |
-| tc4dx             | x         |                |              |                  |        |                    |
-| e3650             | x         |                |              |                  |        |                    |
-| imx8mp-verdin     | x         | x              |              |                  |        | x                  |
+|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal | virtio | torizonos+freertos | nuttx+baremetal |
+| ----------------- | --------- | -------------- | ------------ | ---------------- | ------ | ------------------ | --------------- |
+| zcu102            | x         | x              |              |                  | x      |                    |                 |
+| zcu104            | x         | x              |              |                  | x      |                    |                 |
+| imx8qm            | x         | x              |              |                  |        |                    |                 |
+| s32g3             | x         | x              |              |                  |        |                    |                 |
+| tx2               | x         | x              |              |                  |        |                    |                 |
+| rpi4              | x         | x              | x            |                  | x      |                    |                 |
+| qemu-aarch64-virt | x         | x              | x            |                  | x      |                    |                 |
+| fvp-a             | x         | x              | x            | x                |        |                    |                 |
+| fvp-a-aarch32     | x         | x              | x            | x                |        |                    |                 |
+| fvp-r             | x         | x              | x            | x                |        |                    |                 |
+| fvp-r-aarch32     | x         |                |              | x                |        |                    |                 |
+| s32z270           | x         |                |              | x                |        |                    |                 |
+| qemu-riscv64-virt | x         | x              |              |                  | x      |                    |                 |
+| qemu-riscv32-virt | x         | x              |              |                  |        |                    |                 |
+| k3-com260         | x         | x              |              |                  |        |                    |                 |
+| rh850-u2a16       | x         |                |              |                  |        |                    |                 |
+| tc4dx             | x         |                |              |                  |        |                    |                 |
+| e3650             | x         |                |              |                  |        |                    | x               |
+| imx8mp-verdin     | x         | x              |              |                  |        | x                  |                 |
 
 ---
 

@@ -1,0 +1,264 @@
+diff --git a/examples/bao_shmem/Kconfig b/examples/bao_shmem/Kconfig
+new file mode 100644
+index 0000000..f36d78a
+--- /dev/null
++++ b/examples/bao_shmem/Kconfig
+@@ -0,0 +1,25 @@
++#
++# SPDX-License-Identifier: Apache-2.0
++#
++
++config EXAMPLES_BAO_SHMEM
++	tristate "Bao shared memory demo"
++	default n
++	---help---
++		Enable a simple mailbox demo for the Bao NuttX plus baremetal setup.
++
++if EXAMPLES_BAO_SHMEM
++
++config EXAMPLES_BAO_SHMEM_PROGNAME
++	string "Program name"
++	default "shmdemo"
++
++config EXAMPLES_BAO_SHMEM_PRIORITY
++	int "Task priority"
++	default 100
++
++config EXAMPLES_BAO_SHMEM_STACKSIZE
++	int "Stack size"
++	default DEFAULT_TASK_STACKSIZE
++
++endif
+diff --git a/examples/bao_shmem/Makefile b/examples/bao_shmem/Makefile
+new file mode 100644
+index 0000000..692c85f
+--- /dev/null
++++ b/examples/bao_shmem/Makefile
+@@ -0,0 +1,17 @@
++############################################################################
++# apps/examples/bao_shmem/Makefile
++#
++# SPDX-License-Identifier: Apache-2.0
++#
++############################################################################
++
++include $(APPDIR)/Make.defs
++
++PROGNAME  = $(CONFIG_EXAMPLES_BAO_SHMEM_PROGNAME)
++PRIORITY  = $(CONFIG_EXAMPLES_BAO_SHMEM_PRIORITY)
++STACKSIZE = $(CONFIG_EXAMPLES_BAO_SHMEM_STACKSIZE)
++MODULE    = $(CONFIG_EXAMPLES_BAO_SHMEM)
++
++MAINSRC = bao_shmem_main.c
++
++include $(APPDIR)/Application.mk
+diff --git a/examples/bao_shmem/CMakeLists.txt b/examples/bao_shmem/CMakeLists.txt
+new file mode 100644
+index 0000000..d7932c9
+--- /dev/null
++++ b/examples/bao_shmem/CMakeLists.txt
+@@ -0,0 +1,18 @@
++# ##############################################################################
++# apps/examples/bao_shmem/CMakeLists.txt
++#
++# SPDX-License-Identifier: Apache-2.0
++#
++# ##############################################################################
++
++if(CONFIG_EXAMPLES_BAO_SHMEM)
++  nuttx_add_application(
++    NAME
++    ${CONFIG_EXAMPLES_BAO_SHMEM_PROGNAME}
++    SRCS
++    bao_shmem_main.c
++    STACKSIZE
++    ${CONFIG_EXAMPLES_BAO_SHMEM_STACKSIZE}
++    PRIORITY
++    ${CONFIG_EXAMPLES_BAO_SHMEM_PRIORITY})
++endif()
+diff --git a/examples/bao_shmem/bao_shmem_main.c b/examples/bao_shmem/bao_shmem_main.c
+new file mode 100644
+index 0000000..50e02c0
+--- /dev/null
++++ b/examples/bao_shmem/bao_shmem_main.c
+@@ -0,0 +1,180 @@
++/****************************************************************************
++ * apps/examples/bao_shmem/bao_shmem_main.c
++ *
++ * SPDX-License-Identifier: Apache-2.0
++ *
++ ****************************************************************************/
++
++#include <nuttx/config.h>
++#include <nuttx/cache.h>
++
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++
++#define BAO_SHMEM_BASE (0x00cd0000u)
++#define BAO_SHMEM_MAGIC (0x424d5348u) /* "BMSH" */
++#define BAO_SHMEM_MSG_LEN (96u)
++
++struct shmem_mailbox {
++  uint32_t magic;
++  uint32_t baremetal_seq;
++  uint32_t nuttx_seq;
++  uint32_t ticks;
++  char baremetal_msg[BAO_SHMEM_MSG_LEN];
++  char nuttx_msg[BAO_SHMEM_MSG_LEN];
++  char last_nuttx_msg[BAO_SHMEM_MSG_LEN];
++};
++
++static volatile struct shmem_mailbox *const g_mailbox =
++  (volatile struct shmem_mailbox *)BAO_SHMEM_BASE;
++
++static void shmdemo_invalidate_mailbox(void)
++{
++  up_invalidate_dcache(BAO_SHMEM_BASE,
++                       BAO_SHMEM_BASE + sizeof(struct shmem_mailbox));
++}
++
++static void shmdemo_flush_mailbox(void)
++{
++  up_flush_dcache(BAO_SHMEM_BASE,
++                  BAO_SHMEM_BASE + sizeof(struct shmem_mailbox));
++}
++
++static void shmdemo_dump(void)
++{
++  char baremetal_msg[BAO_SHMEM_MSG_LEN];
++  char nuttx_msg[BAO_SHMEM_MSG_LEN];
++  char last_nuttx_msg[BAO_SHMEM_MSG_LEN];
++
++  shmdemo_invalidate_mailbox();
++
++  memcpy(baremetal_msg, (const void *)g_mailbox->baremetal_msg,
++         sizeof(baremetal_msg));
++  memcpy(nuttx_msg, (const void *)g_mailbox->nuttx_msg, sizeof(nuttx_msg));
++  memcpy(last_nuttx_msg, (const void *)g_mailbox->last_nuttx_msg,
++         sizeof(last_nuttx_msg));
++
++  baremetal_msg[BAO_SHMEM_MSG_LEN - 1] = '\0';
++  nuttx_msg[BAO_SHMEM_MSG_LEN - 1] = '\0';
++  last_nuttx_msg[BAO_SHMEM_MSG_LEN - 1] = '\0';
++
++  printf("magic          : 0x%08lx\n", (unsigned long)g_mailbox->magic);
++  printf("baremetal_seq  : %lu\n", (unsigned long)g_mailbox->baremetal_seq);
++  printf("nuttx_seq      : %lu\n", (unsigned long)g_mailbox->nuttx_seq);
++  printf("ticks          : %lu\n", (unsigned long)g_mailbox->ticks);
++  printf("baremetal_msg  : %s\n", baremetal_msg);
++  printf("nuttx_msg      : %s\n", nuttx_msg);
++  printf("last_nuttx_msg : %s\n", last_nuttx_msg);
++}
++
++static int shmdemo_send(int argc, char *argv[])
++{
++  char buf[BAO_SHMEM_MSG_LEN];
++  size_t used = 0;
++  int i;
++
++  if (argc < 3)
++    {
++      fprintf(stderr, "usage: shmdemo send <message>\n");
++      return 1;
++    }
++
++  buf[0] = '\0';
++  for (i = 2; i < argc; i++)
++    {
++      int written = snprintf(buf + used, sizeof(buf) - used, "%s%s",
++                             used == 0 ? "" : " ", argv[i]);
++      if (written < 0)
++        {
++          return 1;
++        }
++
++      if ((size_t)written >= sizeof(buf) - used)
++        {
++          used = sizeof(buf) - 1;
++          break;
++        }
++
++      used += (size_t)written;
++    }
++
++  memcpy((void *)g_mailbox->nuttx_msg, buf, sizeof(buf));
++  ((char *)g_mailbox->nuttx_msg)[BAO_SHMEM_MSG_LEN - 1] = '\0';
++  g_mailbox->nuttx_seq++;
++  shmdemo_flush_mailbox();
++
++  printf("queued nuttx_seq=%lu message=\"%s\"\n",
++         (unsigned long)g_mailbox->nuttx_seq, buf);
++  return 0;
++}
++
++static int shmdemo_watch(int argc, char *argv[])
++{
++  int count = 5;
++  int delay_ms = 1000;
++  int i;
++
++  if (argc >= 3)
++    {
++      count = atoi(argv[2]);
++    }
++
++  if (argc >= 4)
++    {
++      delay_ms = atoi(argv[3]);
++    }
++
++  if (count <= 0)
++    {
++      count = 1;
++    }
++
++  if (delay_ms <= 0)
++    {
++      delay_ms = 1000;
++    }
++
++  for (i = 0; i < count; i++)
++    {
++      printf("sample %d/%d\n", i + 1, count);
++      shmdemo_dump();
++      if (i + 1 < count)
++        {
++          usleep((useconds_t)delay_ms * 1000);
++        }
++    }
++
++  return 0;
++}
++
++int main(int argc, char *argv[])
++{
++  if (g_mailbox->magic != BAO_SHMEM_MAGIC)
++    {
++      fprintf(stderr, "shared memory not initialized: magic=0x%08lx\n",
++              (unsigned long)g_mailbox->magic);
++      return 1;
++    }
++
++  if (argc == 1 || strcmp(argv[1], "show") == 0)
++    {
++      shmdemo_dump();
++      return 0;
++    }
++
++  if (strcmp(argv[1], "send") == 0)
++    {
++      return shmdemo_send(argc, argv);
++    }
++
++  if (strcmp(argv[1], "watch") == 0)
++    {
++      return shmdemo_watch(argc, argv);
++    }
++
++  fprintf(stderr, "usage: shmdemo [show|send <message>|watch [count] [ms]]\n");
++  return 1;
++}

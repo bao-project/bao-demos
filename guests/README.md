@@ -6,6 +6,7 @@ At the moment we are supporting three type of guests:
 - FreeRTOS
 - Linux
 - Zephyr
+- Nuttx
 
 Other OSs have been run over bao including:
 
