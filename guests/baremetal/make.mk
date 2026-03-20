@@ -1,9 +1,10 @@
 baremetal_src:=$(wrkdir_src)/baremetal
 baremetal_repo:=https://github.com/bao-project/bao-baremetal-guest.git
-baremetal_branch:=demo-next
+baremetal_version:=8336d17e225e03d9bdd656d37804003e7f9ace81
 
 $(baremetal_src):
-	git clone $(baremetal_repo) $@ --branch $(baremetal_branch)
+	git clone $(baremetal_repo) $@
+	cd $@ && git checkout $(baremetal_version)
 
 baremetal_bin:=$(baremetal_src)/build/$(PLATFORM)/baremetal.bin
 

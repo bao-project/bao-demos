@@ -9,8 +9,9 @@ export BAO_DEMOS_BAREMETAL=$BAO_DEMOS_WRKDIR_SRC/baremetal
 Clone and build the bao bare-metal guest application:
 
 ```
-git clone https://github.com/bao-project/bao-baremetal-guest.git\
-    --branch demo-next $BAO_DEMOS_BAREMETAL
+git clone https://github.com/bao-project/bao-baremetal-guest.git \
+    $BAO_DEMOS_BAREMETAL
+(cd $BAO_DEMOS_BAREMETAL && git checkout 8336d17e225e03d9bdd656d37804003e7f9ace81)
 make -C $BAO_DEMOS_BAREMETAL PLATFORM=$PLATFORM $BAREMETAL_PARAMS
 ```
 

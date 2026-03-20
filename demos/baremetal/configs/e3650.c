@@ -37,14 +37,18 @@ struct config config = {
                     },
                 },
 
-                .dev_num = 1,
+                .dev_num = 2,
                 .devs =  (struct vm_dev_region[]) {
                     {
                         .pa = E3650_UART_BASE,
                         .va = E3650_UART_BASE,
                         .size = 0x10000,
                         .interrupt_num = 1,
-                        .interrupts = (unsigned[]) { 114 },
+                        .interrupts = (irqid_t[]) { 114 },
+                    },
+                    {
+                        .interrupt_num = 1,
+                        .interrupts = (irqid_t[]) { 27 },
                     },
                 },
 

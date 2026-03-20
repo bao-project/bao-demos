@@ -1,0 +1,67 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+if ARCH_CHIP_CUSTOM
+
+menu "E3650 Chip Selection"
+
+choice
+	prompt "E3650 Core Configuration"
+	default ARCH_CHIP_E3650
+
+config ARCH_CHIP_E3650
+	bool "E3650 Processor (Cortex-r52)"
+	select ARCH_CORTEXR52
+	select ARCH_HAVE_FETCHADD
+	select ARCH_HAVE_FPU
+	select ARCH_HAVE_LOWVECTORS
+	select ARCH_HAVE_MULTICPU
+	select ARCH_HAVE_TESTSET
+	select ARCH_HAVE_RESET
+	select ARM_HAVE_NEON
+	select ARM_USE_CUSTOM_SYS_STACK
+	select ARMV8R_HAVE_DECODEFIQ
+	select ARMV8R_DECODEFIQ
+	select ARMV8R_HAVE_GICv3
+	select ARMV8R_STRING_FUNCTION
+	select ARCH_HAVE_PERF_EVENTS
+	select ARCH_DCACHE
+	select ARCH_ICACHE
+	select ARCH_HAVE_IRQPRIO
+	select HRTIMER
+	select SYSTEM_TIME64
+	select ARCH_IRQPRIO
+	select STACK_OVERFLOW_CHECK
+
+endchoice # E3650 Core Configuration
+
+if ARCH_CHIP_E3650
+
+config E3650_UART0
+	bool "E3650 UART0"
+	default y
+	depends on !DISABLE_DRIVERS
+	select UART0_SERIALDRIVER
+	select ARCH_HAVE_SERIAL_TERMIOS
+
+config ARCH_CHIP_E3650_GICD_BASE
+	hex "E3650 Processor (Cortex-r52) GIC Distributor Base"
+	default 0xF4000000
+
+config ARCH_CHIP_E3650_GICR_BASE
+	hex "E3650 Processor (Cortex-r52) GIC Re-distributor Base"
+	default 0xF4100000
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	int "system clock frequency"
+	default 100000000
+	---help---
+		The system clock frequency in general is used to trigger system tick
+
+endif # ARCH_CHIP_E3650
+
+endmenu # E3650 Chip Selection
+
+endif # ARCH_CHIP_CUSTOM
