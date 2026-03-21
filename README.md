@@ -251,6 +251,7 @@ Build the firmware and deploy the system according to the target platform:
 #### AArch32 platforms:
 * [FVP-A Aarch32](platforms/fvp-a-aarch32/README.md)
 * [FVP-R Aarch32](platforms/fvp-r-aarch32/README.md)
+* [Arm MPS3-AN536](platforms/mps3-an536/README.md)
 * [NXP S32Z270](platforms/s32z270/README.md)
 * [Semidrive E3650](platforms/e3650/README.md)
 
@@ -280,6 +281,7 @@ Build the firmware and deploy the system according to the target platform:
 | FVP-R AArch64       | fvp-r             | aarch64 |
 | FVP-A AArch32       | fvp-a-aarch32     | aarch32 |
 | FVP-R AArch32       | fvp-r-aarch32     | aarch32 |
+| Arm MPS3-AN536      | mps3-an536        | aarch32 |
 | NXP S32Z270         | s32z270           | aarch32 |
 | QEMU RV64 virt      | qemu-riscv64-virt | riscv64 |
 | QEMU RV32 virt      | qemu-riscv32-virt | riscv32 |
@@ -313,6 +315,7 @@ Build the firmware and deploy the system according to the target platform:
 | fvp-a-aarch32     | x         | x              | x            | x                |        |                    |                 |
 | fvp-r             | x         | x              | x            | x                |        |                    |                 |
 | fvp-r-aarch32     | x         |                |              | x                |        |                    |                 |
+| mps3-an536        | x         |                |              | x                |        |                    |                 |
 | s32z270           | x         |                |              | x                |        |                    |                 |
 | qemu-riscv64-virt | x         | x              |              |                  | x      |                    |                 |
 | qemu-riscv32-virt | x         | x              |              |                  |        |                    |                 |
