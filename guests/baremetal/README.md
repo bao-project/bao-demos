@@ -11,7 +11,7 @@ Clone and build the bao bare-metal guest application:
 ```
 git clone https://github.com/bao-project/bao-baremetal-guest.git \
     $BAO_DEMOS_BAREMETAL
-(cd $BAO_DEMOS_BAREMETAL && git checkout 8336d17e225e03d9bdd656d37804003e7f9ace81)
+(cd $BAO_DEMOS_BAREMETAL && git checkout ec644fb2a915617f12d937f81245b429f01697f3)
 make -C $BAO_DEMOS_BAREMETAL PLATFORM=$PLATFORM $BAREMETAL_PARAMS
 ```
 

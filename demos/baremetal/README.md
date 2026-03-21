@@ -12,16 +12,33 @@ The application also setups an RX UART interrupt that might be forwarded to just
 one or multiple cores, depending on the capabilities of the platform's interrupt 
 controller. Each time it receives a character, it will print a message.
 
-If you are targeting the MPU-based fvp-r platforms, set:
+If you are targetting an MPU platform, set the platform-specific image variable.
+
+For FVP-R:
 
 ```
 export FVPR_VM_IMAGES="$BAO_DEMOS_WRKDIR_IMGS/baremetal.bin@0x10000000"
 ```
 
-To build the baremetal app, in case you are targeting an MPU-based fvp-r platform, set:
+For MPS3-AN536:
+
+```
+export MPS3_VM_IMAGES="$BAO_DEMOS_WRKDIR_IMGS/baremetal.bin@0x32200000"
+```
+
+To build the baremetal app, in case you are targeting an MPU platform, set
+the memory base address.
+
+For FVP-R:
 
 ```
 export BAREMETAL_PARAMS="MEM_BASE=0x10000000"
+```
+
+For MPS3-AN536:
+
+```
+export BAREMETAL_PARAMS="MEM_BASE=0x32200000"
 ```
 
 Then, follow the [build instructions](../../guests/baremetal/README.md) to
