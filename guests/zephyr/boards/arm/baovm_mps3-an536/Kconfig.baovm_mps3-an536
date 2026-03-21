@@ -1,0 +1,6 @@
+# Copyright (c) 2021 Arm Limited (or its affiliates). All rights reserved.
+# Copyright (c) 2022 IoT.bzh
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_BAOVM_MPS3_AN536
+        select SOC_FVP_AEMV8R_AARCH32

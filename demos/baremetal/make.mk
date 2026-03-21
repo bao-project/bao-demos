@@ -11,7 +11,9 @@ baremetal_args+=MEM_BASE=0x10000000
 fvpr_image_data:=$(baremetal_image)@0x10000000
 else ifeq ($(PLATFORM),e3650)
 baremetal_args+=MEM_BASE=0x00B00000 MEM_SIZE=0x00100000
-# Intentionally use default values for S32Z270 
+else ifeq ($(PLATFORM), mps3-an536))
+baremetal_args+=MEM_BASE=0x32200000
+qemu_loader_data:=$(baremetal_image)@0x32200000
 endif
 endif
 
