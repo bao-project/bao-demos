@@ -1,0 +1,3 @@
+/* No board-specific DT overlay needed for mps3-an536.
+ * The board DTS and app.overlay already provide all required configuration.
+ */

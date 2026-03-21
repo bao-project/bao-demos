@@ -36,18 +36,38 @@ Configure the baremetal app for communication:
 export BAREMETAL_PARAMS="DEMO_IPC=y"
 ```
 
-If you are targeting a fvp-r MPU-based platforms, set:
+If you are targetting an Arm MPU platform set, you need to set the images variable:
+
+For FVP-R:
 
 ```
 export FVPR_VM_IMAGES="$BAO_DEMOS_WRKDIR_IMGS/zephyr.bin@0x24000000 \
     $BAO_DEMOS_WRKDIR_IMGS/baremetal.bin@0x10000000"
 ```
 
-To build the baremetal app, in case you are targeting fvp-r MPU-based platforms, set:
+For MPS3-AN536:
+
+```
+export MPS3_VM_IMAGES="$BAO_DEMOS_WRKDIR_IMGS/baremetal.bin@0x32200000 \
+    $BAO_DEMOS_WRKDIR_IMGS/zephyr.bin@0x40000000"
+```
+
+To build the baremetal app, in case you are targeting an MPU platform, set the
+required parameters.
+
+For FVP-R:
 
 ```
 export BAREMETAL_PARAMS="$BAREMETAL_PARAMS MEM_BASE=0x10000000"
 ```
+
+For MPS3-AN536:
+
+```
+export BAREMETAL_PARAMS="$BAREMETAL_PARAMS MEM_BASE=0x32200000 SHMEM_BASE=0x70000000 SHMEM_SIZE=0x200000"
+```
+
+The Zephyr board for MPS3-AN536 is `baovm_mps3-an536`.
 
 Follow the instructions to build [Zephyr](../../guests/zephyr/README.md) 
 and the [baremetal app](../../guests/baremetal/README.md).

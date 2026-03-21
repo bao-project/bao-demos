@@ -1,0 +1,8 @@
+board:
+  name: baovm_mps3-an536
+  full_name: Arm MPS3 AN536
+  vendor: arm
+  socs:
+  - name: fvp_aemv8r_aarch32
+    variants:
+    - name: 'smp'
