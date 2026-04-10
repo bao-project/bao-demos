@@ -87,6 +87,8 @@ struct config config = {
                         .pa = 0xF8D60000,
                         .va = 0xF8D60000,
                         .size = 0x10000,
+                        .interrupt_num = 1,
+                        .interrupts = (unsigned[]) { 114 },
                     },
                 },
                 .arch = {

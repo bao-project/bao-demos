@@ -10,6 +10,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <plat.h>
+#include <uart.h>
 
 #define SHMEM_MAGIC (0x424d5348u) /* "BMSH" */
 #define SHMEM_MSG_LEN (96u)
@@ -32,6 +34,16 @@ static volatile struct shmem_mailbox *const g_mailbox =
 static uint32_t g_seen_nuttx_seq;
 static uint32_t g_poll_ticks;
 static bool g_master_done;
+
+static void uart_rx_handler(unsigned id)
+{
+    (void)id;
+    uart_clear_rxirq();
+
+    spin_lock(&print_lock);
+    printf("Baremetal uart rx on cpu %d\n", get_cpuid());
+    spin_unlock(&print_lock);
+}
 
 static void shmem_update_status(void)
 {
@@ -102,6 +114,11 @@ void main(void)
         spin_lock(&print_lock);
         printf("Bao bare-metal test guest\n");
         spin_unlock(&print_lock);
+
+        irq_set_handler(UART_IRQ_ID, uart_rx_handler);
+        uart_enable_rxirq();
+        irq_enable(UART_IRQ_ID);
+        irq_set_prio(UART_IRQ_ID, UART_IRQ_PRIO);
 
         shmem_init();
 
