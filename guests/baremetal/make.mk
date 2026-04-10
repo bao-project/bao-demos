@@ -1,6 +1,6 @@
 baremetal_src:=$(wrkdir_src)/baremetal
-baremetal_repo:=https://github.com/bao-project/bao-baremetal-guest.git
-baremetal_branch:=demo
+baremetal_repo:=https://github.com/leon6002/bao-baremetal-guest.git
+baremetal_branch:=fix/e3650-console
 
 $(baremetal_src):
 	git clone $(baremetal_repo) $@ --branch $(baremetal_branch)
