@@ -8,6 +8,7 @@ systems and targeting several supported platforms. The available demos are:
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
 * [Dual-guest Linux+Zephyr](demos/linux+zephyr/README.md)
 * [Dual-guest Zephyr+Baremetal](demos/zephyr+baremetal/README.md)
+* [Dual-guest FreeRTOS+Baremetal](demos/freertos+baremetal/README.md)
 * [Four-guest VirtIO Demo](demos/virtio/README.md)
 
 ---
@@ -187,6 +188,7 @@ Build guests according to the target demo:
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
 * [Dual-Guest Linux+Zephyr](demos/linux+zephyr/README.md)
 * [Dual-Guest Zephyr+Baremetal](demos/zephyr+baremetal/README.md)
+* [Dual-Guest FreeRTOS+Baremetal](demos/freertos+baremetal/README.md)
 * [Dual-Guest Torizon OS+FreeRTOS](demos/torizonos+freertos/README.md)
 
 
@@ -196,8 +198,8 @@ Clone Bao's repo to the working directory:
 
 ```
 export BAO_DEMOS_BAO=$BAO_DEMOS_WRKDIR_SRC/bao
-git clone https://github.com/bao-project/bao-hypervisor $BAO_DEMOS_BAO\
-    --branch v2.0.0
+git clone https://github.com/bao-project/bao-hypervisor $BAO_DEMOS_BAO
+(cd $BAO_DEMOS_BAO && git checkout 1358391b654499d8e55f85d655c8441c3b599610)
 ```
 
 Copy your config to the working directory:
@@ -294,26 +296,26 @@ Build the firmware and deploy the system according to the target platform:
 
 ## Appendix II
 
-|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal | virtio | torizonos+freertos |
-| ----------------- | --------- | -------------- | ------------ | ---------------- | ------ | ------------------ |
-| zcu102            | x         | x              |              |                  | x      |                    |
-| zcu104            | x         | x              |              |                  | x      |                    |
-| imx8qm            | x         | x              |              |                  |        |                    |
-| s32g3             | x         | x              |              |                  |        |                    |
-| tx2               | x         | x              |              |                  |        |                    |
-| rpi4              | x         | x              | x            |                  | x      |                    |
-| qemu-aarch64-virt | x         | x              | x            |                  | x      |                    |
-| fvp-a             | x         | x              | x            | x                |        |                    |
-| fvp-a-aarch32     | x         | x              | x            | x                |        |                    |
-| fvp-r             | x         | x              | x            | x                |        |                    |
-| fvp-r-aarch32     | x         |                |              | x                |        |                    |
-| s32z270           | x         |                |              | x                |        |                    |
-| qemu-riscv64-virt | x         | x              |              |                  | x      |                    |
-| qemu-riscv32-virt | x         | x              |              |                  |        |                    |
-| rh850-u2a16       | x         |                |              |                  |        |                    |
-| tc4dx             | x         |                |              |                  |        |                    |
-| e3650             | x         |                |              |                  |        |                    |
-| imx8mp-verdin     | x         | x              |              |                  |        | x                  |
+|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal | virtio | torizonos+freertos |freertos+baremetal|
+| ----------------- | --------- | -------------- | ------------ | ---------------- | ------ | ------------------ | ---------------- |
+| zcu102            | x         | x              |              |                  | x      |                    |                  |
+| zcu104            | x         | x              |              |                  | x      |                    |                  |
+| imx8qm            | x         | x              |              |                  |        |                    |                  |
+| s32g3             | x         | x              |              |                  |        |                    |                  |
+| tx2               | x         | x              |              |                  |        |                    |                  |
+| rpi4              | x         | x              | x            |                  | x      |                    |                  |
+| qemu-aarch64-virt | x         | x              | x            |                  | x      |                    |                  |
+| fvp-a             | x         | x              | x            | x                |        |                    |                  |
+| fvp-a-aarch32     | x         | x              | x            | x                |        |                    |                  |
+| fvp-r             | x         | x              | x            | x                |        |                    |                  |
+| fvp-r-aarch32     | x         |                |              | x                |        |                    |                  |
+| s32z270           | x         |                |              | x                |        |                    |                  |
+| qemu-riscv64-virt | x         | x              |              |                  | x      |                    |                  |
+| qemu-riscv32-virt | x         | x              |              |                  |        |                    |                  |
+| rh850-u2a16       | x         |                |              |                  |        |                    | x                |
+| tc4dx             | x         |                |              |                  |        |                    |                  |
+| e3650             | x         |                |              |                  |        |                    |                  |
+| imx8mp-verdin     | x         | x              |              |                  |        | x                  |                  |
 
 ---
 

@@ -6,6 +6,7 @@ The following demos are available:
 * [Dual-Guest Linux+FreeRTOS](linux+freertos/README.md)
 * [Dual-Guest Linux+Zephyr](linux+zephyr/README.md)
 * [Dual-Guest Zephyr+Baremetal](zephyr+baremetal/README.md)
+* [Dual-Guest FreeRTOS+Baremetal](freertos+baremetal/README.md)
 
 More demos, showcasing different Bao features, guests and configurations will
 be available in the future.

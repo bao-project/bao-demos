@@ -1,10 +1,12 @@
 freertos_src:=$(wrkdir_src)/freertos
 freertos_repo:=https://github.com/bao-project/freertos-over-bao.git
-freertos_branch:=demo
+freertos_version:=a4787e224ac20ab2fc4601d1a7f6bbe7ada84b9b
 
 $(freertos_src):
-	git clone --recursive --shallow-submodules --branch $(freertos_branch) \
-		$(freertos_repo) $(freertos_src)
+	git clone $(freertos_repo) $@
+	cd $@ && \
+		git checkout $(freertos_version) && \
+		git submodule update --init --recursive
 
 freertos_bin:=$(freertos_src)/build/$(PLATFORM)/freertos.bin
 
