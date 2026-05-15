@@ -1,4 +1,4 @@
-# RH850-U2A16 berametal DEMO
+# RH850-U2A16 baremetal DEMO
 After building the demo follow these steps.
 
 <!--- instruction#1 -->

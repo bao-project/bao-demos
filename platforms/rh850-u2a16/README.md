@@ -34,3 +34,4 @@ make
 You must use the `rfp-cli` tool to program the `bao.bin` and guest images.
 Please take a look at the corresponding demo instructions for this platform.
 * [baremetal](baremetal.md)
+* [FreeRTOS+baremetal](freertos+baremetal.md)
