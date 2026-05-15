@@ -2,13 +2,13 @@
 
 Setup an environment variable for the baremetal app source code:
 
-```
+```shell
 export BAO_DEMOS_BAREMETAL=$BAO_DEMOS_WRKDIR_SRC/baremetal
 ```
 
 Clone and build the bao bare-metal guest application:
 
-```
+```shell
 git clone https://github.com/bao-project/bao-baremetal-guest.git \
     $BAO_DEMOS_BAREMETAL
 (cd $BAO_DEMOS_BAREMETAL && git checkout ec644fb2a915617f12d937f81245b429f01697f3)
@@ -17,6 +17,6 @@ make -C $BAO_DEMOS_BAREMETAL PLATFORM=$PLATFORM $BAREMETAL_PARAMS
 
 Copy the resulting binary to the final image's directory:
 
-```
+```shell
 cp $BAO_DEMOS_BAREMETAL/build/$PLATFORM/baremetal.bin $BAO_DEMOS_WRKDIR_IMGS
 ```

@@ -73,7 +73,7 @@ environment+=BAO_DEMOS_SDCARD=/media/$$USER/boot
 all: platform
 
 bao_repo:=https://github.com/bao-project/bao-hypervisor
-bao_version:=1a78ca35e21f25b1196b8ac11aff59f35427cc8f
+bao_version:=2956f48f8a56a147303521315b34325014affbcd
 bao_src:=$(wrkdir_src)/bao
 bao_cfg_repo:=$(wrkdir_demo_imgs)/config
 wrkdirs+=$(bao_cfg_repo)
