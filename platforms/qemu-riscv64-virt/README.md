@@ -32,8 +32,8 @@ make -C $BAO_DEMOS_OPENSBI PLATFORM=generic \
     FW_PAYLOAD=y \
     FW_PAYLOAD_FDT_ADDR=0x80100000\
     FW_PAYLOAD_PATH=$BAO_DEMOS_WRKDIR_IMGS/bao.bin
-cp $BAO_DEMOS_OPENSBI/build/platform/generic/firmware/fw_payload.elf\
-    $BAO_DEMOS_WRKDIR_IMGS/opensbi.elf
+cp $BAO_DEMOS_OPENSBI/build/platform/generic/firmware/fw_payload.bin\
+    $BAO_DEMOS_WRKDIR_IMGS/opensbi.bin
 ```
 
 ## 3) Run QEMU
@@ -41,7 +41,7 @@ cp $BAO_DEMOS_OPENSBI/build/platform/generic/firmware/fw_payload.elf\
 ```
  qemu-system-riscv64 -nographic\
     -M virt -cpu rv64 -m 4G -smp 4\
-    -bios $BAO_DEMOS_WRKDIR_IMGS/opensbi.elf\
+    -bios $BAO_DEMOS_WRKDIR_IMGS/opensbi.bin\
     -device virtio-net-device,netdev=net0 \
     -netdev user,id=net0,net=192.168.42.0/24,hostfwd=tcp:127.0.0.1:5555-:22\
     -device virtio-serial-device -chardev pty,id=serial3 -device virtconsole,chardev=serial3 -S
