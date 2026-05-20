@@ -29,6 +29,8 @@ export BAO_DEMOS_OPENSBI=$BAO_DEMOS_WRKDIR_SRC/opensbi
 git clone https://github.com/bao-project/opensbi.git $BAO_DEMOS_OPENSBI\
     --depth 1 --branch bao/demo-next
 make -C $BAO_DEMOS_OPENSBI PLATFORM=generic \
+    CROSS_COMPILE=$OPENSBI_CROSS_COMPILE \
+    PLATFORM_RISCV_XLEN=64 \
     FW_PAYLOAD=y \
     FW_PAYLOAD_FDT_ADDR=0x80100000\
     FW_PAYLOAD_PATH=$BAO_DEMOS_WRKDIR_IMGS/bao.bin

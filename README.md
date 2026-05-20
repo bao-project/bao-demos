@@ -202,7 +202,7 @@ Clone Bao's repo to the working directory:
 ```
 export BAO_DEMOS_BAO=$BAO_DEMOS_WRKDIR_SRC/bao
 git clone https://github.com/bao-project/bao-hypervisor $BAO_DEMOS_BAO
-(cd $BAO_DEMOS_BAO && git checkout 2956f48f8a56a147303521315b34325014affbcd)
+(cd $BAO_DEMOS_BAO && git checkout 997ba1dd811f6728ee2694f7876907b5528ded6c)
 ```
 
 Copy your config to the working directory:
@@ -258,7 +258,8 @@ Build the firmware and deploy the system according to the target platform:
 * [Semidrive E3650](platforms/e3650/README.md)
 
 #### RISC-V platforms:
-* [QEMU virt](platforms/qemu-riscv64-virt/README.md)
+* [QEMU 32 virt](platforms/qemu-riscv32-virt/README.md)
+* [QEMU 64 virt](platforms/qemu-riscv64-virt/README.md)
 * [SpacemiT K3 CoM260 Kit](platforms/k3-com260/README.md)
 
 #### RH850 platforms:
