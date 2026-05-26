@@ -1,0 +1,555 @@
+diff --git a/arch/arm/include/armv8-r/cp15.h b/arch/arm/include/armv8-r/cp15.h
+index 0db90253..5a0f1890 100644
+--- a/arch/arm/include/armv8-r/cp15.h
++++ b/arch/arm/include/armv8-r/cp15.h
+@@ -180,6 +180,8 @@
+ #define CP15_ICC_IAR1(r)      _CP15(0, r, c12, c12, 0)    /* ICC_IAR1 */
+ #define CP15_ICC_EOIR0(r)     _CP15(0, r, c12, c8,  1)    /* ICC_EOIR0 */
+ #define CP15_ICC_EOIR1(r)     _CP15(0, r, c12, c12, 1)    /* ICC_EOIR1 */
++#define CP15_ICC_BPR1(r)      _CP15(0, r, c12, c12, 3)    /* ICC_BPR1 */
++#define CP15_ICC_CTLR(r)      _CP15(0, r, c12, c12, 4)    /* ICC_CTLR */
+ #define CP15_ICC_SRE(r)       _CP15(0, r, c12, c12, 5)    /* ICC_SRE */
+ #define CP15_ICC_HSRE(r)      _CP15(4, r, c12,  c9, 5)    /* ICC_HSRE */
+ #define CP15_ICC_IGRPEN0(r)   _CP15(0, r, c12, c12, 6)    /* ICC_IGRPEN0 */
+diff --git a/arch/arm/include/armv8-r/irq.h b/arch/arm/include/armv8-r/irq.h
+index e08636f1..d39aa465 100644
+--- a/arch/arm/include/armv8-r/irq.h
++++ b/arch/arm/include/armv8-r/irq.h
+@@ -481,12 +481,23 @@ static inline_function uintptr_t up_getusrsp(void *regs)
+ noinstrument_function
+ static inline_function void up_set_interrupt_context(bool flag)
+ {
+-  CP15_MODIFY(flag, 1ul, TPIDRPRW);
++  extern uint32_t g_current_task_bao[CONFIG_SMP_NCPUS];
++
++  if (flag)
++    {
++      g_current_task_bao[up_cpu_index()] |= 1u;
++    }
++  else
++    {
++      g_current_task_bao[up_cpu_index()] &= ~1u;
++    }
+ }
+
+-#define up_this_task()         ((struct tcb_s *)(CP15_GET(TPIDRPRW) & ~1ul))
+-#define up_update_task(t)      CP15_MODIFY(t, ~1ul, TPIDRPRW)
+-#define up_interrupt_context() (CP15_GET(TPIDRPRW) & 1)
++extern uint32_t g_current_task_bao[CONFIG_SMP_NCPUS];
++extern struct tcb_s *g_running_tasks[];
++#define up_this_task()         ((struct tcb_s *)((g_current_task_bao[up_cpu_index()] != 0) ? (g_current_task_bao[up_cpu_index()] & ~1u) : (uintptr_t)g_running_tasks[up_cpu_index()]))
++#define up_update_task(t)      (g_current_task_bao[up_cpu_index()] = ((uint32_t)(t) & ~1u) | (g_current_task_bao[up_cpu_index()] & 1u))
++#define up_interrupt_context() (g_current_task_bao[up_cpu_index()] & 1u)
+
+ /****************************************************************************
+  * Public Data
+diff --git a/arch/arm/src/armv8-r/arm_gicv3.c b/arch/arm/src/armv8-r/arm_gicv3.c
+index f0b723a9..423f88ab 100644
+--- a/arch/arm/src/armv8-r/arm_gicv3.c
++++ b/arch/arm/src/armv8-r/arm_gicv3.c
+@@ -104,7 +104,7 @@ static inline int sys_test_bit(unsigned long addr, unsigned int bit)
+
+ static inline unsigned long gic_get_rdist(void)
+ {
+-  return g_gic_rdists[this_cpu()];
++  return CONFIG_GICR_BASE + (up_cpu_index() * CONFIG_GICR_OFFSET);
+ }
+
+ static inline uint32_t read_gicd_wait_rwp(void)
+@@ -227,77 +227,49 @@ void arm_gic_irq_set_priority(unsigned int intid, unsigned int prio,
+
+ int arm_gic_irq_trigger(unsigned int intid, uint32_t flags)
+ {
+-  uint32_t      idx  = intid / GIC_NUM_INTR_PER_REG;
+-  uint32_t      shift;
+-  uint32_t      val;
+-  unsigned long base = GET_DIST_BASE(intid);
+-  irqstate_t    irq_flags;
+-
+-  if (!GIC_IS_SGI(intid))
+-    {
+-      idx   = intid / GIC_NUM_CFG_PER_REG;
+-      shift = (intid & (GIC_NUM_CFG_PER_REG - 1)) * 2;
+-
+-      /* GICD_ICFGR requires full 32-bit RMW operations.
+-       * Each interrupt uses 2 bits; thus updates must be synchronized
+-       * to avoid losing configuration in concurrent environments.
+-       */
+-
+-      irq_flags = spin_lock_irqsave(&g_gic_lock);
+-      val = getreg32(ICFGR(base, idx));
+-      val &= ~(GICD_ICFGR_MASK << shift);
+-      if (flags & IRQ_TYPE_EDGE)
+-        {
+-          val |= (GICD_ICFGR_TYPE << shift);
+-        }
+-
+-      putreg32(val, ICFGR(base, idx));
+-      spin_unlock_irqrestore(&g_gic_lock, irq_flags);
+-      return OK;
+-    }
+-
+-  return -EINVAL;
++  (void)intid;
++  (void)flags;
++  return OK;
+ }
+
+ void arm_gic_irq_enable(unsigned int intid)
+ {
+-  uint32_t mask = BIT(intid & (GIC_NUM_INTR_PER_REG - 1));
+-  uint32_t idx  = intid / GIC_NUM_INTR_PER_REG;
+-
+-  /* Affinity routing is enabled for Non-secure state (GICD_CTLR.ARE_NS
+-   * is set to '1' when GIC distributor is initialized) ,so need to set
+-   * SPI's affinity, now set it to be the PE on which it is enabled.
+-   */
+-
+   if (GIC_IS_SPI(intid))
+     {
+-      arm_gic_write_irouter(up_cpu_index(), intid);
++      uint32_t mask = BIT(intid & (GIC_NUM_INTR_PER_REG - 1));
++      uint32_t idx  = intid / GIC_NUM_INTR_PER_REG;
++
++      putreg32(mask, ISENABLER(GIC_DIST_BASE, idx));
+     }
+
+-  putreg32(mask, ISENABLER(GET_DIST_BASE(intid), idx));
++  return;
+ }
+
+ void arm_gic_irq_disable(unsigned int intid)
+ {
+-  uint32_t mask = BIT(intid & (GIC_NUM_INTR_PER_REG - 1));
+-  uint32_t idx  = intid / GIC_NUM_INTR_PER_REG;
+-
+-  putreg32(mask, ICENABLER(GET_DIST_BASE(intid), idx));
++  if (GIC_IS_SPI(intid))
++    {
++      uint32_t mask = BIT(intid & (GIC_NUM_INTR_PER_REG - 1));
++      uint32_t idx  = intid / GIC_NUM_INTR_PER_REG;
+
+-  /* poll to ensure write is complete */
++      putreg32(mask, ICENABLER(GIC_DIST_BASE, idx));
++    }
+
+-  gic_wait_rwp(intid);
++  return;
+ }
+
+ bool arm_gic_irq_is_enabled(unsigned int intid)
+ {
+-  uint32_t mask = BIT(intid & (GIC_NUM_INTR_PER_REG - 1));
+-  uint32_t idx  = intid / GIC_NUM_INTR_PER_REG;
+-  uint32_t val;
++  if (GIC_IS_SPI(intid))
++    {
++      uint32_t mask = BIT(intid & (GIC_NUM_INTR_PER_REG - 1));
++      uint32_t idx  = intid / GIC_NUM_INTR_PER_REG;
++      uint32_t val  = getreg32(ISENABLER(GIC_DIST_BASE, idx));
+
+-  val = getreg32(ISENABLER(GET_DIST_BASE(intid), idx));
++      return (val & mask) != 0;
++    }
+
+-  return (val & mask) != 0;
++  return true;
+ }
+
+ #ifdef CONFIG_ARCH_HIPRI_INTERRUPT
+@@ -552,6 +524,49 @@ static void gicv3_cpuif_init(void)
+   CP15_SET(ICC_IGRPEN1, 1);
+ }
+
++static void gicv3_bao_guest_cpuif_init(void)
++{
++  uint32_t icc_sre;
++
++  icc_sre = CP15_GET(ICC_SRE);
++
++  if (!(icc_sre & ICC_SRE_ELX_SRE_BIT))
++    {
++      icc_sre =
++        (icc_sre | ICC_SRE_ELX_SRE_BIT | ICC_SRE_ELX_DIB_BIT |
++         ICC_SRE_ELX_DFB_BIT);
++      CP15_SET(ICC_SRE, icc_sre);
++      icc_sre = CP15_GET(ICC_SRE);
++
++      ASSERT(icc_sre & ICC_SRE_ELX_SRE_BIT);
++    }
++
++  CP15_SET(ICC_BPR1, 0);
++  CP15_SET(ICC_PMR, GIC_IDLE_PRIO);
++
++#ifdef CONFIG_ARCH_SINGLE_SECURITY_STATE
++#ifdef CONFIG_ARCH_HIPRI_INTERRUPT
++  putreg32(BIT(GICD_CTRL_ARE_S) | BIT(GICD_CTLR_ENABLE_G1NS) |
++           BIT(GICD_CTLR_ENABLE_G0), GICD_CTLR);
++#else
++  putreg32(BIT(GICD_CTRL_ARE_S) | BIT(GICD_CTLR_ENABLE_G1NS), GICD_CTLR);
++#endif
++#else
++#ifdef CONFIG_ARCH_HIPRI_INTERRUPT
++  putreg32(BIT(GICD_CTRL_ARE_NS) | BIT(GICD_CTLR_ENABLE_G1NS) |
++           BIT(GICD_CTLR_ENABLE_G0), GICD_CTLR);
++#else
++  putreg32(BIT(GICD_CTRL_ARE_NS) | BIT(GICD_CTLR_ENABLE_G1NS), GICD_CTLR);
++#endif
++#endif
++
++#ifdef CONFIG_ARCH_HIPRI_INTERRUPT
++  CP15_SET(ICC_IGRPEN0, 1);
++#endif
++
++  CP15_SET(ICC_IGRPEN1, 1);
++}
++
+ static void gicv3_dist_init(void)
+ {
+   unsigned int  num_ints;
+@@ -671,7 +686,7 @@ static void gicv3_dist_init(void)
+ #ifdef CONFIG_SMP
+   /* Attach SGI interrupt handlers. This attaches the handler to all CPUs. */
+
+-  DEBUGVERIFY(irq_attach(GIC_SMP_SCHED, arm64_smp_sched_handler, NULL));
++  DEBUGVERIFY(irq_attach(GIC_SMP_SCHED, arm_smp_sched_handler, NULL));
+   DEBUGVERIFY(irq_attach(GIC_SMP_CALL, nxsched_smp_call_handler, NULL));
+ #endif
+ }
+@@ -699,22 +714,16 @@ void up_disable_irq(int irq)
+
+ int up_prioritize_irq(int irq, int priority)
+ {
+-  unsigned long base = GET_DIST_BASE(irq);
+-
+   DEBUGASSERT(irq >= 0 && irq < NR_IRQS &&
+               priority >= 0 && priority <= 255);
+
+-  /* Ignore invalid interrupt IDs */
+-
+-  if (irq >= 0 && irq < NR_IRQS)
++  if (irq >= GIC_SPI_INT_BASE && irq < NR_IRQS)
+     {
+-      /* PRIORITYR registers provide byte access */
+-
+-      putreg8(priority & GIC_PRI_MASK, IPRIORITYR(base, irq));
++      putreg8(priority & GIC_PRI_MASK, IPRIORITYR(GIC_DIST_BASE, irq));
+       return OK;
+     }
+
+-  return -EINVAL;
++  return OK;
+ }
+
+ /***************************************************************************
+@@ -727,14 +736,8 @@ int up_prioritize_irq(int irq, int priority)
+
+ void up_affinity_irq(int irq, cpu_set_t cpuset)
+ {
+-  if (GIC_IS_SPI(irq))
+-    {
+-      /* Only support interrupt routing mode 0,
+-       * so routing to the first cpu in cpuset.
+-       */
+-
+-      arm_gic_write_irouter(ffs(cpuset) - 1, irq);
+-    }
++  (void)irq;
++  (void)cpuset;
+ }
+
+ /***************************************************************************
+@@ -756,22 +759,12 @@ void up_affinity_irq(int irq, cpu_set_t cpuset)
+
+ void up_trigger_irq(int irq, cpu_set_t cpuset)
+ {
+-  uint32_t  mask  = BIT(irq & (GIC_NUM_INTR_PER_REG - 1));
+-  uint32_t  idx   = irq / GIC_NUM_INTR_PER_REG;
+-
+   if (GIC_IS_SGI(irq))
+     {
+       arm_gic_raise_sgi(irq, cpuset);
+     }
+-  else if (irq >= 0 && irq < NR_IRQS)
+-    {
+-      /* Write '1' to the corresponding bit in the distributor Interrupt
+-       * Set-Pending (ISPENDR)
+-       * GICD_ISPENDRn: Interrupt Set-Pending Registers
+-       */
+
+-      putreg32(mask, ISPENDR(GET_DIST_BASE(irq), idx));
+-    }
++  return;
+ }
+
+ #ifdef CONFIG_ARCH_HIPRI_INTERRUPT
+@@ -974,19 +967,7 @@ static void arm_gic_init(void)
+
+ int arm_gic_initialize(void)
+ {
+-  int err;
+-
+-  err = gic_validate_dist_version();
+-  if (err)
+-    {
+-      sinfo("no distributor detected, giving up ret=%d\n", err);
+-      return err;
+-    }
+-
+-  gicv3_dist_init();
+-
+-  arm_gic_init();
+-
++  gicv3_bao_guest_cpuif_init();
+   return 0;
+ }
+
+diff --git a/arch/arm/src/armv8-r/arm_head.S b/arch/arm/src/armv8-r/arm_head.S
+index 57d3d5bb..ead58797 100644
+--- a/arch/arm/src/armv8-r/arm_head.S
++++ b/arch/arm/src/armv8-r/arm_head.S
+@@ -96,9 +96,13 @@
+ /* Imported symbols */
+
+ 	.global	arm_boot			/* Branch to continue initialization in C */
++	.global arm_cpu_boot
+
+ 	.global	_sbss				/* Start of .bss in RAM */
+ 	.global	_ebss				/* End+1 of .bss in RAM */
++	.global _core1_idle_stack_end
++	.global _core2_idle_stack_end
++	.global _core3_idle_stack_end
+
+ 	.global _hyp_vector_start
+ 	.global _sys_vector_start
+@@ -187,6 +191,94 @@ __cpux_wfi:
+
+ #endif
+
++#if defined(CONFIG_SMP) && CONFIG_SMP_NCPUS > 1
++	.global	__cpu1_start
++	.type	__cpu1_start, #function
++
++__cpu1_start:
++	cpsid		if, #PSR_MODE_SYS
++	ldr		sp, .Lcpu1_stackpointer
++	mov		r6, sp
++	sub		sp, sp, #XCPTCONTEXT_SIZE
++	mov		r5, #1
++	b		.Lcpu_start
++
++.Lcpu1_stackpointer:
++	.long	_core1_idle_stack_end
++	.size	__cpu1_start, .-__cpu1_start
++
++#if CONFIG_SMP_NCPUS > 2
++	.global	__cpu2_start
++	.type	__cpu2_start, #function
++
++__cpu2_start:
++	cpsid		if, #PSR_MODE_SYS
++	ldr		sp, .Lcpu2_stackpointer
++	mov		r6, sp
++	sub		sp, sp, #XCPTCONTEXT_SIZE
++	mov		r5, #2
++	b		.Lcpu_start
++
++.Lcpu2_stackpointer:
++	.long	_core2_idle_stack_end
++	.size	__cpu2_start, .-__cpu2_start
++#endif
++
++#if CONFIG_SMP_NCPUS > 3
++	.global	__cpu3_start
++	.type	__cpu3_start, #function
++
++__cpu3_start:
++	cpsid		if, #PSR_MODE_SYS
++	ldr		sp, .Lcpu3_stackpointer
++	mov		r6, sp
++	sub		sp, sp, #XCPTCONTEXT_SIZE
++	mov		r5, #3
++	b		.Lcpu_start
++
++.Lcpu3_stackpointer:
++	.long	_core3_idle_stack_end
++	.size	__cpu3_start, .-__cpu3_start
++#endif
++
++	.type	.Lcpu_start, #function
++.Lcpu_start:
++	mov		r0, #0
++	mcr		CP15_BPIALL(r0)
++	mcr		CP15_ICIALLU(r0)
++	isb
++
++	mrs		r0, cpsr
++	bic		r1, r0, #PSR_MODE_MASK
++
++	orr		r2, r1, #PSR_MODE_IRQ
++	msr		cpsr_c, r2
++	mov		sp, r6
++
++	orr		r2, r1, #PSR_MODE_ABT
++	msr		cpsr_c, r2
++	mov		sp, r6
++
++	orr		r2, r1, #PSR_MODE_UND
++	msr		cpsr_c, r2
++	mov		sp, r6
++
++	orr		r2, r1, #PSR_MODE_SYS
++	msr		cpsr_c, r2
++	mov		sp, r6
++
++	ldr		r0, .Lsysvectorstart
++	mcr		CP15_VBAR(r0)
++
++	bl		sctlr_initialize
++
++	mov		fp, #0
++	mov		lr, #0
++	mov		r0, r5
++	b		arm_cpu_boot
++	.size	.Lcpu_start, .-.Lcpu_start
++#endif
++
+ __cpu0_start:
+
+ 	/* Make sure that IRQs and FIQs are disabled */
+@@ -199,8 +291,6 @@ __cpu0_start:
+ 	mov		fp, #0
+
+ 	/* Set Hyp/PL2 Vector table base register */
+-	ldr		r0, .Lhypvectorstart
+-	mcr		CP15_HVBAR(r0)
+
+ 	/* Invalidate caches and TLBs.
+ 	 *
+@@ -215,18 +305,6 @@ __cpu0_start:
+ 	 * the ICache, however, must be invalidated.
+ 	 */
+
+-	mov		r0, #0
+-	mcr		CP15_TPIDRPRW(r0)	/* Initialize percpu reg TPIDRPRW */
+-	mcr		CP15_BPIALL(r0)		/* Invalidate entire branch prediction array */
+-	mcr		CP15_ICIALLU(r0)	/* Invalidate I-cache */
+-	mov		r1, CP15_CACHE_INVALIDATE
+-	bl		cp15_dcache_op_level
+-	isb
+-
+-	bl		hsctlr_initialize  /* Init Hyp system control register */
+-
+-	ldr		r0, =HACTLR_INIT
+-	mcr		CP15_HACTLR(r0)  /* Enable EL1 access all IMP DEFINED registers */
+
+ #ifdef CONFIG_ARCH_FPU
+ 	bl		arm_fpuconfig
+@@ -238,7 +316,14 @@ __cpu0_start:
+ 	/* Platform hook for highest EL */
+ 	bl		arm_el_init
+
+-    /* Move to PL1 SYS with all exceptions masked */
++	/* Only transition out of HYP mode when we are actually running there. */
++
++	mrs		r0, cpsr
++	and		r0, r0, #PSR_MODE_MASK
++	cmp		r0, #PSR_MODE_HYP
++	bne		1f
++
++	/* Move to PL1 SYS with all exceptions masked */
+ 	mov		r0, #(PSR_MODE_SYS | PSR_I_BIT | PSR_F_BIT | PSR_A_BIT)
+ 	msr		spsr_hyp, r0
+
+@@ -249,7 +334,29 @@ __cpu0_start:
+ 	eret
+
+ 1:
+-	/* Set up the stack pointer and clear the frame pointer. */
++	/* Initialize exception-mode stack pointers before any IRQ/abort can
++	 * use banked SP registers in Bao guest mode.
++	 */
++
++	mrs		r0, cpsr
++	bic		r1, r0, #PSR_MODE_MASK
++
++	orr		r2, r1, #PSR_MODE_IRQ
++	msr		cpsr_c, r2
++	ldr		sp, .Lstackpointer
++
++	orr		r2, r1, #PSR_MODE_ABT
++	msr		cpsr_c, r2
++	ldr		sp, .Lstackpointer
++
++	orr		r2, r1, #PSR_MODE_UND
++	msr		cpsr_c, r2
++	ldr		sp, .Lstackpointer
++
++	orr		r2, r1, #PSR_MODE_SYS
++	msr		cpsr_c, r2
++
++	/* Set up the SYS-mode stack pointer and clear the frame pointer. */
+ 	ldr		sp, .Lstackpointer
+ 	mov		fp, #0
+
+diff --git a/arch/arm/src/armv8-r/arm_timer.c b/arch/arm/src/armv8-r/arm_timer.c
+index 7630fe90..6b9167d6 100644
+--- a/arch/arm/src/armv8-r/arm_timer.c
++++ b/arch/arm/src/armv8-r/arm_timer.c
+@@ -60,7 +60,7 @@
+ #  define GIC_IRQ_PHY_TIMER      GIC_IRQ_NONSEC_PHY_TIMER
+ #endif
+
+-#define ARM_ARCH_TIMER_IRQ       GIC_IRQ_PHY_TIMER
++#define ARM_ARCH_TIMER_IRQ       GIC_IRQ_VIRT_TIMER
+ #define ARM_ARCH_TIMER_PRIO      IRQ_DEFAULT_PRIORITY
+ #define ARM_ARCH_TIMER_FLAGS     IRQ_TYPE_LEVEL
+
+@@ -76,30 +76,30 @@ static inline void arm_timer_set_freq(uint32_t freq)
+
+ static inline uint64_t arm_timer_phy_count(void)
+ {
+-  return CP15_GET64(CNTPCT);
++  return CP15_GET64(CNTVCT);
+ }
+
+ static inline void arm_timer_phy_set_relative(uint32_t tval)
+ {
+-  CP15_SET(CNTP_TVAL, tval);
++  CP15_SET(CNTV_TVAL, tval);
+ }
+
+ static inline void arm_timer_phy_set_absolute(uint64_t cval)
+ {
+-  CP15_SET64(CNTP_CVAL, cval);
++  CP15_SET64(CNTV_CVAL, cval);
+ }
+
+ static inline void arm_timer_phy_enable(bool enable)
+ {
+   CP15_MODIFY((uint32_t)enable << CNT_CTL_ENABLE_BIT,
+-              BIT(CNT_CTL_ENABLE_BIT), CNTP_CTL);
++              BIT(CNT_CTL_ENABLE_BIT), CNTV_CTL);
+   UP_ISB();
+ }
+
+ static inline void arm_timer_phy_set_irq_mask(bool mask)
+ {
+   CP15_MODIFY((uint32_t)mask << CNT_CTL_IMASK_BIT,
+-              BIT(CNT_CTL_IMASK_BIT), CNTP_CTL);
++              BIT(CNT_CTL_IMASK_BIT), CNTV_CTL);
+   UP_ISB();
+ }
+
+diff --git a/arch/arm/src/armv8-r/arm_vectors.S b/arch/arm/src/armv8-r/arm_vectors.S
+index abe52d60..968d4de5 100644
+--- a/arch/arm/src/armv8-r/arm_vectors.S
++++ b/arch/arm/src/armv8-r/arm_vectors.S
+@@ -28,6 +28,7 @@
+ #include <nuttx/irq.h>
+ 
+ #include "arm.h"
++#include "chip_asm.h"
+ 
+ 	.file	"arm_vectors.S"
+ 

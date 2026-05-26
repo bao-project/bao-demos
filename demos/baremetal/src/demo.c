@@ -14,10 +14,13 @@
 #include <irq.h>
 #include <uart.h>
 #include <timer.h>
+#include <fences.h>
 
 #define TIMER_INTERVAL (TIME_S(1))
 
 spinlock_t print_lock = SPINLOCK_INITVAL;
+
+static volatile unsigned int startup_print_turn = 0;
 
 void uart_rx_handler(unsigned id){
     static int irq_count = 0;
@@ -69,9 +72,16 @@ void main(void){
     irq_set_prio(IPI_IRQ_ID, IPI_IRQ_PRIO);
 
     while(!master_done);
+
+    while (startup_print_turn != get_cpuid());
+
+    fence_ord();
+
     spin_lock(&print_lock);
     printf("cpu %d up\n", get_cpuid());
     spin_unlock(&print_lock);
+    fence_sync_write();
+    startup_print_turn = get_cpuid() + 1;
 
     while(1) wfi();
 }
