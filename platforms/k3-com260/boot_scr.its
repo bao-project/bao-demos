@@ -1,0 +1,26 @@
+/dts-v1/;
+
+/*
+ * FIT wrapper for boot.cmd. This board's U-Boot has the legacy image format
+ * disabled (CONFIG_LEGACY_IMAGE_FORMAT unset), so a classic
+ * `mkimage -T script` boot.scr is rejected by `source` with
+ * "Wrong image format" - the script must be a FIT, just like bao.itb.
+ * The `default` property under /images lets a plain `source ${addr}`
+ * (no :unit-name suffix) find the script.
+ */
+
+/ {
+	description = "Bao boot script (FIT, this U-Boot rejects legacy uImages)";
+	#address-cells = <1>;
+
+	images {
+		default = "script";
+
+		script {
+			description = "boot.cmd";
+			data = /incbin/("boot.cmd");
+			type = "script";
+			compression = "none";
+		};
+	};
+};

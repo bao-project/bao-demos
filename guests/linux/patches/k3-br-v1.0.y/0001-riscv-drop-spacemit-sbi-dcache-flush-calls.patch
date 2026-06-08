@@ -1,0 +1,56 @@
+riscv: drop the SpacemiT vendor SBI dcache-flush calls
+
+The SpacemiT vendor kernel flushes the local dcache through a vendor SBI
+extension (sbi_flush_local_dcache_all) on cpu hotplug and suspend paths.
+As a Bao guest these ecalls land in the hypervisor's SBI handler, not in
+the vendor M-mode firmware, so they are useless under virtualization (and
+the mismatched config gating of the helper's definition can break the
+vmlinux link). Remove the call sites.
+
+diff --git a/arch/riscv/kernel/cpu-hotplug.c b/arch/riscv/kernel/cpu-hotplug.c
+index 2cf05d6d2..6bfad8e84 100644
+--- a/arch/riscv/kernel/cpu-hotplug.c
++++ b/arch/riscv/kernel/cpu-hotplug.c
+@@ -70,14 +70,8 @@ void __noreturn arch_cpu_idle_dead(void)
+ {
+ 	idle_task_exit();
+ 
+-#if defined(CONFIG_SOC_SPACEMIT)
+-	sbi_flush_local_dcache_all();
+-#endif
+ 	cpuhp_ap_report_dead();
+ 
+-#if defined(CONFIG_SOC_SPACEMIT)
+-	sbi_flush_local_dcache_all();
+-#endif
+ 	cpu_ops->cpu_stop();
+ 	/* It should never reach here */
+ 	BUG();
+diff --git a/arch/riscv/kernel/suspend.c b/arch/riscv/kernel/suspend.c
+index 79b41533c..575e6cc42 100644
+--- a/arch/riscv/kernel/suspend.c
++++ b/arch/riscv/kernel/suspend.c
+@@ -139,11 +139,6 @@ static int sbi_system_suspend(unsigned long sleep_type,
+ {
+ 	struct sbiret ret;
+ 
+-#if defined(CONFIG_SOC_SPACEMIT)
+-        /* flush the local cache */
+-        sbi_flush_local_dcache_all();
+-#endif
+-
+ 	ret = sbi_ecall(SBI_EXT_SUSP, SBI_EXT_SUSP_SYSTEM_SUSPEND,
+ 			sleep_type, resume_addr, opaque, 0, 0, 0);
+ 	if (ret.error)
+@@ -182,11 +177,6 @@ static int sbi_suspend_finisher(unsigned long suspend_type,
+ {
+ 	struct sbiret ret;
+ 
+-#if defined(CONFIG_SOC_SPACEMIT)
+-        /* flush the local cache */
+-        sbi_flush_local_dcache_all();
+-#endif
+-
+ 	ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_SUSPEND,
+ 			suspend_type, resume_addr, opaque, 0, 0, 0);
+ 

@@ -1,0 +1,33 @@
+/dts-v1/;
+
+/ {
+	description = "Bao hypervisor for SpacemiT K3 (CoM260 Kit)";
+	#address-cells = <2>;
+
+	images {
+		bao {
+			description = "Bao hypervisor + guest(s)";
+			data = /incbin/("./bao.bin");
+			type = "kernel";
+			arch = "riscv";
+			os = "linux";
+			compression = "none";
+			/* Fixed, page-aligned load/entry inside DRAM (kernel_addr_r from the
+			 * vendor U-Boot env). U-Boot's RISC-V bootm enters with a0 = boot
+			 * hart id, a1 = FDT (Bao ignores a1). */
+			load = <0x1 0x40000000>;
+			entry = <0x1 0x40000000>;
+			hash {
+				algo = "crc32";
+			};
+		};
+	};
+
+	configurations {
+		default = "conf-bao";
+		conf-bao {
+			description = "Boot Bao";
+			kernel = "bao";
+		};
+	};
+};
