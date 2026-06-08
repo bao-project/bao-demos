@@ -10,7 +10,7 @@ Clone and build the bao bare-metal guest application:
 
 ```
 git clone https://github.com/bao-project/bao-baremetal-guest.git\
-    --branch demo $BAO_DEMOS_BAREMETAL
+    --branch demo-next $BAO_DEMOS_BAREMETAL
 make -C $BAO_DEMOS_BAREMETAL PLATFORM=$PLATFORM $BAREMETAL_PARAMS
 ```
 
