@@ -20,3 +20,16 @@ $(strip $1): $(strip $2) $(opensbi_src)
 		FW_PAYLOAD_PATH=$(strip $2)
 	cp $(opensbi_src)/build/platform/generic/firmware/fw_payload.bin $$@
 endef
+
+# Build the dynamic firmware (fw_dynamic) for boot flows where an earlier
+# stage (e.g. a vendor SPL) loads OpenSBI and the next stage separately,
+# optionally with a platform defconfig ($2). The produced artifact is selected
+# by the target's file name ($1), e.g. fw_dynamic.bin or a vendor fw_dynamic.itb.
+define build-opensbi-dynamic
+$(strip $1): | $(opensbi_src)
+	$(MAKE) -C $(opensbi_src) \
+		CROSS_COMPILE=$(OPENSBI_CROSS_COMPILE) \
+		PLATFORM=generic \
+		$(if $(strip $2),PLATFORM_DEFCONFIG=$(strip $2))
+	cp $(opensbi_src)/build/platform/generic/firmware/$$(notdir $$@) $$@
+endef
