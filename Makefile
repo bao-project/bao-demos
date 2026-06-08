@@ -44,7 +44,8 @@ define print-instructions
 		sed '1d;$d' | head -n -1 |\
 		sed -r -e 's/(.*)\[(.*)\]\((http.*)\)(.*)/\1\2 (\3)\4/g' |\
 		sed -r -e 's/(.*)\[(.*)\]\((\.\/(\.\.\/)*)(.*)\)(.*)/\1\2 (\.\/\5)\6/g' |\
-		pandoc --to plain --wrap=preserve | $(environment) envsubst
+		pandoc --to plain --wrap=preserve |\
+		$(environment) envsubst '$(foreach v,$(environment),$$$(firstword $(subst =, ,$v)))'
 	-@if [ $(strip $3) = false ];\
 		then  printf "\n(Press return to continue)\r"; read -s dummy;\
 		else for i in {1..80}; do printf "-"; done ; printf "\n"; fi
