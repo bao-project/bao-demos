@@ -33,7 +33,8 @@ newer/compatible versions of the tools and software listed in
 ```
 sudo apt install build-essential bison flex git libssl-dev ninja-build \
     u-boot-tools pandoc libslirp-dev pkg-config libglib2.0-dev libpixman-1-dev \
-    gettext-base curl xterm cmake python3-pip xilinx-bootgen file cpio
+    gettext-base curl xterm cmake python3-pip xilinx-bootgen file cpio \
+    device-tree-compiler gdisk e2fsprogs
 
 pip3 install pykwalify packaging pyelftools
 ```
@@ -253,6 +254,7 @@ Build the firmware and deploy the system according to the target platform:
 
 #### RISC-V platforms:
 * [QEMU virt](platforms/qemu-riscv64-virt/README.md)
+* [SpacemiT K3 CoM260 Kit](platforms/k3-com260/README.md)
 
 #### RH850 platforms:
 * [RH850 U2A16](platforms/rh850-u2a16/README.md)
@@ -279,6 +281,7 @@ Build the firmware and deploy the system according to the target platform:
 | NXP S32Z270         | s32z270           | aarch32 |
 | QEMU RV64 virt      | qemu-riscv64-virt | riscv64 |
 | QEMU RV32 virt      | qemu-riscv32-virt | riscv32 |
+| SpacemiT K3 CoM260  | k3-com260         | riscv64 |
 | RH850-U2A16         | rh850-u2a16       | rh850   |
 | Infineon TC4Dx COM  | tc4dx             | tricore |
 | E3650               | e3650             | aarch32 |
@@ -310,6 +313,7 @@ Build the firmware and deploy the system according to the target platform:
 | s32z270           | x         |                |              | x                |        |                    |
 | qemu-riscv64-virt | x         | x              |              |                  | x      |                    |
 | qemu-riscv32-virt | x         | x              |              |                  |        |                    |
+| k3-com260         | x         | x              |              |                  |        |                    |
 | rh850-u2a16       | x         |                |              |                  |        |                    |
 | tc4dx             | x         |                |              |                  |        |                    |
 | e3650             | x         |                |              |                  |        |                    |
@@ -330,6 +334,9 @@ Build the firmware and deploy the system according to the target platform:
 | dtc                     | 1.6.1   |
 | gcc                     | 11.4.0  |
 | mkimage                 | 2022.01 |
+| mkenvimage              | 2022.01 |
+| sgdisk                  | 1.0.8   |
+| mke2fs                  | 1.46.5  |
 | cmake                   | 3.22.1  |
 | ninja                   | 1.10.1  |
 

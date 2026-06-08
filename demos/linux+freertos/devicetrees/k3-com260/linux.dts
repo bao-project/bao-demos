@@ -1,0 +1,519 @@
+/dts-v1/;
+
+/ {
+	#address-cells = <2>;
+	#size-cells = <2>;
+	model = "SpacemiT K3";
+	compatible = "spacemit,k3";
+
+	cpus: cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		timebase-frequency = <24000000>;
+
+		cpu_0: cpu@0 {
+			compatible = "spacemit,x100", "riscv";
+			device_type = "cpu";
+			reg = <0>;
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "b", "v", "h",
+					       "sha", "shcounterenw", "shgatpa", "shtvala",
+					       "shvsatpa", "shvstvala", "shvstvecd", "smaia",
+					       "smstateen", "ssaia", "ssccptr", "sscofpmf",
+					       "sscounterenw", "ssnpm", "ssstateen", "sstc",
+					       "sstvala", "sstvecd", "ssu64xl", "svade",
+					       "svinval", "svnapot", "svpbmt", "za64rs",
+					       "zawrs", "zba", "zbb", "zbc", "zbs", "zca",
+					       "zcb", "zcd", "zcmop", "zfa", "zfbfmin",
+					       "zfh", "zfhmin", "zicbom", "zicbop", "zicboz",
+					       "ziccamoa", "ziccif", "zicclsm", "zicntr",
+					       "zicond", "zicsr", "zifencei", "zihintntl",
+					       "zihintpause", "zihpm", "zimop", "zkt", "zvbb",
+					       "zvbc", "zvfbfmin", "zvfbfwma", "zvfh",
+					       "zvfhmin", "zvkb", "zvkg", "zvkn", "zvknc",
+					       "zvkned", "zvkng", "zvknha", "zvknhb", "zvks",
+					       "zvksc", "zvksed", "zvksg", "zvksh", "zvkt";
+			riscv,cbom-block-size = <64>;
+			riscv,cbop-block-size = <64>;
+			riscv,cboz-block-size = <64>;
+			i-cache-block-size = <64>;
+			i-cache-size = <65536>;
+			i-cache-sets = <256>;
+			d-cache-block-size = <64>;
+			d-cache-size = <65536>;
+			d-cache-sets = <256>;
+			next-level-cache = <&l2_cache0>;
+			mmu-type = "riscv,sv39";
+
+			cpu0_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+
+		cpu_1: cpu@1 {
+			compatible = "spacemit,x100", "riscv";
+			device_type = "cpu";
+			reg = <1>;
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "b", "v", "h",
+					       "sha", "shcounterenw", "shgatpa", "shtvala",
+					       "shvsatpa", "shvstvala", "shvstvecd", "smaia",
+					       "smstateen", "ssaia", "ssccptr", "sscofpmf",
+					       "sscounterenw", "ssnpm", "ssstateen", "sstc",
+					       "sstvala", "sstvecd", "ssu64xl", "svade",
+					       "svinval", "svnapot", "svpbmt", "za64rs",
+					       "zawrs", "zba", "zbb", "zbc", "zbs", "zca",
+					       "zcb", "zcd", "zcmop", "zfa", "zfbfmin",
+					       "zfh", "zfhmin", "zicbom", "zicbop", "zicboz",
+					       "ziccamoa", "ziccif", "zicclsm", "zicntr",
+					       "zicond", "zicsr", "zifencei", "zihintntl",
+					       "zihintpause", "zihpm", "zimop", "zkt", "zvbb",
+					       "zvbc", "zvfbfmin", "zvfbfwma", "zvfh",
+					       "zvfhmin", "zvkb", "zvkg", "zvkn", "zvknc",
+					       "zvkned", "zvkng", "zvknha", "zvknhb", "zvks",
+					       "zvksc", "zvksed", "zvksg", "zvksh", "zvkt";
+			riscv,cbom-block-size = <64>;
+			riscv,cbop-block-size = <64>;
+			riscv,cboz-block-size = <64>;
+			i-cache-block-size = <64>;
+			i-cache-size = <65536>;
+			i-cache-sets = <256>;
+			d-cache-block-size = <64>;
+			d-cache-size = <65536>;
+			d-cache-sets = <256>;
+			next-level-cache = <&l2_cache0>;
+			mmu-type = "riscv,sv39";
+
+			cpu1_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+
+		cpu_2: cpu@2 {
+			compatible = "spacemit,x100", "riscv";
+			device_type = "cpu";
+			reg = <2>;
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "b", "v", "h",
+					       "sha", "shcounterenw", "shgatpa", "shtvala",
+					       "shvsatpa", "shvstvala", "shvstvecd", "smaia",
+					       "smstateen", "ssaia", "ssccptr", "sscofpmf",
+					       "sscounterenw", "ssnpm", "ssstateen", "sstc",
+					       "sstvala", "sstvecd", "ssu64xl", "svade",
+					       "svinval", "svnapot", "svpbmt", "za64rs",
+					       "zawrs", "zba", "zbb", "zbc", "zbs", "zca",
+					       "zcb", "zcd", "zcmop", "zfa", "zfbfmin",
+					       "zfh", "zfhmin", "zicbom", "zicbop", "zicboz",
+					       "ziccamoa", "ziccif", "zicclsm", "zicntr",
+					       "zicond", "zicsr", "zifencei", "zihintntl",
+					       "zihintpause", "zihpm", "zimop", "zkt", "zvbb",
+					       "zvbc", "zvfbfmin", "zvfbfwma", "zvfh",
+					       "zvfhmin", "zvkb", "zvkg", "zvkn", "zvknc",
+					       "zvkned", "zvkng", "zvknha", "zvknhb", "zvks",
+					       "zvksc", "zvksed", "zvksg", "zvksh", "zvkt";
+			riscv,cbom-block-size = <64>;
+			riscv,cbop-block-size = <64>;
+			riscv,cboz-block-size = <64>;
+			i-cache-block-size = <64>;
+			i-cache-size = <65536>;
+			i-cache-sets = <256>;
+			d-cache-block-size = <64>;
+			d-cache-size = <65536>;
+			d-cache-sets = <256>;
+			next-level-cache = <&l2_cache0>;
+			mmu-type = "riscv,sv39";
+
+			cpu2_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+
+		cpu_3: cpu@3 {
+			compatible = "spacemit,x100", "riscv";
+			device_type = "cpu";
+			reg = <3>;
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "b", "v", "h",
+					       "sha", "shcounterenw", "shgatpa", "shtvala",
+					       "shvsatpa", "shvstvala", "shvstvecd", "smaia",
+					       "smstateen", "ssaia", "ssccptr", "sscofpmf",
+					       "sscounterenw", "ssnpm", "ssstateen", "sstc",
+					       "sstvala", "sstvecd", "ssu64xl", "svade",
+					       "svinval", "svnapot", "svpbmt", "za64rs",
+					       "zawrs", "zba", "zbb", "zbc", "zbs", "zca",
+					       "zcb", "zcd", "zcmop", "zfa", "zfbfmin",
+					       "zfh", "zfhmin", "zicbom", "zicbop", "zicboz",
+					       "ziccamoa", "ziccif", "zicclsm", "zicntr",
+					       "zicond", "zicsr", "zifencei", "zihintntl",
+					       "zihintpause", "zihpm", "zimop", "zkt", "zvbb",
+					       "zvbc", "zvfbfmin", "zvfbfwma", "zvfh",
+					       "zvfhmin", "zvkb", "zvkg", "zvkn", "zvknc",
+					       "zvkned", "zvkng", "zvknha", "zvknhb", "zvks",
+					       "zvksc", "zvksed", "zvksg", "zvksh", "zvkt";
+			riscv,cbom-block-size = <64>;
+			riscv,cbop-block-size = <64>;
+			riscv,cboz-block-size = <64>;
+			i-cache-block-size = <64>;
+			i-cache-size = <65536>;
+			i-cache-sets = <256>;
+			d-cache-block-size = <64>;
+			d-cache-size = <65536>;
+			d-cache-sets = <256>;
+			next-level-cache = <&l2_cache0>;
+			mmu-type = "riscv,sv39";
+
+			cpu3_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+
+		l2_cache0: cache-controller-0 {
+			compatible = "cache";
+			cache-block-size = <64>;
+			cache-level = <2>;
+			cache-size = <4194304>;
+			cache-sets = <4096>;
+			cache-unified;
+		};
+
+		l2_cache1: cache-controller-1 {
+			compatible = "cache";
+			cache-block-size = <64>;
+			cache-level = <2>;
+			cache-size = <4194304>;
+			cache-sets = <4096>;
+			cache-unified;
+		};
+
+		cpu-map {
+			cluster0 {
+				core0 {
+					cpu = <&cpu_0>;
+				};
+				core1 {
+					cpu = <&cpu_1>;
+				};
+				core2 {
+					cpu = <&cpu_2>;
+				};
+				core3 {
+					cpu = <&cpu_3>;
+				};
+			};
+		};
+	};
+
+	memory@180000000 {
+		device_type = "memory";
+		reg = <0x1 0x80000000 0x0 0x40000000>;
+	};
+
+	clocks {
+		vctcxo_1m: clock-1m {
+			compatible = "fixed-clock";
+			clock-frequency = <1000000>;
+			clock-output-names = "vctcxo_1m";
+			#clock-cells = <0>;
+		};
+
+		vctcxo_24m: clock-24m {
+			compatible = "fixed-clock";
+			clock-frequency = <24000000>;
+			clock-output-names = "vctcxo_24m";
+			#clock-cells = <0>;
+		};
+
+		vctcxo_3m: clock-3m {
+			compatible = "fixed-clock";
+			clock-frequency = <3000000>;
+			clock-output-names = "vctcxo_3m";
+			#clock-cells = <0>;
+		};
+
+		osc_32k: clock-32k {
+			compatible = "fixed-clock";
+			clock-frequency = <32000>;
+			clock-output-names = "osc_32k";
+			#clock-cells = <0>;
+		};
+	};
+
+	soc: soc {
+		compatible = "simple-bus";
+		interrupt-parent = <&saplic>;
+		#address-cells = <2>;
+		#size-cells = <2>;
+		dma-noncoherent;
+		ranges;
+
+		syscon_apmu: system-controller@d4282800 {
+			compatible = "spacemit,k3-syscon-apmu";
+			reg = <0x0 0xd4282800 0x0 0x400>;
+			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>, <&vctcxo_24m>;
+			clock-names = "osc", "vctcxo_1m", "vctcxo_3m", "vctcxo_24m";
+			#clock-cells = <1>;
+			#power-domain-cells = <1>;
+			#reset-cells = <1>;
+		};
+
+		/* APBC clock/reset controller: clock provider for the GPIO and pinctrl
+		 * blocks, which gmac1 depends on (pinctrl-0 + PHY reset-gpio). Needs its
+		 * MMIO (0xd4015000) passed through to the Bao guest. */
+		syscon_apbc: system-controller@d4015000 {
+			compatible = "spacemit,k3-syscon-apbc";
+			reg = <0x0 0xd4015000 0x0 0x1000>;
+			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>, <&vctcxo_24m>;
+			clock-names = "osc", "vctcxo_1m", "vctcxo_3m", "vctcxo_24m";
+			#clock-cells = <1>;
+			#reset-cells = <1>;
+		};
+
+		/* GPIO register block, also viewed as two syscon regions (overlapping
+		 * the same 0xd4019000 page). Needs 0xd4019000 (0x1000) passed through. */
+		syscon_gpio: syscon-gpio {
+			compatible = "syscon";
+			reg = <0x0 0xd4019000 0x0 0x800>;
+		};
+
+		syscon_gpio_edge: syscon-gpio-edge {
+			compatible = "syscon";
+			reg = <0x0 0xd4019800 0x0 0x10>;
+		};
+
+		/* GPIO controller - provides the PHY reset line (gmac1 bank1/line5). */
+		gpio: gpio@d4019000 {
+			compatible = "spacemit,k3-gpio";
+			reg = <0x0 0xd4019000 0x0 0x100>;
+			clocks = <&syscon_apbc 20>, <&syscon_apbc 21>; /* CLK_APBC_GPIO[_BUS] */
+			clock-names = "core", "bus";
+			gpio-controller;
+			#gpio-cells = <3>;
+			interrupts = <58 4>;
+			interrupt-parent = <&saplic>;
+			interrupt-controller;
+			#interrupt-cells = <3>;
+			syscon-gpio-regs = <&syscon_gpio>;
+			syscon-gpio-edge = <&syscon_gpio_edge>;
+			gpio-ranges = <&pinctrl 0 0 0 32>,
+				      <&pinctrl 1 0 32 32>,
+				      <&pinctrl 2 0 64 32>,
+				      <&pinctrl 3 0 96 32>;
+		};
+
+		/* Pinctrl controller - muxes the gmac1 RGMII/MDIO pads (gmac1_cfg).
+		 * Needs 0xd401e000 (0x1000) passed through. */
+		pinctrl: pinctrl@d401e000 {
+			compatible = "spacemit,k3-pinctrl";
+			reg = <0x0 0xd401e000 0x0 0x400>,
+			      <0x0 0xd401e800 0x0 0x34>;
+			clocks = <&syscon_apbc 103>, <&syscon_apbc 104>; /* CLK_APBC_AIB[_BUS] */
+			clock-names = "func", "bus";
+			interrupt-controller;
+			#interrupt-cells = <2>;
+			interrupts = <60 4>;
+			interrupt-parent = <&saplic>;
+			spacemit,gpio-edge = <&syscon_gpio_edge>;
+			spacemit,apbc = <&syscon_apbc 0x50>;
+			spacemit,apmu = <&syscon_apmu>;
+		};
+
+		eth1: ethernet@cac82000 {
+			compatible = "spacemit,k3-gmac", "snps,dwmac-5.10a";
+			reg = <0x0 0xcac82000 0x0 0x2000>;
+			clocks = <&syscon_apmu 79>,
+				 <&syscon_apmu 81>;
+			clock-names = "stmmaceth", "ptp_ref";
+			interrupts = <133 4>,
+				     <277 4>;
+			interrupt-names = "macirq", "eth_wake_irq";
+			resets = <&syscon_apmu 78>;
+			reset-names = "stmmaceth";
+			rx-fifo-depth = <8192>;
+			tx-fifo-depth = <8192>;
+			snps,multicast-filter-bins = <64>;
+			snps,perfect-filter-entries = <32>;
+			snps,aal;
+			snps,tso;
+			snps,txpbl = <8>;
+			snps,rxpbl = <8>;
+			snps,force_sf_dma_mode;
+			snps,axi-config = <&gmac1_axi_setup>;
+			/* dwmac-spacemit-ethqos reads these as 3 separate properties:
+			 * spacemit,apmu = phandle only; ctrl/dline offsets as u32. */
+			spacemit,apmu = <&syscon_apmu>;
+			spacemit,ctrl-offset = <0x3ec>;
+			spacemit,dline-offset = <0x3f0>;
+			status = "disabled";
+
+			mdio {
+				compatible = "snps,dwmac-mdio";
+				#address-cells = <1>;
+				#size-cells = <0>;
+			};
+
+			gmac1_axi_setup: stmmac-axi-config {
+				snps,wr_osr_lmt = <0xf>;
+				snps,rd_osr_lmt = <0xf>;
+				/* max axi burst len is 256 */
+				snps,blen = <256 128 64 32 16 0 0>;
+			};
+		};
+
+		simsic: interrupt-controller@e0400000 {
+			compatible = "spacemit,k3-imsics", "riscv,imsics";
+			/* Bao maps one S-level interrupt file per vCPU CONTIGUOUSLY, one
+			 * 4K page apart (vimsic: imsic.base + 4K * vcpu_id). The virtual
+			 * geometry is therefore guest-index-bits = 0 (absent) and
+			 * hart-index-bits = 2 (covers the 4 harts => 0x4000 window), so
+			 * cpu N's file sits at 0xe0400000 + N*0x1000. hart-index-bits
+			 * MUST match: the APLIC MSI driver decomposes the per-CPU MSI
+			 * address with it (WARN at aplic_msi_write_msg otherwise). Each
+			 * file is backed by a VS interrupt file: only 63 MSI ids. */
+			reg = <0x0 0xe0400000 0x0 0x4000>;
+			#interrupt-cells = <0>;
+			#msi-cells = <0>;
+			interrupt-controller;
+			interrupts-extended = <&cpu0_intc 9>, <&cpu1_intc 9>,
+					      <&cpu2_intc 9>, <&cpu3_intc 9>;
+			msi-controller;
+			riscv,hart-index-bits = <2>;
+			riscv,num-ids = <63>;
+		};
+
+		saplic: interrupt-controller@e0804000 {
+			compatible = "spacemit,k3-aplic", "riscv,aplic";
+			reg = <0x0 0xe0804000 0x0 0x4000>;
+			#interrupt-cells = <2>;
+			interrupt-controller;
+			msi-parent = <&simsic>;
+			riscv,num-sources = <512>;
+		};
+	};
+
+	chosen {
+		bootargs = "clk_ignore_unused ip=192.168.42.15 carrier_timeout=0";
+	};
+
+    aliases {
+		ethernet0 = &eth1;
+	};
+
+	/* Bao inter-VM shared-memory channel to the FreeRTOS VM (shmem 0 in the
+	 * Bao config: base 0xf0000000, 64 KiB, notification irq 52). The channel
+	 * layout mirrors the FreeRTOS demo app: it writes its message at offset
+	 * 0x0 (our read-channel) and reads ours at 0x2000 (our write-channel).
+	 * Driver: the out-of-tree "ipc" module from bao-project/bao-linux-drivers
+	 * (compatible bao,ipcshmem); no kernel patch needed. */
+	bao-ipc@f0000000 {
+		compatible = "bao,ipcshmem";
+		reg = <0x0 0xf0000000 0x0 0x00010000>;
+		read-channel = <0x0 0x2000>;
+		write-channel = <0x2000 0x2000>;
+		interrupt-parent = <&saplic>;
+		interrupts = <52 1>; /* edge-rising: message irq injected by Bao */
+		id = <0>;
+	};
+};
+
+/* gmac1 RGMII + MDIO pad mux (effective CoM260-kit set: vendor groups 0/1/3/6,
+ * with kit's gmac1-2/4/5 deleted). pinmux raw form = (pin << 16) | func. */
+&pinctrl {
+	/omit-if-no-ref/
+	gmac1_cfg: gmac1-cfg {
+		gmac1_base_pins: gmac1-0-pins {
+			pinmux = <0x150001>,	/* pin 21 rx_ctl */
+				 <0x160001>,	/* pin 22 rx d0  */
+				 <0x170001>,	/* pin 23 rx d1  */
+				 <0x180001>,	/* pin 24 rxc    */
+				 <0x1b0001>,	/* pin 27 tx d0  */
+				 <0x1c0001>,	/* pin 28 tx d1  */
+				 <0x200001>,	/* pin 32 tx_ctl */
+				 <0x210001>,	/* pin 33 mdc    */
+				 <0x220001>;	/* pin 34 mdio   */
+			bias-disable;
+			drive-strength = <25>;
+			power-source = <1800>;
+		};
+		gmac1_rgmii_add_pins: gmac1-1-pins {
+			pinmux = <0x190001>,	/* pin 25 rx d2  */
+				 <0x1a0001>,	/* pin 26 rx d3  */
+				 <0x1d0001>,	/* pin 29 tx clk */
+				 <0x1e0001>,	/* pin 30 tx d2  */
+				 <0x1f0001>;	/* pin 31 tx d3  */
+			bias-disable;
+			drive-strength = <25>;
+			power-source = <1800>;
+		};
+		gmac1_int_pins: gmac1-3-pins {
+			pinmux = <0x230001>;	/* pin 35 phy int */
+			bias-disable;
+			drive-strength = <25>;
+			power-source = <1800>;
+		};
+		gmac1_pin6: gmac1-6-pins {
+			pinmux = <0x250000>;	/* pin 37 func 0 (board-specific) */
+			bias-disable;
+			drive-strength = <25>;
+			power-source = <1800>;
+		};
+	};
+};
+
+&eth1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&gmac1_cfg>;
+
+	max-speed = <1000>;
+	phy-mode = "rgmii";
+	phy-handle = <&gmac1_phy>;
+	snps,reset-gpios = <&gpio 1 5 1>;
+	snps,reset-delays-us = <0 20000 100000>;
+
+	spacemit,wake-irq-enable;
+
+	spacemit,clk-tuning-enable;
+	spacemit,clk-tuning-by-delayline;
+	spacemit,tx-phase = <47>;
+	spacemit,rx-phase = <53>;
+
+	status = "okay";
+
+	mdio {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "snps,dwmac-mdio";
+
+		gmac1_phy: ethernet-phy@1 {
+			compatible = "ethernet-phy-id001c.c916",
+				     "ethernet-phy-ieee802.3-c22";
+			reg = <1>;
+
+			leds {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				led@1 {
+					reg = <1>;
+					function = "lan";
+					color = <2>;
+					default-state = "keep";
+				};
+
+				led@2 {
+					reg = <2>;
+					function = "lan";
+					color = <6>;
+					default-state = "keep";
+				};
+			};
+		};
+	};
+};

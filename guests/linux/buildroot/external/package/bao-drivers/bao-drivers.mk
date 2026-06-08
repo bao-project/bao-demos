@@ -1,6 +1,8 @@
 BAO_DRIVERS_SITE = https://github.com/bao-project/bao-linux-drivers.git
 ifneq (,$(filter $(PLATFORM),s32g3))
 BAO_DRIVERS_VERSION = linux-v6.6
+else ifneq (,$(filter $(PLATFORM),k3-com260))
+BAO_DRIVERS_VERSION = linux-v6.18
 else
 BAO_DRIVERS_VERSION = linux-v6.15
 endif
