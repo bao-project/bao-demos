@@ -1,0 +1,156 @@
+diff --git a/arch/arm/dts/imx8mp-verdin-wifi-dev-u-boot.dtsi b/arch/arm/dts/imx8mp-verdin-wifi-dev-u-boot.dtsi
+index 7b45a874..0e15a6c7 100644
+--- a/arch/arm/dts/imx8mp-verdin-wifi-dev-u-boot.dtsi
++++ b/arch/arm/dts/imx8mp-verdin-wifi-dev-u-boot.dtsi
+@@ -144,9 +144,9 @@
+ 	bootph-pre-ram;
+ };
+ 
+-&uart3 {
+-	bootph-pre-ram;
+-};
++// &uart3 {
++// 	bootph-pre-ram;
++// };
+ 
+ &usdhc1 {
+ 	status = "disabled";
+diff --git a/arch/arm/dts/imx8mp.dtsi b/arch/arm/dts/imx8mp.dtsi
+index c9a610ba..64d5174e 100644
+--- a/arch/arm/dts/imx8mp.dtsi
++++ b/arch/arm/dts/imx8mp.dtsi
+@@ -38,7 +38,7 @@
+ 		mmc2 = &usdhc3;
+ 		serial0 = &uart1;
+ 		serial1 = &uart2;
+-		serial2 = &uart3;
++		// serial2 = &uart3;
+ 		serial3 = &uart4;
+ 		spi0 = &flexspi;
+ 	};
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index 34d91cd6..acd1d50e 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -295,7 +295,7 @@ static int imx8mp_clk_probe(struct udevice *dev)
+ 
+ 	clk_dm(IMX8MP_CLK_UART1, imx8m_clk_composite("uart1", imx8mp_uart1_sels, base + 0xaf00));
+ 	clk_dm(IMX8MP_CLK_UART2, imx8m_clk_composite("uart2", imx8mp_uart2_sels, base + 0xaf80));
+-	clk_dm(IMX8MP_CLK_UART3, imx8m_clk_composite("uart3", imx8mp_uart3_sels, base + 0xb000));
++	// clk_dm(IMX8MP_CLK_UART3, imx8m_clk_composite("uart3", imx8mp_uart3_sels, base + 0xb000));
+ 	clk_dm(IMX8MP_CLK_UART4, imx8m_clk_composite("uart4", imx8mp_uart4_sels, base + 0xb080));
+ 	clk_dm(IMX8MP_CLK_USB_CORE_REF, imx8m_clk_composite("usb_core_ref", imx8mp_usb_core_ref_sels, base + 0xb100));
+ 	clk_dm(IMX8MP_CLK_USB_PHY_REF, imx8m_clk_composite("usb_phy_ref", imx8mp_usb_phy_ref_sels, base + 0xb180));
+@@ -342,7 +342,7 @@ static int imx8mp_clk_probe(struct udevice *dev)
+ 	clk_dm(IMX8MP_CLK_ENET_QOS_ROOT, imx_clk_gate4("enet_qos_root_clk", "sim_enet_root_clk", base + 0x43b0, 0));
+ 	clk_dm(IMX8MP_CLK_UART1_ROOT, imx_clk_gate4("uart1_root_clk", "uart1", base + 0x4490, 0));
+ 	clk_dm(IMX8MP_CLK_UART2_ROOT, imx_clk_gate4("uart2_root_clk", "uart2", base + 0x44a0, 0));
+-	clk_dm(IMX8MP_CLK_UART3_ROOT, imx_clk_gate4("uart3_root_clk", "uart3", base + 0x44b0, 0));
++	// clk_dm(IMX8MP_CLK_UART3_ROOT, imx_clk_gate4("uart3_root_clk", "uart3", base + 0x44b0, 0));
+ 	clk_dm(IMX8MP_CLK_UART4_ROOT, imx_clk_gate4("uart4_root_clk", "uart4", base + 0x44c0, 0));
+ 	clk_dm(IMX8MP_CLK_USB_ROOT, imx_clk_gate2("usb_root_clk", "hsio_axi", base + 0x44d0, 0));
+ 	clk_dm(IMX8MP_CLK_USB_SUSP, imx_clk_gate2("usb_suspend_clk", "clock-osc-24m", base + 0x44d0, 0));
+diff --git a/dts/upstream/src/arm64/freescale/imx8mp-verdin-dev.dtsi b/dts/upstream/src/arm64/freescale/imx8mp-verdin-dev.dtsi
+index 42ed44a1..b773345c 100644
+--- a/dts/upstream/src/arm64/freescale/imx8mp-verdin-dev.dtsi
++++ b/dts/upstream/src/arm64/freescale/imx8mp-verdin-dev.dtsi
+@@ -192,9 +192,9 @@
+ };
+ 
+ /* Verdin UART_3, used as the Linux Console */
+-&uart3 {
+-	status = "okay";
+-};
++// &uart3 {
++// 	status = "okay";
++// };
+ 
+ /* Verdin USB_1 */
+ &usb3_0 {
+diff --git a/dts/upstream/src/arm64/freescale/imx8mp-verdin.dtsi b/dts/upstream/src/arm64/freescale/imx8mp-verdin.dtsi
+index aef4bef4..8d9d7710 100644
+--- a/dts/upstream/src/arm64/freescale/imx8mp-verdin.dtsi
++++ b/dts/upstream/src/arm64/freescale/imx8mp-verdin.dtsi
+@@ -9,7 +9,7 @@
+ 
+ / {
+ 	chosen {
+-		stdout-path = &uart3;
++		// stdout-path = &uart3;
+ 	};
+ 
+ 	aliases {
+@@ -837,10 +837,10 @@
+ };
+ 
+ /* Verdin UART_3, used as the Linux Console */
+-&uart3 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_uart3>;
+-};
++// &uart3 {
++// 	pinctrl-names = "default";
++// 	pinctrl-0 = <&pinctrl_uart3>;
++// };
+ 
+ /* Verdin UART_4, used for Bluetooth on Wi-Fi/Bluetooth SKUs */
+ &uart4 {
+diff --git a/dts/upstream/src/arm64/freescale/imx8mp.dtsi b/dts/upstream/src/arm64/freescale/imx8mp.dtsi
+index b92abb5a..b9c980a4 100644
+--- a/dts/upstream/src/arm64/freescale/imx8mp.dtsi
++++ b/dts/upstream/src/arm64/freescale/imx8mp.dtsi
+@@ -38,7 +38,7 @@
+ 		mmc2 = &usdhc3;
+ 		serial0 = &uart1;
+ 		serial1 = &uart2;
+-		serial2 = &uart3;
++		// serial2 = &uart3;
+ 		serial3 = &uart4;
+ 		spi0 = &flexspi;
+ 	};
+@@ -1082,17 +1082,17 @@
+ 					status = "disabled";
+ 				};
+ 
+-				uart3: serial@30880000 {
+-					compatible = "fsl,imx8mp-uart", "fsl,imx6q-uart";
+-					reg = <0x30880000 0x10000>;
+-					interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
+-					clocks = <&clk IMX8MP_CLK_UART3_ROOT>,
+-						 <&clk IMX8MP_CLK_UART3_ROOT>;
+-					clock-names = "ipg", "per";
+-					dmas = <&sdma1 26 4 0>, <&sdma1 27 4 0>;
+-					dma-names = "rx", "tx";
+-					status = "disabled";
+-				};
++				// uart3: serial@30880000 {
++				// 	compatible = "fsl,imx8mp-uart", "fsl,imx6q-uart";
++				// 	reg = <0x30880000 0x10000>;
++				// 	interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
++				// 	clocks = <&clk IMX8MP_CLK_UART3_ROOT>,
++				// 		 <&clk IMX8MP_CLK_UART3_ROOT>;
++				// 	clock-names = "ipg", "per";
++				// 	dmas = <&sdma1 26 4 0>, <&sdma1 27 4 0>;
++				// 	dma-names = "rx", "tx";
++				// 	status = "disabled";
++				// };
+ 
+ 				uart2: serial@30890000 {
+ 					compatible = "fsl,imx8mp-uart", "fsl,imx6q-uart";
+diff --git a/include/configs/verdin-imx8mp.h b/include/configs/verdin-imx8mp.h
+index 0b88e956..55269720 100644
+--- a/include/configs/verdin-imx8mp.h
++++ b/include/configs/verdin-imx8mp.h
+@@ -56,8 +56,9 @@
+ /* i.MX 8M Plus supports max. 8GB memory in two albeit concecutive banks */
+ #define CFG_SYS_SDRAM_BASE		0x40000000
+ #define PHYS_SDRAM			0x40000000
+-#define PHYS_SDRAM_SIZE			(SZ_2G + SZ_1G)
+-#define PHYS_SDRAM_2			0x100000000
+-#define PHYS_SDRAM_2_SIZE		(SZ_4G + SZ_1G)
++#define PHYS_SDRAM_SIZE			(SZ_1G)
++/* #define PHYS_SDRAM_2			0x100000000 */
++/* #define PHYS_SDRAM_2_SIZE		(SZ_4G + SZ_1G) */
++#define PHYS_SDRAM_2_SIZE		(0)
+ 
+ #endif /* __VERDIN_IMX8MP_H */

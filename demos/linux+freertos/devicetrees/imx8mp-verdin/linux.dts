@@ -1,0 +1,334 @@
+/dts-v1/;
+
+/ {   
+
+	#size-cells = <0x2>;
+	#address-cells = <0x2>;
+
+	model = "Toradex Verdin iMX8M Plus WB on Dahlia Board";
+	compatible = "toradex,verdin-imx8mp-wifi-dahlia",
+		     "toradex,verdin-imx8mp-wifi",
+		     "toradex,verdin-imx8mp",
+		     "fsl,imx8mp";
+
+	cpus {
+		#size-cells = <0x0>;
+		#address-cells = <0x1>;
+
+		cpu@0 {
+			compatible = "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x0>;
+		};
+
+		cpu@1 {
+			compatible = "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+			reg = <0x1>;
+		};
+
+		cpu@2 {
+			reg = <0x2>;
+			compatible = "arm,armv8";
+			device_type = "cpu";
+			enable-method = "psci";
+		};
+	};
+
+	psci {
+		compatible = "arm,psci-0.2";
+		method = "smc";
+	};
+
+
+	memory@80200000 {
+		reg = <0x0 0x80200000 0x0 0x20000000>;
+		device_type = "memory";
+	};
+
+	gic: intc@38800000 {
+		interrupts = <0x01 0x09 0x04>;
+                reg = <0x00 0x38800000 0x00 0x10000 0x00 0x38880000 0x00 0xc0000>;
+		compatible = "arm,gic-v3";
+		interrupt-controller;
+		#interrupt-cells = <0x03>;
+                interrupt-parent = <&gic>;
+	};
+
+   	timer {
+		compatible = "arm,armv8-timer";
+		interrupt-parent = <&gic>;
+		interrupts = <0x1 0xd 0xf08 0x1 0xe 0xf08 0x1 0xb 0xf08 0x1 0xa 0xf08>;
+	};
+
+
+	osc_32k: clock-osc-32k {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <32768>;
+		clock-output-names = "osc_32k";
+	};
+
+	osc_24m: clock-osc-24m {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <24000000>;
+		clock-output-names = "osc_24m";
+	};
+
+	clk_ext1: clock-ext1 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <133000000>;
+		clock-output-names = "clk_ext1";
+	};
+
+	clk_ext2: clock-ext2 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <133000000>;
+		clock-output-names = "clk_ext2";
+	};
+
+	clk_ext3: clock-ext3 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <133000000>;
+		clock-output-names = "clk_ext3";
+	};
+
+	clk_ext4: clock-ext4 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <133000000>;
+		clock-output-names = "clk_ext4";
+	};
+
+        anatop: clock-controller@30360000 {
+                compatible = "fsl,imx8mp-anatop", "fsl,imx8mm-anatop";
+                reg = <0x0 0x30360000 0x0 0x10000>;
+                #clock-cells = <1>;
+        };
+
+        clk: clock-controller@30380000 {
+                compatible = "fsl,imx8mp-ccm";
+                reg = <0x0 0x30380000 0x0 0x10000>;
+                interrupts = <0 85 4>,
+                             <0 86 4>;
+                #clock-cells = <1>;
+                clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
+                         <&clk_ext3>, <&clk_ext4>;
+                clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
+                              "clk_ext3", "clk_ext4";
+                assigned-clocks = <&clk 66>,
+                                  <&clk 288>,
+                                  <&clk 103>,
+                                  <&clk 104>,
+                                  <&clk 148>;
+                assigned-clock-parents = <&clk 56>,
+                                         <&clk 44>,
+                                         <&clk 65>,
+                                         <&clk 56>,
+                                         <&clk 64>;
+                assigned-clock-rates = <0>, <0>,
+                                       <1000000000>,
+                                       <800000000>,
+                                       <500000000>;
+                interrupt-parent = <&gic>;
+        };
+
+        gpr: syscon@30340000 {
+            compatible = "fsl,imx8mp-iomuxc-gpr", "syscon";
+            reg = <0x0 0x30340000 0x0 0x10000>;
+        };
+
+
+        iomuxc: pinctrl@30330000 {
+                compatible = "fsl,imx8mp-iomuxc";
+                reg = <0x0 0x30330000 0x0 0x10000>;
+
+                pinctrl_eqos: eqosgrp {
+                    fsl,pins =
+                            <0x054 0x2B4 0x000 0x0 0x0  0x3>,
+                            <0x058 0x2B8 0x590 0x0 0x1  0x3>,
+                            <0x07C 0x2DC 0x000 0x0 0x0  0x91>,
+                            <0x080 0x2E0 0x000 0x0 0x0  0x91>,
+                            <0x084 0x2E4 0x000 0x0 0x0  0x91>,
+                            <0x088 0x2E8 0x000 0x0 0x0  0x91>,
+                            <0x078 0x2D8 0x000 0x0 0x0  0x91>,
+                            <0x074 0x2D4 0x000 0x0 0x0  0x91>,
+                            <0x068 0x2C8 0x000 0x0 0x0  0x1f>,
+                            <0x064 0x2C4 0x000 0x0 0x0  0x1f>,
+                            <0x060 0x2C0 0x000 0x0 0x0  0x1f>,
+                            <0x05C 0x2BC 0x000 0x0 0x0  0x1f>,
+                            <0x06C 0x2CC 0x000 0x0 0x0  0x1f>,
+                            <0x070 0x2D0 0x000 0x0 0x0  0x1f>;
+                };
+        };
+
+        gpio1: gpio@30200000 {
+            compatible = "fsl,imx8mp-gpio", "fsl,imx35-gpio";
+            reg = <0x0 0x30200000 0x0 0x10000>;
+            interrupts = <0 64 4>,
+                         <0 65 4>;
+            clocks = <&clk 193>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-controller;
+            #interrupt-cells = <2>;
+            gpio-ranges = <&iomuxc 0 5 30>;
+            interrupt-parent = <&gic>;
+        };
+
+        ocotp: efuse@30350000 {
+                compatible = "fsl,imx8mp-ocotp", "fsl,imx8mm-ocotp", "syscon";
+                reg = <0x0 0x30350000 0x0 0x10000>;
+                clocks = <&clk 214>;
+                /* For nvmem subnodes */
+                #address-cells = <1>;
+                #size-cells = <1>;
+
+                eth_mac1: mac-address@90 { /* 0x640 */
+                        reg = <0x90 6>;
+                };
+
+                eth_mac2: mac-address@96 { /* 0x658 */
+                        reg = <0x96 6>;
+                };
+        };
+
+        eqos: ethernet@30bf0000 {
+                compatible = "nxp,imx8mp-dwmac-eqos", "snps,dwmac-5.10a";
+                reg = <0x0 0x30bf0000 0x0 0x10000>;
+                interrupts = <0 135 4>,
+                             <0 134 4>;
+                interrupt-names = "macirq", "eth_wake_irq";
+                clocks = <&clk 237>,
+                         <&clk 225>,
+                         <&clk 130>,
+                         <&clk 129>;
+                clock-names = "stmmaceth", "pclk", "ptp_ref", "tx";
+                assigned-clocks = <&clk 94>,
+                                  <&clk 130>,
+                                  <&clk 129>;
+                assigned-clock-parents = <&clk 54>,
+                                         <&clk 58>,
+                                         <&clk 59>;
+                assigned-clock-rates = <0>, <100000000>, <125000000>;
+                nvmem-cells = <&eth_mac2>;
+                nvmem-cell-names = "mac-address";
+                intf_mode = <&gpr 0x4>;
+                status = "okay";
+                interrupt-parent = <&gic>;
+
+                phy-handle = <&ethphy0>;
+                phy-mode = "rgmii-id";
+                pinctrl-names = "default";
+                pinctrl-0 = <&pinctrl_eqos>;
+                snps,force_thresh_dma_mode;
+                snps,mtl-rx-config = <&mtl_rx_setup>;
+                snps,mtl-tx-config = <&mtl_tx_setup>;
+
+
+                mdio {
+                        compatible = "snps,dwmac-mdio";
+                        #address-cells = <1>;
+                        #size-cells = <0>;
+
+                        ethphy0: ethernet-phy@7 {
+                                compatible = "ethernet-phy-ieee802.3-c22";
+                                eee-broken-100tx;
+                                eee-broken-1000t;
+                                interrupt-parent = <&gpio1>;
+                                interrupts = <10 8>;
+                                micrel,led-mode = <0>;
+                                reg = <7>;
+                        };
+                };
+
+                mtl_rx_setup: rx-queues-config {
+                        snps,rx-queues-to-use = <5>;
+
+                        queue0 {
+                                snps,dcb-algorithm;
+                                snps,priority = <0x1>;
+                                snps,map-to-dma-channel = <0>;
+                        };
+
+                        queue1 {
+                                snps,dcb-algorithm;
+                                snps,priority = <0x2>;
+                                snps,map-to-dma-channel = <1>;
+                        };
+
+                        queue2 {
+                                snps,dcb-algorithm;
+                                snps,priority = <0x4>;
+                                snps,map-to-dma-channel = <2>;
+                        };
+
+                        queue3 {
+                                snps,dcb-algorithm;
+                                snps,priority = <0x8>;
+                                snps,map-to-dma-channel = <3>;
+                        };
+
+                        queue4 {
+                                snps,dcb-algorithm;
+                                snps,priority = <0xf0>;
+                                snps,map-to-dma-channel = <4>;
+                        };
+                };
+
+                mtl_tx_setup: tx-queues-config {
+                        snps,tx-queues-to-use = <5>;
+
+                        queue0 {
+                                snps,dcb-algorithm;
+                                snps,priority = <0x1>;
+                        };
+
+                        queue1 {
+                                snps,dcb-algorithm;
+                                snps,priority = <0x2>;
+                        };
+
+                        queue2 {
+                                snps,dcb-algorithm;
+                                snps,priority = <0x4>;
+                        };
+
+                        queue3 {
+                                snps,dcb-algorithm;
+                                snps,priority = <0x8>;
+                        };
+
+                        queue4 {
+                                snps,dcb-algorithm;
+                                snps,priority = <0xf0>;
+                        };
+                };
+
+        };
+
+        bao-ipc@f0000000 {
+                    compatible = "bao,ipcshmem";
+                    reg = <0x0 0xf0000000 0x0 0x00010000>;
+                    read-channel = <0x0 0x2000>;
+                    write-channel = <0x2000 0x2000>;
+                    interrupts = <0 20 1>;
+                    interrupt-parent = <&gic>;
+                    id = <0>;
+        };
+
+	aliases {
+                ethernet1 = &eqos;
+                gpio0 = &gpio1;
+	};
+
+	chosen {
+		bootargs = "clk_ignore_unused ip=192.168.42.15 carrier_timeout=0";
+	};
+};

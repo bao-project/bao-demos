@@ -33,7 +33,7 @@ newer/compatible versions of the tools and software listed in
 ```
 sudo apt install build-essential bison flex git libssl-dev ninja-build \
     u-boot-tools pandoc libslirp-dev pkg-config libglib2.0-dev libpixman-1-dev \
-    gettext-base curl xterm cmake python3-pip xilinx-bootgen
+    gettext-base curl xterm cmake python3-pip xilinx-bootgen file cpio
 
 pip3 install pykwalify packaging pyelftools
 ```
@@ -187,6 +187,7 @@ Build guests according to the target demo:
 * [Dual-guest Linux+FreeRTOS](demos/linux+freertos/README.md)
 * [Dual-Guest Linux+Zephyr](demos/linux+zephyr/README.md)
 * [Dual-Guest Zephyr+Baremetal](demos/zephyr+baremetal/README.md)
+* [Dual-Guest Torizon OS+FreeRTOS](demos/torizonos+freertos/README.md)
 
 
 ### B.4) Build Bao
@@ -196,7 +197,7 @@ Clone Bao's repo to the working directory:
 ```
 export BAO_DEMOS_BAO=$BAO_DEMOS_WRKDIR_SRC/bao
 git clone https://github.com/bao-project/bao-hypervisor $BAO_DEMOS_BAO\
-    --branch demo-next
+    --branch v2.0.0
 ```
 
 Copy your config to the working directory:
@@ -243,11 +244,13 @@ Build the firmware and deploy the system according to the target platform:
 * [FVP-A Aarch64](platforms/fvp-a/README.md)
 * [FVP-R Aarch64](platforms/fvp-r/README.md)
 * [BeagleBone AI-64](platforms/beaglebone-ai64/README.md)
+* [iMX8MP-Verdin](platforms/imx8mp-verdin/README.md)
 
 #### AArch32 platforms:
 * [FVP-A Aarch32](platforms/fvp-a-aarch32/README.md)
 * [FVP-R Aarch32](platforms/fvp-r-aarch32/README.md)
 * [NXP S32Z270](platforms/s32z270/README.md)
+* [E3650](platforms/e3650/README.md)
 
 #### RISC-V platforms:
 * [QEMU virt](platforms/qemu-riscv64-virt/README.md)
@@ -280,6 +283,8 @@ Build the firmware and deploy the system according to the target platform:
 | RH850-U2A16         | rh850-u2a16       | rh850   |
 | Infineon TC4Dx COM  | tc4dx             | tricore |
 | BeagleBone AI-64    | beaglebone-ai64   | aarch64 |
+| E3650               | e3650             | aarch32 |
+| iMX8MP Verdin       | imx8mp-verdin     | aarch64 |
 
 |                  | DEMO             |
 | ---------------- | ---------------- |
@@ -310,6 +315,8 @@ Build the firmware and deploy the system according to the target platform:
 | rh850-u2a16       | x         |                |              |                  |                  |
 | tc4dx             | x         |                |              |                  |                  |
 | beaglebone-ai64   | x         |                |              |                  |                  |
+| e3650             | x         |                |              |                  |                  |
+| imx8mp-verdin     | x         | x              |              |                  | x                |
 
 ---
 
