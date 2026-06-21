@@ -243,6 +243,7 @@ Build the firmware and deploy the system according to the target platform:
 * [QEMU virt](platforms/qemu-aarch64-virt/README.md)
 * [FVP-A Aarch64](platforms/fvp-a/README.md)
 * [FVP-R Aarch64](platforms/fvp-r/README.md)
+* [BeagleBone AI-64](platforms/beaglebone-ai64/README.md)
 * [iMX8MP-Verdin](platforms/imx8mp-verdin/README.md)
 
 #### AArch32 platforms:
@@ -281,6 +282,7 @@ Build the firmware and deploy the system according to the target platform:
 | QEMU RV32 virt      | qemu-riscv32-virt | riscv32 |
 | RH850-U2A16         | rh850-u2a16       | rh850   |
 | Infineon TC4Dx COM  | tc4dx             | tricore |
+| BeagleBone AI-64    | beaglebone-ai64   | aarch64 |
 | E3650               | e3650             | aarch32 |
 | iMX8MP Verdin       | imx8mp-verdin     | aarch64 |
 
@@ -294,45 +296,46 @@ Build the firmware and deploy the system according to the target platform:
 
 ## Appendix II
 
-|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal | virtio | torizonos+freertos |
-| ----------------- | --------- | -------------- | ------------ | ---------------- | ------ | ------------------ |
-| zcu102            | x         | x              |              |                  | x      |                    |
-| zcu104            | x         | x              |              |                  | x      |                    |
-| imx8qm            | x         | x              |              |                  |        |                    |
-| s32g3             | x         | x              |              |                  |        |                    |
-| tx2               | x         | x              |              |                  |        |                    |
-| rpi4              | x         | x              | x            |                  | x      |                    |
-| qemu-aarch64-virt | x         | x              | x            |                  | x      |                    |
-| fvp-a             | x         | x              | x            | x                |        |                    |
-| fvp-a-aarch32     | x         | x              | x            | x                |        |                    |
-| fvp-r             | x         | x              | x            | x                |        |                    |
-| fvp-r-aarch32     | x         |                |              | x                |        |                    |
-| s32z270           | x         |                |              | x                |        |                    |
-| qemu-riscv64-virt | x         | x              |              |                  | x      |                    |
-| qemu-riscv32-virt | x         | x              |              |                  |        |                    |
-| rh850-u2a16       | x         |                |              |                  |        |                    |
-| tc4dx             | x         |                |              |                  |        |                    |
-| e3650             | x         |                |              |                  |        |                    |
-| imx8mp-verdin     | x         | x              |              |                  |        | x                  |
+|                   | baremetal | linux+freertos | linux+zephyr | zephyr+baremetal | virtio |
+| ----------------- | --------- | -------------- | ------------ | ---------------- | ---------------- |
+| zcu102            | x         | x              |              |                  | x                |
+| zcu104            | x         | x              |              |                  | x                |
+| imx8qm            | x         | x              |              |                  |                  |
+| s32g3             | x         | x              |              |                  |                  |
+| tx2               | x         | x              |              |                  |                  |
+| rpi4              | x         | x              | x            |                  | x                |
+| qemu-aarch64-virt | x         | x              | x            |                  | x                |
+| fvp-a             | x         | x              | x            | x                |                  |
+| fvp-a-aarch32     | x         | x              | x            | x                |                  |
+| fvp-r             | x         | x              | x            | x                |                  |
+| fvp-r-aarch32     | x         |                |              | x                |                  |
+| s32z270           | x         |                |              | x                |                  |
+| qemu-riscv64-virt | x         | x              |              |                  | x                |
+| qemu-riscv32-virt | x         | x              |              |                  |                  |
+| rh850-u2a16       | x         |                |              |                  |                  |
+| tc4dx             | x         |                |              |                  |                  |
+| beaglebone-ai64   | x         |                |              |                  |                  |
+| e3650             | x         |                |              |                  |                  |
+| imx8mp-verdin     | x         | x              |              |                  | x                |
 
 ---
 
 ## Appendix III
 
-| Tool                    | Version |
-| ----------------------- | ------- |
-| arm-none-eabi-gcc       | 14.2.1  |
-| aarch64-none-elf-gcc    | 14.2.1  |
-| riscv64-unknown-elf-gcc | 13.2.0  |
-| v850-elf-gcc            | 14.2.0  |
-| tricore-elf-gcc         | 11.3.1  |
-| make                    | 4.3     |
-| dtc                     | 1.6.1   |
-| gcc                     | 11.4.0  |
-| mkimage                 | 2022.01 |
-| cmake                   | 3.22.1  |
-| ninja                   | 1.10.1  |
-
+| Tool                      | Version |
+| ------------------------- | ------- |
+| arm-none-eabi-gcc         | 14.2.1  |
+| aarch64-none-elf-gcc      | 14.2.1  |
+| riscv64-unknown-elf-gcc   | 13.2.0  |
+| v850-elf-gcc              | 14.2.0  |
+| tricore-elf-gcc           | 11.3.1  |
+| make                      | 4.3     |
+| dtc                       | 1.6.1   |
+| gcc                       | 11.4.0  |
+| mkimage                   | 2022.01 |
+| cmake                     | 3.22.1  |
+| ninja                     | 1.10.1  |
+| arm-none-linux-gnueabihf  | 14.2.1  |
 
 <!-- Links -->
 
