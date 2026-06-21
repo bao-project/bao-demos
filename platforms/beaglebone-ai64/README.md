@@ -85,13 +85,15 @@ cp $BAO_DEMOS_UBOOT/u-boot.img_unsigned $BAO_DEMOS_WRKDIR_PLAT/u-boot.img
 
 Post [preparing the uSD card](../sdcard.md):
 
+> **Note:** Booting the raw `bao.bin` binary has several caveats (such as lacking image headers and expected boot state). It is strongly recommended to use the `.itb` (FIT image) boot method instead.
+
 ```bash
 cp $BAO_DEMOS_WRKDIR_PLAT/tiboot3.bin $BAO_DEMOS_SDCARD
 cp $BAO_DEMOS_WRKDIR_PLAT/sysfw.itb $BAO_DEMOS_SDCARD
 cp $BAO_DEMOS_WRKDIR_PLAT/tispl.bin $BAO_DEMOS_SDCARD
 cp $BAO_DEMOS_WRKDIR_PLAT/u-boot.img $BAO_DEMOS_SDCARD
 
-cp $BAO_DEMOS_WRKDIR_IMGS/bao.bin $BAO_DEMOS_SDCARD
+cp $BAO_DEMOS_WRKDIR_IMGS/bao.itb $BAO_DEMOS_SDCARD
 
 umount $BAO_DEMOS_SDCARD
 ```
@@ -119,7 +121,7 @@ Quickly press any key to skip autoboot. If not possibly press `ctrl-c` until
 you get the u-boot prompt. Then load the bao image, and jump to it:
 
 ```
-fatload mmc ${mmcdev} 0x82000000 bao.bin; go 0x82000000
+uenvcmd=fatload mmc ${mmcdev} 0x82000000 bao.itb; bootm 0x82000000 - ${fdtcontroladdr}
 ```
 
 You should see the firmware, bao and its guests printing on the UART.
