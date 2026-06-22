@@ -7,10 +7,11 @@ $(atf_image): $(atf_src)
 	cp $(atf_src)/build/tegra/t186/release/bl31.bin $@
 
 nvidia_tools:=$(wrkdir_src)/nvidia-tools
-nvidia_tools_flash:=$(nvidia_tools)/Linux_for_Tegra/
+nvidia_tools_flash:=$(nvidia_tools)/Linux_for_Tegra
 wrkdirs+=$(nvidia_tools)
 nvidia_tools_flash_link:=https://developer.nvidia.com/downloads/embedded/l4t/r32_release_v7.6/t186/jetson_linux_r32.7.6_aarch64.tbz2
 nvidia_tools_flash_ar:=$(nvidia_tools)/jetson_linux_r32.7.6_aarch64.tbz2
+nvidia_tools_python3_patch:=$(nvidia_tools_flash)/.gen_tos_part_img_python3.patch.applied
 
 environment+=BAO_DEMOS_NVIDIA_TOOLS=$(nvidia_tools)
 
@@ -20,8 +21,15 @@ $(nvidia_tools_flash_ar):
 $(nvidia_tools_flash): $(nvidia_tools_flash_ar)
 	tar xfvm $(nvidia_tools_flash_ar) -C $(nvidia_tools)
 
+$(nvidia_tools_python3_patch): $(nvidia_tools_flash) $(bao_demos)/platforms/$(PLATFORM)/gen_tos_part_img_python3.py
+	python3 $(bao_demos)/platforms/$(PLATFORM)/gen_tos_part_img_python3.py \
+		$(nvidia_tools_flash)/nv_tegra/tos-scripts/gen_tos_part_img.py
+	$(RM) $(nvidia_tools_flash)/nv_tegra/tos-scripts/gen_tos_part_img.py.rej \
+		$(nvidia_tools_flash)/nv_tegra/tos-scripts/gen_tos_part_img.py.orig
+	touch $@
+
 flash_image:=$(wrkdir_plat_imgs)/tos.img
-$(flash_image): $(nvidia_tools_flash) $(atf_image)
+$(flash_image): $(nvidia_tools_python3_patch) $(atf_image)
 	$(nvidia_tools_flash)/nv_tegra/tos-scripts/gen_tos_part_img.py\
 		--monitor $(atf_image) $(flash_image)
 
