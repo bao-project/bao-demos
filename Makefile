@@ -105,6 +105,7 @@ bao $(bao_image): $(guest_images) $(bao_cfg) $(bao_src)
 		PLATFORM=$(PLATFORM)\
 		CONFIG_REPO=$(bao_cfg_repo)\
 		CONFIG=$(DEMO) \
+		DEBUG=y \
 		CPPFLAGS=-DBAO_DEMOS_WRKDIR_IMGS=$(wrkdir_demo_imgs)
 	cp $(bao_src)/bin/$(PLATFORM)/$(DEMO)/bao.bin $(bao_image)
 

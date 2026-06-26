@@ -1,1 +1,1 @@
-src_c_srcs:=demo.c
+src_c_srcs:=demo.c gpt.c

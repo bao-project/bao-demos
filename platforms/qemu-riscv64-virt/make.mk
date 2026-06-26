@@ -18,4 +18,4 @@ run: qemu platform
 		-device virtio-net-device,netdev=net0\
 		-netdev user,id=net0,net=192.168.42.0/24,hostfwd=tcp:127.0.0.1:5555-:22\
 		-device virtio-serial-device -chardev pty,id=serial3 -device virtconsole,chardev=serial3\
-		-S
+		-s

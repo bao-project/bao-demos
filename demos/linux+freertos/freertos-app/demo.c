@@ -35,6 +35,46 @@
 #include <irq.h>
 #include <plat.h>
 
+#include "wdog.h"
+#include "gpt.h"
+#include "ccm_gpt.h"
+
+#define WDOG_TIMEOUT_VAL    0xFFU   /* 128s max — tighten in production */
+#define WDOG_KICK_PERIOD_MS 120000U    /* Must be << timeout/2             */
+
+
+static void WDOG_Task(void *pvParameters)
+{
+    printf("wdog task\n");
+    /* Extend to max timeout first, then maintain it */
+    WDOG_SetTimeout(WDOG1_BASE, WDOG_TIMEOUT_VAL);
+
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    for (;;)
+    {
+        printf("wdog reset\n");
+        WDOG_Kick(WDOG1_BASE);
+        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(WDOG_KICK_PERIOD_MS));
+    }
+}
+
+static void OnTimer(uint32_t latency_ticks)
+{
+    static unsigned long counter = 0;
+    const unsigned long warmup = 10;
+
+    counter++;
+    if(counter < warmup){
+        ;
+    } else if (counter < 10000 + warmup){
+        printf("%lu\n", latency_ticks);
+    } else {
+        printf("Done.\n", latency_ticks);
+        GPT_Stop();
+    }
+}
+
+
 /*
  * Prototypes for the standard FreeRTOS callback/hook functions implemented
  * within this file.  See https://www.freertos.org/a00016.html
@@ -46,50 +86,12 @@ void vApplicationTickHook(void);
 
 /*-----------------------------------------------------------*/
 
-void vTask(void *pvParameters)
-{
-    unsigned long counter = 0;
-    unsigned long id = (unsigned long)pvParameters;
-    while (1)
-    {
-        printf("Task%d: %d\n", id, counter++); 
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
-}
-
-#define SHMEM_IRQ_ID (52)
-
-char* const freertos_message = (char*)SHMEM_BASE;
-char* const linux_message    = (char*)(SHMEM_BASE + 0x2000);
-const size_t shmem_channel_size = 0x2000;
-
-
-void shmem_update_msg(int irq_count) {
-    sprintf(freertos_message, "freertos has received %d uart interrupts!\n", 
-        irq_count);
-}
 
 void uart_rx_handler(){
     static int irq_count = 0;
     uart_clear_rxirq();
     printf("%s %d\n", __func__, ++irq_count);
-    shmem_update_msg(irq_count);
-}
-
-void shmem_handler() {
-    linux_message[shmem_channel_size-1] = '\0';
-    char* end = strchr(linux_message, '\n');
-    *end = '\0';
-    printf("message from linux: %s\n", linux_message);
-}
-
-void shmem_init() {
-    memset(freertos_message, 0, shmem_channel_size);
-    memset(linux_message, 0, shmem_channel_size);
-    shmem_update_msg(0);
-    irq_set_handler(SHMEM_IRQ_ID, shmem_handler);
-    irq_set_prio(SHMEM_IRQ_ID, IRQ_MAX_PRIO);
-    irq_enable(SHMEM_IRQ_ID);
+    /* shmem_update_msg(irq_count); */
 }
 
 int main(void){
@@ -99,25 +101,28 @@ int main(void){
     uart_enable_rxirq();
     irq_set_handler(UART_IRQ_ID, uart_rx_handler);
     irq_set_prio(UART_IRQ_ID, IRQ_MAX_PRIO);
-    irq_enable(UART_IRQ_ID);    
+    irq_enable(UART_IRQ_ID);
 
-    shmem_init();
+    CCM_EnableGPT1Root();
+    CCM_EnableGPT1();
+    GPT_Init();
+    irq_set_handler(GPT1_GIC_ID, GPT_IRQHandler);
+    irq_set_prio(GPT1_GIC_ID, IRQ_MAX_PRIO);
+    irq_enable(GPT1_GIC_ID);
 
-    xTaskCreate(
-        vTask,
-        "Task1",
-        configMINIMAL_STACK_SIZE,
-        (void *)1,
-        tskIDLE_PRIORITY + 1,
-        NULL);
+    printf("Timer test: delay 1s\n");
+    GPT_DelayMicroseconds(1000000);
+    printf("Timer test done\n");
 
-    xTaskCreate(
-        vTask,
-        "Task2",
-        configMINIMAL_STACK_SIZE,
-        (void *)2,
-        tskIDLE_PRIORITY + 1,
-        NULL);
+
+    GPT_SetPeriodic(5000, OnTimer);   /* Fire every 5ms, measure each time */
+
+    xTaskCreate(WDOG_Task,
+                "wdog",
+                configMINIMAL_STACK_SIZE,
+                NULL,
+                configMAX_PRIORITIES - 1,  /* Highest priority */
+                NULL);
 
     vTaskStartScheduler();
 }

@@ -12,8 +12,92 @@ struct config config = {
         [0] = { .size = 0x00010000, }
     },
 
-    .vmlist_size = 2,
+    .vmlist_size = 1,
     .vmlist = (struct vm_config[]) {
+        {
+            .image = {
+                .base_addr = 0x80200000,
+                .load_addr = VM_IMAGE_OFFSET(freertos_image),
+                .size = VM_IMAGE_SIZE(freertos_image)
+            },
+
+            .entry = 0x80200000,
+            .cpu_affinity = 0x1,
+
+            .platform = {
+                .cpu_num = 1,
+
+                .region_num = 1,
+                .regions =  (struct vm_mem_region[]) {
+                    {
+                        .base = 0x80200000,
+                        .size = 0x8000000
+                    }
+                },
+
+                .ipc_num = 1,
+                .ipcs = (struct ipc[]) {
+                    {
+                        .base = 0xf0000000,
+                        .size = 0x00010000,
+                        .shmem_id = 0,
+                        .interrupt_num = 1,
+                        .interrupts = (irqid_t[]) {52}
+                    }
+                },
+
+                .dev_num = 6,
+                .devs =  (struct vm_dev_region[]) {
+                    {
+                        /* uart 3 */
+                        .pa = 0x30880000,
+                        .va = 0x30880000,
+                        .size = 0x1000,
+                        .interrupt_num = 1,
+                        .interrupts = (irqid_t[]) {60}
+                    },
+                    {
+                        /* GPT1 */
+                        .pa = 0x302D0000,
+                        .va = 0x302D0000,
+                        .size = 0x1000,
+                        .interrupt_num = 1,
+                        .interrupts = (irqid_t[]) {87}
+                    },
+                    {
+                        /* GPT1 CCGR */
+                        .pa = 0x30384000,
+                        .va = 0x30384000,
+                        .size = 0x1000,
+                    },
+                    {
+                        /* CCM_GPT1_CLK_ROOT */
+                        .pa = 0x3038b000UL,
+                        .va = 0x3038b000UL,
+                        .size = 0x1000,
+                    },
+                    {
+                        /* WDOG */
+                        .pa = 0x30280000U,
+                        .va = 0x30280000U,
+                        .size = 0x1000,
+                    },
+                    {
+                        /* Arch timer interrupt */
+                        .interrupt_num = 1,
+                        .interrupts =
+                            (irqid_t[]) {27}
+                    }
+                },
+
+                .arch = {
+                    .gic = {
+                        .gicd_addr = 0x38800000,
+                        .gicr_addr = 0x38880000
+                    }
+                }
+            },
+        },
         {
             .image = {
                 .base_addr = 0x80200000,
@@ -112,63 +196,5 @@ struct config config = {
                 }
             },
         },
-        {
-            .image = {
-                .base_addr = 0x0,
-                .load_addr = VM_IMAGE_OFFSET(freertos_image),
-                .size = VM_IMAGE_SIZE(freertos_image)
-            },
-
-            .entry = 0x0,
-            .cpu_affinity = 0x8,
-
-            .platform = {
-                .cpu_num = 1,
-
-                .region_num = 1,
-                .regions =  (struct vm_mem_region[]) {
-                    {
-                        .base = 0x0,
-                        .size = 0x8000000
-                    }
-                },
-
-                .ipc_num = 1,
-                .ipcs = (struct ipc[]) {
-                    {
-                        .base = 0xf0000000,
-                        .size = 0x00010000,
-                        .shmem_id = 0,
-                        .interrupt_num = 1,
-                        .interrupts = (irqid_t[]) {52}
-                    }
-                },
-
-                .dev_num = 2,
-                .devs =  (struct vm_dev_region[]) {
-                    {
-                        /* uart 3 */
-                        .pa = 0x30880000,
-                        .va = 0xff000000,
-                        .size = 0x1000,
-                        .interrupt_num = 1,
-                        .interrupts = (irqid_t[]) {60}
-                    },
-                    {
-                        /* Arch timer interrupt */
-                        .interrupt_num = 1,
-                        .interrupts =
-                            (irqid_t[]) {27}
-                    }
-                },
-
-                .arch = {
-                    .gic = {
-                        .gicd_addr = 0xF9010000,
-                        .gicr_addr = 0xF9020000,
-                    }
-                }
-            },
-        }
     },
 };
