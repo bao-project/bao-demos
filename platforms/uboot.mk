@@ -4,7 +4,7 @@ uboot_src:=$(wrkdir_src)/u-boot-$(uboot_version)
 
 $(uboot_src):
 	git clone --depth 1 --branch $(uboot_version) $(uboot_repo) $(uboot_src)
-ifneq (,$(filter $(PLATFORM),zcu102 zcu104))
+ifneq (,$(filter $(PLATFORM),zcu102 zcu104 kr260))
 	git -C $(uboot_src) apply $(bao_demos)/platforms/$(PLATFORM)/u-boot.patch
 endif
 
