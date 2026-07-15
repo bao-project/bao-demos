@@ -12,7 +12,15 @@ The application also setups an RX UART interrupt that might be forwarded to just
 one or multiple cores, depending on the capabilities of the platform's interrupt 
 controller. Each time it receives a character, it will print a message.
 
-If you are targetting an MPU platform, set the platform-specific image variable.
+To build this demo's application instead of the
+[bao-baremetal-guest](https://github.com/bao-project/bao-baremetal-guest)
+repo's default one, set:
+
+```
+export BAREMETAL_PARAMS="APP_SRC_DIR=$BAO_DEMOS/demos/baremetal/src"
+```
+
+If you are targeting an MPU platform, set the platform-specific image variable.
 
 For FVP-R:
 
