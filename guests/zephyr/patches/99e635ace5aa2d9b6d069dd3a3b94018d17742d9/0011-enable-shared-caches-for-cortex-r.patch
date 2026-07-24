@@ -1,7 +1,7 @@
-From be5aa0b900f86819d855cc4df68b4ee95c514555 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jose Martins <josemartins90@gmail.com>
 Date: Sat, 1 Apr 2023 21:23:31 +0100
-Subject: [PATCH 3/3] enable shared caches for cortex-r
+Subject: [PATCH 11/13] enable shared caches for cortex-r
 
 Signed-off-by: Jose Martins <josemartins90@gmail.com>
 ---
@@ -11,10 +11,10 @@ Signed-off-by: Jose Martins <josemartins90@gmail.com>
  3 files changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm/core/mpu/arm_mpu.c b/arch/arm/core/mpu/arm_mpu.c
-index e66c02ec067..ae5d48b000b 100644
+index a3fab873d5d..c4c1b571017 100644
 --- a/arch/arm/core/mpu/arm_mpu.c
 +++ b/arch/arm/core/mpu/arm_mpu.c
-@@ -233,7 +233,7 @@ void arm_core_mpu_enable(void)
+@@ -258,7 +258,7 @@ void arm_core_mpu_enable(void)
  	uint32_t val;
  
  	val = __get_SCTLR();
@@ -24,7 +24,7 @@ index e66c02ec067..ae5d48b000b 100644
  
  	/* Make sure that all the registers are set before proceeding */
 diff --git a/arch/arm64/core/cortex_r/arm_mpu.c b/arch/arm64/core/cortex_r/arm_mpu.c
-index 3053d90cb75..b0a8bba8dc9 100644
+index 4239ccea61e..97fef27a44c 100644
 --- a/arch/arm64/core/cortex_r/arm_mpu.c
 +++ b/arch/arm64/core/cortex_r/arm_mpu.c
 @@ -96,7 +96,7 @@ FUNC_NO_STACK_PROTECTOR void arm_core_mpu_enable(void)
@@ -37,10 +37,10 @@ index 3053d90cb75..b0a8bba8dc9 100644
  	barrier_dsync_fence_full();
  	barrier_isync_fence_full();
 diff --git a/include/zephyr/arch/arm/mpu/arm_mpu_v8.h b/include/zephyr/arch/arm/mpu/arm_mpu_v8.h
-index 0f13bee99be..90f89fbc9fa 100644
+index 3e003818f9d..de99c905c64 100644
 --- a/include/zephyr/arch/arm/mpu/arm_mpu_v8.h
 +++ b/include/zephyr/arch/arm/mpu/arm_mpu_v8.h
-@@ -174,27 +174,27 @@
+@@ -181,27 +181,27 @@
  
  #define REGION_RAM_ATTR(limit)                                                                     \
  	{                                                                                          \
@@ -72,7 +72,7 @@ index 0f13bee99be..90f89fbc9fa 100644
  		.mair_idx = MPU_MAIR_INDEX_SRAM_NOCACHE,              /* Cache-ability */          \
  		.r_limit = limit - 1,                                 /* Region Limit */           \
  	}
-@@ -240,7 +240,7 @@
+@@ -247,7 +247,7 @@
  #define REGION_RAM_ATTR(base, size)                                                                \
  	{                                                                                          \
  		.rbar = IF_ENABLED(CONFIG_XIP, (NOT_EXEC |)) P_RW_U_NA_Msk |                       \
@@ -80,7 +80,4 @@ index 0f13bee99be..90f89fbc9fa 100644
 +			INNER_SHAREABLE_Msk,                /* AP, XN, SH */                         \
  		.mair_idx = MPU_MAIR_INDEX_SRAM,          /* Cache-ability */                      \
  		.r_limit = REGION_LIMIT_ADDR(base, size), /* Region Limit */                       \
- 	}
--- 
-2.34.1
-
+ 		IF_ENABLED(CONFIG_ARM_MPU_PXN, (.pxn = !PRIV_EXEC_NEVER,))			   \

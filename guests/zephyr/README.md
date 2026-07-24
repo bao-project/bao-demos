@@ -1,9 +1,19 @@
 # Zephyr Guest
 
+---
+**NOTE**
+
+RISC-V S-mode support (and the AIA drivers the RISC-V boards rely on) is not
+part of any Zephyr release yet, so all platforms pin a snapshot of upstream
+main. Zephyr main requires Python 3.12 or newer on the PATH to build.
+
+---
+
 Setup the environment variables for Zephyr:
 
 ```
-export BAO_DEMOS_ZEPHYR_VRS=v4.1.0
+export BAO_DEMOS_ZEPHYR_VRS=99e635ace5aa2d9b6d069dd3a3b94018d17742d9
+export BAO_DEMOS_ZEPHYR_CMSIS_COMMIT=512cc7e895e8491696b61f7ba8066b4a182569b8
 export BAO_DEMOS_ZEPHYR_SRC=$BAO_DEMOS_WRKDIR_SRC/zephyr
 export BAO_DEMOS_ZEPHYR_CMSIS_SRC=$BAO_DEMOS_WRKDIR_SRC/cmsis
 export BAO_DEMOS_ZEPHYR_BUILD=$BAO_DEMOS_WRKDIR_PLAT/zephyr_build
@@ -18,23 +28,34 @@ export BAO_DEMOS_ZEPHYR_APP=$BAO_DEMOS/demos/$DEMO/zephyr/app
 Clone zephyr kernel and necessary modules:
 
 ```
-git clone https://github.com/zephyrproject-rtos/cmsis.git --depth 1 \
-    $BAO_DEMOS_ZEPHYR_CMSIS_SRC
-git clone https://github.com/zephyrproject-rtos/zephyr.git --depth 1 \
-    --branch $BAO_DEMOS_ZEPHYR_VRS $BAO_DEMOS_ZEPHYR_SRC
+git init $BAO_DEMOS_ZEPHYR_CMSIS_SRC
+git -C $BAO_DEMOS_ZEPHYR_CMSIS_SRC remote add origin \
+    https://github.com/zephyrproject-rtos/cmsis.git
+git -C $BAO_DEMOS_ZEPHYR_CMSIS_SRC fetch --depth 1 origin \
+    $BAO_DEMOS_ZEPHYR_CMSIS_COMMIT
+git -C $BAO_DEMOS_ZEPHYR_CMSIS_SRC checkout FETCH_HEAD
+git init $BAO_DEMOS_ZEPHYR_SRC
+git -C $BAO_DEMOS_ZEPHYR_SRC remote add origin \
+    https://github.com/zephyrproject-rtos/zephyr.git
+git -C $BAO_DEMOS_ZEPHYR_SRC fetch --depth 1 origin $BAO_DEMOS_ZEPHYR_VRS
+git -C $BAO_DEMOS_ZEPHYR_SRC checkout FETCH_HEAD
 ```
 
 ---
 **NOTE**
 
-For NXP S32Z270, we need to specify the rtu0 as a board qualifier and also clone the `hal_nxp`
-module on the specific revision that works with Zephyr v4.1.0.
+For NXP S32Z270, we need to specify the rtu0 as a board qualifier and also fetch the `hal_nxp`
+module at the revision the pinned Zephyr expects.
 
 ```
 export BAO_DEMOS_ZEPHYR_BOARD=baovm_$PLATFORM/s32z270/rtu0
 export BAO_DEMOS_ZEPHYR_NXP_SRC=$BAO_DEMOS_WRKDIR_SRC/nxp
-git clone https://github.com/bao-project/hal_nxp.git --depth 1 \
-    --branch v4.1.0 $BAO_DEMOS_ZEPHYR_NXP_SRC
+export BAO_DEMOS_ZEPHYR_NXP_VRS=6c77523dfdfc5a1ecefbafb31feee6499a5de8ec
+git init $BAO_DEMOS_ZEPHYR_NXP_SRC
+git -C $BAO_DEMOS_ZEPHYR_NXP_SRC remote add origin \
+    https://github.com/bao-project/hal_nxp.git
+git -C $BAO_DEMOS_ZEPHYR_NXP_SRC fetch --depth 1 origin $BAO_DEMOS_ZEPHYR_NXP_VRS
+git -C $BAO_DEMOS_ZEPHYR_NXP_SRC checkout FETCH_HEAD
 ```
 ---
 

@@ -1,0 +1,140 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Mon, 18 May 2026 14:55:37 +0100
+Subject: [PATCH 02/13] riscv: s_mode: add SBI client wrapper for native-S-mode
+ entry
+
+When CONFIG_RISCV_S_MODE_NATIVE_ENTRY is set, the kernel runs in S-mode
+under an external supervisor (hypervisor or M-mode firmware) that
+services SBI ecalls. The kernel itself does not provide the M-mode SBI
+shim (sbi.S is not built), so a C-side client is needed to issue
+ecalls upward.
+
+Add:
+
+  - struct sbiret and sbi_ecall() / sbi_set_timer() declarations in
+    include/zephyr/arch/riscv/sbi.h (guarded by !_ASMLANGUAGE so the
+    asm-side users of the existing #defines are unaffected);
+  - arch/riscv/core/sbi.c with sbi_ecall() and an sbi_set_timer()
+    convenience helper, built only when
+    CONFIG_RISCV_S_MODE_NATIVE_ENTRY is set.
+
+Further extension helpers (HSM, IPI, etc.) can be added on top as the
+need arises.
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+(cherry picked from commit ceafa3247bb8a070535e4f8ae7d437f940f81d5f)
+---
+ arch/riscv/core/CMakeLists.txt  |  1 +
+ arch/riscv/core/sbi.c           | 46 +++++++++++++++++++++++++++++++++
+ include/zephyr/arch/riscv/sbi.h | 34 ++++++++++++++++++++++++
+ 3 files changed, 81 insertions(+)
+ create mode 100644 arch/riscv/core/sbi.c
+
+diff --git a/arch/riscv/core/CMakeLists.txt b/arch/riscv/core/CMakeLists.txt
+index 080ec92c3af..42cd1c13c69 100644
+--- a/arch/riscv/core/CMakeLists.txt
++++ b/arch/riscv/core/CMakeLists.txt
+@@ -31,6 +31,7 @@ zephyr_library_sources_ifdef(CONFIG_USE_ISR_WRAPPER isr.S)
+ if(CONFIG_RISCV_S_MODE AND NOT CONFIG_RISCV_S_MODE_NATIVE_ENTRY)
+   zephyr_library_sources(sbi.S)
+ endif()
++zephyr_library_sources_ifdef(CONFIG_RISCV_S_MODE_NATIVE_ENTRY sbi.c)
+ zephyr_library_sources_ifdef(CONFIG_RISCV_PMP pmp.c pmp.S)
+ zephyr_linker_sources_ifdef(CONFIG_RISCV_PMP ROM_SECTIONS pmp.ld)
+ zephyr_library_sources_ifdef(CONFIG_THREAD_LOCAL_STORAGE tls.c)
+diff --git a/arch/riscv/core/sbi.c b/arch/riscv/core/sbi.c
+new file mode 100644
+index 00000000000..f8abe5f3254
+--- /dev/null
++++ b/arch/riscv/core/sbi.c
+@@ -0,0 +1,46 @@
++/*
++ * SPDX-License-Identifier: Apache-2.0
++ *
++ * RISC-V SBI client wrappers.
++ *
++ * Used when CONFIG_RISCV_S_MODE_NATIVE_ENTRY is set: the kernel runs in
++ * S-mode under an external supervisor (a hypervisor or M-mode firmware)
++ * and issues ecalls upward to request services.
++ */
++
++#include <zephyr/arch/riscv/sbi.h>
++
++struct sbiret sbi_ecall(int ext, int fid, unsigned long arg0,
++			unsigned long arg1, unsigned long arg2,
++			unsigned long arg3, unsigned long arg4,
++			unsigned long arg5)
++{
++	struct sbiret ret;
++
++	register unsigned long a0 __asm__("a0") = arg0;
++	register unsigned long a1 __asm__("a1") = arg1;
++	register unsigned long a2 __asm__("a2") = arg2;
++	register unsigned long a3 __asm__("a3") = arg3;
++	register unsigned long a4 __asm__("a4") = arg4;
++	register unsigned long a5 __asm__("a5") = arg5;
++	register unsigned long a6 __asm__("a6") = (unsigned long)fid;
++	register unsigned long a7 __asm__("a7") = (unsigned long)ext;
++
++	__asm__ volatile("ecall"
++			 : "+r"(a0), "+r"(a1)
++			 : "r"(a2), "r"(a3), "r"(a4), "r"(a5), "r"(a6), "r"(a7)
++			 : "memory");
++
++	ret.error = a0;
++	ret.value = a1;
++	return ret;
++}
++
++int sbi_set_timer(uint64_t stime_value)
++{
++	struct sbiret ret;
++
++	ret = sbi_ecall(SBI_EXT_TIME, SBI_FUNC_SET_TIMER,
++			(unsigned long)stime_value, 0, 0, 0, 0, 0);
++	return ret.error;
++}
+diff --git a/include/zephyr/arch/riscv/sbi.h b/include/zephyr/arch/riscv/sbi.h
+index 31a454a1d98..2cad3c157ac 100644
+--- a/include/zephyr/arch/riscv/sbi.h
++++ b/include/zephyr/arch/riscv/sbi.h
+@@ -48,4 +48,38 @@
+ /** @brief SBI return code: requested extension/function is not available */
+ #define SBI_ERR_NOT_SUPPORTED		-1
+ 
++#ifndef _ASMLANGUAGE
++#include <stdint.h>
++
++/** @brief Return value from an SBI ecall: (error, value) pair. */
++struct sbiret {
++	long error;
++	long value;
++};
++
++/**
++ * @brief Issue an SBI ecall to the supervisor above the kernel.
++ *
++ * Used when CONFIG_RISCV_S_MODE_NATIVE_ENTRY is set and the kernel runs
++ * under an external supervisor (hypervisor or M-mode firmware).
++ *
++ * @param ext         SBI extension ID
++ * @param fid         Function ID within the extension
++ * @param arg0..arg5  Function arguments (ABI: a0..a5)
++ * @return            error / value pair returned by the supervisor
++ */
++struct sbiret sbi_ecall(int ext, int fid, unsigned long arg0,
++			unsigned long arg1, unsigned long arg2,
++			unsigned long arg3, unsigned long arg4,
++			unsigned long arg5);
++
++/**
++ * @brief Program the next supervisor timer interrupt deadline.
++ *
++ * @param stime_value Absolute deadline, in mtime ticks.
++ * @return 0 on success, non-zero SBI error code otherwise.
++ */
++int sbi_set_timer(uint64_t stime_value);
++#endif /* !_ASMLANGUAGE */
++
+ #endif /* ZEPHYR_INCLUDE_ARCH_RISCV_SBI_H_ */

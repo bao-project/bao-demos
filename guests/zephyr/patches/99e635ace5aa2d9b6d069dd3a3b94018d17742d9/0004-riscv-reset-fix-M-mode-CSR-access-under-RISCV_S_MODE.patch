@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Tue, 19 May 2026 22:13:00 +0100
+Subject: [PATCH 04/13] riscv: reset: fix M-mode CSR access under
+ RISCV_S_MODE_NATIVE_ENTRY
+
+When CONFIG_RISCV_S_MODE_NATIVE_ENTRY is set, the hypervisor (Bao)
+starts the guest directly in S-mode and passes hartid in a0. Reading
+mhartid is illegal from S-mode and causes a trap. Similarly, sstatus
+must be used instead of mstatus to enable the FPU FS field (same bit
+position in both CSRs, MSTATUS_FS_INIT = BIT(13)).
+
+Guard both accesses: skip the mhartid csrr (use a0 as-is from the
+hypervisor) and select sstatus/mstatus based on the native entry flag.
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+(cherry picked from commit 9178d616e3dc8d1fcfda4b7f61aa43892c79fdd4)
+---
+ arch/riscv/core/reset.S | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/riscv/core/reset.S b/arch/riscv/core/reset.S
+index 1bc68ea46c2..e8901b6d83f 100644
+--- a/arch/riscv/core/reset.S
++++ b/arch/riscv/core/reset.S
+@@ -80,7 +80,10 @@ tls_skip\@:
+  * the C domain
+  */
+ SECTION_FUNC(TEXT, __initialize)
++#if !defined(CONFIG_RISCV_S_MODE_NATIVE_ENTRY)
+ 	csrr a0, mhartid
++#endif
++	/* a0 = hartid (from mhartid, or passed in a0 by hypervisor/SBI) */
+ 	li t0, CONFIG_RV_BOOT_HART
+ 	beq a0, t0, boot_first_core
+ 	j boot_secondary_core
+@@ -92,7 +95,11 @@ boot_first_core:
+ 	 * Enable floating-point.
+ 	 */
+ 	li t0, MSTATUS_FS_INIT
++#if defined(CONFIG_RISCV_S_MODE_NATIVE_ENTRY)
++	csrs sstatus, t0
++#else
+ 	csrs mstatus, t0
++#endif
+ 
+ 	/*
+ 	 * Floating-point rounding mode set to IEEE-754 default, and clear

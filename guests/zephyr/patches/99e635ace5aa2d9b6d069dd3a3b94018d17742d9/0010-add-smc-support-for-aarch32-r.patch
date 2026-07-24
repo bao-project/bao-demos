@@ -1,7 +1,7 @@
-From 5d20f94d8c26f516e5dd1b67b860d3893ff0c1d5 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jose Martins <josemartins90@gmail.com>
 Date: Mon, 6 Feb 2023 19:20:41 +0000
-Subject: [PATCH 2/3] add smc support for aarch32-r
+Subject: [PATCH 10/13] add smc support for aarch32-r
 
 Signed-off-by: Jose Martins <josemartins90@gmail.com>
 ---
@@ -14,7 +14,7 @@ Signed-off-by: Jose Martins <josemartins90@gmail.com>
  create mode 100644 include/zephyr/arch/arm/arm-smccc.h
 
 diff --git a/arch/arm/core/cortex_a_r/CMakeLists.txt b/arch/arm/core/cortex_a_r/CMakeLists.txt
-index 7d18e0e610d..1e5448d0af3 100644
+index d165d298316..f65ccf74f39 100644
 --- a/arch/arm/core/cortex_a_r/CMakeLists.txt
 +++ b/arch/arm/core/cortex_a_r/CMakeLists.txt
 @@ -25,3 +25,4 @@ zephyr_library_sources_ifdef(CONFIG_THREAD_LOCAL_STORAGE __aeabi_read_tp.S)
@@ -23,10 +23,10 @@ index 7d18e0e610d..1e5448d0af3 100644
  zephyr_library_sources_ifndef(CONFIG_USE_SWITCH swap_helper.S exc_exit.S)
 +zephyr_library_sources_ifdef(CONFIG_HAS_ARM_SMCCC smccc-call.S)
 diff --git a/arch/arm/core/cortex_a_r/Kconfig b/arch/arm/core/cortex_a_r/Kconfig
-index 409968ca6c7..52fcb4cfb65 100644
+index 51b40bff6dd..a4946dcfbfe 100644
 --- a/arch/arm/core/cortex_a_r/Kconfig
 +++ b/arch/arm/core/cortex_a_r/Kconfig
-@@ -161,11 +161,18 @@ config ARMV7_R_FP
+@@ -231,11 +231,18 @@ config ARMV7_R_FP
  	  This option signifies the use of an ARMv7-R processor
  	  implementation supporting the Floating-Point Extension.
  
@@ -149,6 +149,3 @@ index 00000000000..e702ce22804
 +		   struct arm_smccc_res *res);
 +
 +#endif /* ZEPHYR_INCLUDE_ARCH_ARM_SMCCC_H_ */
--- 
-2.34.1
-

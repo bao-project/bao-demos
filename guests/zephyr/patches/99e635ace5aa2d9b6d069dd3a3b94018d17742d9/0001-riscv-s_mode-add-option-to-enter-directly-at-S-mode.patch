@@ -1,0 +1,117 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Mon, 18 May 2026 14:53:18 +0100
+Subject: [PATCH 01/13] riscv: s_mode: add option to enter directly at S-mode
+
+CONFIG_RISCV_S_MODE today assumes the kernel boots in M-mode and is
+responsible for the M-mode-to-S-mode transition; it also bundles a
+resident M-mode SBI shim (arch/riscv/core/sbi.S) that services ecalls
+from the kernel.
+
+When the kernel is launched from an external supervisor (a hypervisor
+or boot firmware that hands off in S-mode), both of those things are
+wrong: the kernel is already at S-mode on entry, and the M-mode level
+is owned by the supervisor above. Trying to write M-mode CSRs or
+install an M-mode trap handler in that environment traps or has no
+effect.
+
+Add a new option CONFIG_RISCV_S_MODE_NATIVE_ENTRY (depends on
+RISCV_S_MODE) that:
+
+  - guards the M-mode bootstrap block in reset.S (medeleg/mideleg, PMP
+    entry 0, mscratch/mcounteren setup, mret into s_mode_entry);
+  - keeps sbi.S out of the build via CMakeLists.txt;
+  - makes RISCV_M_MODE_STACK_SIZE inapplicable.
+
+With this set, an external supervisor is expected to hand off in
+S-mode and to service SBI ecalls itself.
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+(cherry picked from commit 8f6b8c8128a1f48c82f13c537d7920183f71234a)
+---
+ arch/riscv/Kconfig             | 19 ++++++++++++++++++-
+ arch/riscv/core/CMakeLists.txt |  4 +++-
+ arch/riscv/core/reset.S        |  6 +++---
+ 3 files changed, 24 insertions(+), 5 deletions(-)
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index c92a79573ab..2042baa29ed 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -689,12 +689,29 @@ endchoice # RISCV_PRIVILEGE_MODE
+ config RISCV_M_MODE_STACK_SIZE
+ 	int "M-mode SBI handler stack size (bytes)"
+ 	default 256
+-	depends on RISCV_S_MODE
++	depends on RISCV_S_MODE && !RISCV_S_MODE_NATIVE_ENTRY
+ 	help
+ 	  Size in bytes of the dedicated stack used by the in-tree M-mode SBI
+ 	  runtime handler. Increase this if the handler is extended with
+ 	  functionality that requires more stack space.
+ 
++config RISCV_S_MODE_NATIVE_ENTRY
++	bool "Enter at S-mode directly (no in-tree M-mode bootstrap or SBI shim)"
++	depends on RISCV_S_MODE
++	help
++	  Assume the kernel is launched already in S-mode by an external
++	  supervisor (a hypervisor, or boot firmware that hands off in
++	  S-mode). When set:
++
++	    - the boot code skips the M-mode-to-S-mode transition in reset.S
++	      (the kernel is already at S-mode on entry);
++	    - the in-tree M-mode SBI shim (arch/riscv/core/sbi.S) is not
++	      built; SBI ecalls go up to whatever supervisor is above.
++
++	  This is the right choice when running as a guest under a
++	  hypervisor, or when external firmware (e.g. OpenSBI) provides the
++	  M-mode SBI runtime.
++
+ rsource "Kconfig.isa"
+ 
+ rsource "custom/Kconfig"
+diff --git a/arch/riscv/core/CMakeLists.txt b/arch/riscv/core/CMakeLists.txt
+index 04a60a92e38..080ec92c3af 100644
+--- a/arch/riscv/core/CMakeLists.txt
++++ b/arch/riscv/core/CMakeLists.txt
+@@ -28,7 +28,9 @@ zephyr_library_sources_ifdef(CONFIG_PM_S2RAM pm_s2ram.c pm_s2ram.S)
+ zephyr_library_sources_ifdef(CONFIG_DEBUG_COREDUMP coredump.c)
+ zephyr_library_sources_ifdef(CONFIG_IRQ_OFFLOAD irq_offload.c)
+ zephyr_library_sources_ifdef(CONFIG_USE_ISR_WRAPPER isr.S)
+-zephyr_library_sources_ifdef(CONFIG_RISCV_S_MODE sbi.S)
++if(CONFIG_RISCV_S_MODE AND NOT CONFIG_RISCV_S_MODE_NATIVE_ENTRY)
++  zephyr_library_sources(sbi.S)
++endif()
+ zephyr_library_sources_ifdef(CONFIG_RISCV_PMP pmp.c pmp.S)
+ zephyr_linker_sources_ifdef(CONFIG_RISCV_PMP ROM_SECTIONS pmp.ld)
+ zephyr_library_sources_ifdef(CONFIG_THREAD_LOCAL_STORAGE tls.c)
+diff --git a/arch/riscv/core/reset.S b/arch/riscv/core/reset.S
+index 43759a677a2..1bc68ea46c2 100644
+--- a/arch/riscv/core/reset.S
++++ b/arch/riscv/core/reset.S
+@@ -13,7 +13,7 @@
+ #include <zephyr/arch/riscv/irq.h>
+ #include "asm_macros.inc"
+ 
+-#ifdef CONFIG_RISCV_S_MODE
++#if defined(CONFIG_RISCV_S_MODE) && !defined(CONFIG_RISCV_S_MODE_NATIVE_ENTRY)
+ /* mcounteren bits */
+ #define MCOUNTEREN_CY  BIT(0)  /* cycle counter */
+ #define MCOUNTEREN_TM  BIT(1)  /* time counter */
+@@ -29,7 +29,7 @@ GTEXT(z_prep_c)
+ GDATA(riscv_cpu_wake_flag)
+ GDATA(riscv_cpu_sp)
+ GTEXT(arch_secondary_cpu_init)
+-#ifdef CONFIG_RISCV_S_MODE
++#if defined(CONFIG_RISCV_S_MODE) && !defined(CONFIG_RISCV_S_MODE_NATIVE_ENTRY)
+ GTEXT(__m_mode_sbi_handler)
+ #endif
+ 
+@@ -143,7 +143,7 @@ aa_loop:
+ 	call _WdogInit
+ #endif
+ 
+-#ifdef CONFIG_RISCV_S_MODE
++#if defined(CONFIG_RISCV_S_MODE) && !defined(CONFIG_RISCV_S_MODE_NATIVE_ENTRY)
+ 	/* Set M-mode trap vector to our SBI handler */
+ 	la t0, __m_mode_sbi_handler
+ 	csrw mtvec, t0
