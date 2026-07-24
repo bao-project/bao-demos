@@ -15,13 +15,13 @@ zephyr_env:=ZEPHYR_TOOLCHAIN_VARIANT=cross-compile \
 	CROSS_COMPILE=$(shell which $(CROSS_COMPILE)gcc | sed 's/.\{3\}$$//')
 zephyr_patches:=$(wildcard $(bao_demos)/guests/zephyr/patches/$(zephyr_version)/*.patch)
 zephyr_modules:=$(zephyr_cmsis_src)
-zephyr_overlay:=app.overlay
+zephyr_overlay:=overlays/$(ARCH)/app.overlay
 
 ifeq ($(PLATFORM),s32z270)
 zephyr_modules:=$(zephyr_modules);$(zephyr_hal_nxp_src)
 zephyr_hal_nxp_dep:=$(zephyr_hal_nxp_src)
 zephyr_board:=baovm_$(PLATFORM)/$(PLATFORM)/rtu0
-zephyr_overlay:=app.overlay;boards/$(PLATFORM).overlay
+zephyr_overlay:=overlays/$(ARCH)/app.overlay;boards/$(PLATFORM).overlay
 endif
 
 $(zephyr_src):
