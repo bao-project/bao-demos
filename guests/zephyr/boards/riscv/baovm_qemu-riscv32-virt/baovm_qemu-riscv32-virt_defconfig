@@ -1,0 +1,10 @@
+CONFIG_CONSOLE=y
+CONFIG_SERIAL=y
+CONFIG_UART_CONSOLE=y
+CONFIG_UART_INTERRUPT_DRIVEN=y
+CONFIG_XIP=n
+CONFIG_RISCV_S_MODE=y
+CONFIG_RISCV_S_MODE_NATIVE_ENTRY=y
+# Bao's virtual APLIC delivers on the S-mode external line (9); the
+# qemu_virt_riscv SoC family default assumes the M-mode line (11).
+CONFIG_2ND_LVL_INTR_00_OFFSET=9
