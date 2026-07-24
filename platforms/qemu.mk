@@ -4,7 +4,7 @@ qemu_arch:=arm
 endif
 
 qemu_repo:=https://github.com/qemu/qemu.git
-qemu_version:=v11.0.2
+qemu_version:=v11.1.0-rc1
 qemu_cmd:=qemu-system-$(qemu_arch)
 
 ifeq ($(shell which $(qemu_cmd)),)
