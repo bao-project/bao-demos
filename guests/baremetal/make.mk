@@ -1,6 +1,6 @@
 baremetal_src:=$(wrkdir_src)/baremetal
 baremetal_repo:=https://github.com/bao-project/bao-baremetal-guest.git
-baremetal_version:=ec644fb2a915617f12d937f81245b429f01697f3
+baremetal_version:=7c3a0f3c9f81e8a2fe34af6db1e39efb81c166af
 
 $(baremetal_src):
 	git clone $(baremetal_repo) $@

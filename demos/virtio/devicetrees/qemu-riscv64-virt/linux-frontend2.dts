@@ -14,7 +14,7 @@
 			reg = <0x0>;
 			status = "okay";
 			compatible = "riscv";
-			riscv,isa = "rv64imafdcsu";
+			riscv,isa = "rv64imafdcsu_ssaia";
 			mmu-type = "riscv,sv48";
 
 			cpu0_intc: interrupt-controller {
@@ -47,28 +47,38 @@
 		};
     };
 
-	plic: interrupt-controller@c000000 {
-		riscv,ndev = <60>;
-		reg = <0x0 0xc000000 0x0 0x4000000>;
+	imsic: interrupt-controller@28000000 {
+		riscv,num-ids = <255>;
+		reg = <0x0 0x28000000 0x0 0x1000>;
 		interrupts-extended = <
-			&cpu0_intc 11 &cpu0_intc 9 
+			&cpu0_intc 9
 		>;
+		msi-controller;
 		interrupt-controller;
-		compatible = "riscv,plic0";
-		#interrupt-cells = <0x1>;
+		compatible = "riscv,imsics";
+		#interrupt-cells = <0x0>;
+	};
+
+	aplic: interrupt-controller@d000000 {
+		riscv,num-sources = <96>;
+		reg = <0x0 0xd000000 0x0 0x8000>;
+		msi-parent = <&imsic>;
+		interrupt-controller;
+		compatible = "riscv,aplic";
+		#interrupt-cells = <0x2>;
 	};
 
 	virtio@a003e00 {
-		interrupt-parent = <&plic>;
-		interrupts = <79>;
+		interrupt-parent = <&aplic>;
+		interrupts = <79 4>;
 		reg = <0x0 0xa003e00 0x0 0x200>;
 		compatible = "virtio,mmio";
 		memory-region = <&reserved1>;	
 	};
 
 	virtio@a003c00 {
-		interrupt-parent = <&plic>;
-		interrupts = <78>;
+		interrupt-parent = <&aplic>;
+		interrupts = <78 4>;
 		reg = <0x0 0xa003c00 0x0 0x200>;
 		compatible = "virtio,mmio";
 		memory-region = <&reserved2>;	

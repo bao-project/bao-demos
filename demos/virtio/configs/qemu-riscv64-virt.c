@@ -110,8 +110,9 @@ struct config config = {
                 },
 
                 .arch = {
-                    .irqc.plic = {
-                        .base = 0xC000000,
+                    .irqc.aia = {
+                        .aplic.base = 0xD000000,
+                        .imsic.base = 0x28000000,
                     }
                 }
             },
@@ -166,8 +167,9 @@ struct config config = {
                 },
 
                 .arch = {
-                    .irqc.plic = {
-                        .base = 0xC000000,
+                    .irqc.aia = {
+                        .aplic.base = 0xD000000,
+                        .imsic.base = 0x28000000,
                     }
                 }
             },
@@ -222,8 +224,9 @@ struct config config = {
                 },
 
                 .arch = {
-                    .irqc.plic = {
-                        .base = 0xC000000,
+                    .irqc.aia = {
+                        .aplic.base = 0xD000000,
+                        .imsic.base = 0x28000000,
                     }
                 }
             },
@@ -278,8 +281,9 @@ struct config config = {
                 },
 
                 .arch = {
-                    .irqc.plic = {
-                        .base = 0xC000000,
+                    .irqc.aia = {
+                        .aplic.base = 0xD000000,
+                        .imsic.base = 0x28000000,
                     }
                 }
             },

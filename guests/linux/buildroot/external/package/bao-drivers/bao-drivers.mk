@@ -4,7 +4,7 @@ BAO_DRIVERS_VERSION = linux-v6.6
 else ifneq (,$(filter $(PLATFORM),k3-com260))
 BAO_DRIVERS_VERSION = linux-v6.18
 else
-BAO_DRIVERS_VERSION = linux-v6.15
+BAO_DRIVERS_VERSION = 76ed4153feb3fa2460dcf1f6e00ffedd98059dc5
 endif
 
 BAO_DRIVERS_SITE_METHOD = git

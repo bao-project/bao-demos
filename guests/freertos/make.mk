@@ -1,6 +1,6 @@
 freertos_src:=$(wrkdir_src)/freertos
 freertos_repo:=https://github.com/bao-project/freertos-over-bao.git
-freertos_version:=cb9112f982c2768872536b811e013254d0184811
+freertos_version:=b8166a8627b4ac9778f7a4872997fa5197e46c2d
 
 $(freertos_src):
 	git clone $(freertos_repo) $@

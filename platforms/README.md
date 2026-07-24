@@ -18,7 +18,8 @@ well as RISC-V using RV64:
 * [FVP-R Aarch32](fvp-r-aarch32/README.md)
 
 #### RISC-V platforms:
-* [QEMU virt](qemu-riscv64-virt/README.md)
+* [QEMU virt RV64](qemu-riscv64-virt/README.md)
+* [QEMU virt RV32](qemu-riscv32-virt/README.md)
 
 #### RH850 platforms:
 * [RH850 U2A16](rh850-u2a16/README.md)
