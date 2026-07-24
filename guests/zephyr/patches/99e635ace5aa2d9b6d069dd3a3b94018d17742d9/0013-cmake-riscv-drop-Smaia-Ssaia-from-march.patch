@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Fri, 24 Jul 2026 06:43:29 +0100
+Subject: [PATCH 13/13] cmake: riscv: drop Smaia/Ssaia from -march
+
+The Smaia and Ssaia extensions only define CSRs accessed through
+Zicsr instructions, so they have no bearing on code generation.
+GCC only started accepting them in -march from version 14, which
+breaks builds with older, still common, toolchains. Drop them from
+the march string.
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+---
+ cmake/compiler/gcc/target_riscv.cmake | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/cmake/compiler/gcc/target_riscv.cmake b/cmake/compiler/gcc/target_riscv.cmake
+index b479cd4afd6..bfafe705f0d 100644
+--- a/cmake/compiler/gcc/target_riscv.cmake
++++ b/cmake/compiler/gcc/target_riscv.cmake
+@@ -185,12 +185,8 @@ if(CONFIG_RISCV_ISA_EXT_XTHEAD_VECTOR)
+   string(APPEND riscv_march "_xtheadvector")
+ endif()
+ 
+-if(CONFIG_RISCV_ISA_EXT_SMAIA)
+-  string(APPEND riscv_march "_smaia")
+-endif()
+-if(CONFIG_RISCV_ISA_EXT_SSAIA)
+-  string(APPEND riscv_march "_ssaia")
+-endif()
++# Smaia/Ssaia gate CSR accesses only and have no codegen impact; keep them
++# out of -march since GCC only accepts them from version 14 onwards.
+ 
+ if(CONFIG_RISCV_USE_MSAVE_RESTORE)
+   list(APPEND RISCV_C_FLAGS -msave-restore)

@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Fri, 24 Jul 2026 06:32:55 +0100
+Subject: [PATCH 12/13] soc: qemu: virt_riscv: make riscv64 PLIC selection
+ variant-aware
+
+The qemu_virt_riscv32 SoC already dropped its unconditional
+RISCV_HAS_PLIC select in favor of the family defconfig default keyed
+on !RISCV_HAS_AIA. Apply the same treatment to qemu_virt_riscv64 so
+AIA board variants can select RISCV_HAS_AIA and get the PLIC default
+flipped off.
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+---
+ soc/qemu/virt_riscv/qemu_virt_riscv64/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/soc/qemu/virt_riscv/qemu_virt_riscv64/Kconfig b/soc/qemu/virt_riscv/qemu_virt_riscv64/Kconfig
+index f130f51207b..acad6fc38e6 100644
+--- a/soc/qemu/virt_riscv/qemu_virt_riscv64/Kconfig
++++ b/soc/qemu/virt_riscv/qemu_virt_riscv64/Kconfig
+@@ -2,4 +2,4 @@
+ # SPDX-License-Identifier: Apache-2.0
+ 
+ config SOC_QEMU_VIRT_RISCV64
+-	select RISCV_HAS_PLIC
++	bool

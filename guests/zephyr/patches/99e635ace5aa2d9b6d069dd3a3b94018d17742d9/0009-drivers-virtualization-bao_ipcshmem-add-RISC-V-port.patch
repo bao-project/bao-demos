@@ -1,0 +1,90 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Tue, 19 May 2026 18:38:36 +0100
+Subject: [PATCH 09/13] drivers: virtualization: bao_ipcshmem: add RISC-V port
+
+The driver was ARM-only: notify_peer issued an `arm_smccc_hvc` with the
+Bao vendor hypercall encoded as an ARM SMCCC fast-call. RISC-V has no
+SMCCC; the equivalent on a RISC-V Bao guest is an SBI ecall under
+Bao's experimental extension space (SBI_EXTID 0x08000ba0, FID = HC_IPC
+= 1, see bao-hypervisor/src/core/inc/hypercall.h and
+bao-hypervisor/src/arch/riscv/sbi.c).
+
+Wrap the architecture-specific bits behind CONFIG_ARM/ARM64 vs
+CONFIG_RISCV. The shared call surface (read/write/notify/id/irq) is
+unchanged.
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+(cherry picked from commit 68034c5c002faa3266608818c4a787f027fadf4d)
+---
+ drivers/virtualization/bao_ipcshmem.c | 29 ++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/virtualization/bao_ipcshmem.c b/drivers/virtualization/bao_ipcshmem.c
+index a323cf0ca59..0e1e111c83e 100644
+--- a/drivers/virtualization/bao_ipcshmem.c
++++ b/drivers/virtualization/bao_ipcshmem.c
+@@ -2,21 +2,21 @@
+ #include "bao_ipcshmem_internal.h"
+ 
+ #include <zephyr/irq.h>
+-#include <zephyr/arch/arm64/arm-smccc.h>
+ 
+ #include <stdio.h>
+ #include <string.h>
+ 
++#if defined(CONFIG_ARM64) || defined(CONFIG_ARM)
++#include <zephyr/arch/arm64/arm-smccc.h>
++
+ #define ARM_SMCCC_OWNER_VENDOR_HYP	6
+ #define ARM_SMCCC_FAST_CALL	    1UL
+ #define ARM_SMCCC_SMC_64		1
+ #define ARM_SMCCC_SMC_32		0
+ #if defined(CONFIG_ARM64)
+ #define ARM_SMCCC_SMC  ARM_SMCCC_SMC_64
+-#elif defined(CONFIG_ARM)
+-#define ARM_SMCCC_SMC  ARM_SMCCC_SMC_32
+ #else
+-#error "Bao IPC Shared Memory: unsupported architecture"
++#define ARM_SMCCC_SMC  ARM_SMCCC_SMC_32
+ #endif
+ #define ARM_SMCCC_CALL_VAL(type, calling_convention, owner, func_id) \
+     (((type) << 31) | ((calling_convention) << 30) | \
+@@ -25,6 +25,19 @@
+ #define BAO_SHMEMIPC_SMCCC_VAL ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, \
+     ARM_SMCCC_SMC, ARM_SMCCC_OWNER_VENDOR_HYP, BAO_IPC_HC_ID)
+ 
++#elif defined(CONFIG_RISCV)
++#include <zephyr/arch/riscv/sbi.h>
++
++/* Bao uses an experimental SBI extension ID space for hypercalls. The FID
++ * carries the hypercall ID; HC_IPC = 1 (see bao-hypervisor's
++ * src/core/inc/hypercall.h). */
++#define BAO_SBI_EXTID    0x08000ba0
++#define BAO_SBI_FID_IPC  1
++
++#else
++#error "Bao IPC Shared Memory: unsupported architecture"
++#endif
++
+ static void shmem_read(const struct device *dev, char *buf, size_t n) {
+     size_t size = MIN(SHMEM_CONFIG(dev)->read_buf_size, n);
+     memcpy(buf, SHMEM_DATA(dev)->read_buf, size);
+@@ -37,10 +50,16 @@ static void shmem_write(const struct device *dev, const char *buf, size_t n) {
+ 
+ static void shmem_notify(const struct device *dev) {
+     unsigned shmem_id = SHMEM_CONFIG(dev)->id;
+-    struct arm_smccc_res hvc_res;
+     unsigned notification_id = 0; // we assume only one notification
++
++#if defined(CONFIG_ARM64) || defined(CONFIG_ARM)
++    struct arm_smccc_res hvc_res;
+     arm_smccc_hvc(BAO_SHMEMIPC_SMCCC_VAL, shmem_id, notification_id,
+         0, 0, 0, 0, 0, &hvc_res);
++#elif defined(CONFIG_RISCV)
++    (void)sbi_ecall(BAO_SBI_EXTID, BAO_SBI_FID_IPC,
++        shmem_id, notification_id, 0, 0, 0, 0);
++#endif
+ }
+ 
+ static unsigned shmem_id(const struct device *dev) {

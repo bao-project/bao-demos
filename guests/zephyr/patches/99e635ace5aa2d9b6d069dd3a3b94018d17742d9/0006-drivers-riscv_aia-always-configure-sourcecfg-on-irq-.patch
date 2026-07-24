@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Wed, 20 May 2026 16:45:43 +0100
+Subject: [PATCH 06/13] drivers: riscv_aia: always configure sourcecfg on irq
+ priority set
+
+An APLIC source with SM=0 (inactive) is never forwarded regardless of
+its enable bit. Guard against this by always calling
+riscv_aia_config_source(), defaulting to level-high when the caller
+passes flags=0 (the standard 'no special type' sentinel).
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+(cherry picked from commit df3dae8eb6fd1804fcdbe459536b7f75cb1d4be8)
+---
+ soc/common/riscv-privileged/soc_common_irq.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/soc/common/riscv-privileged/soc_common_irq.c b/soc/common/riscv-privileged/soc_common_irq.c
+index 55e09fe866f..5d943b0df50 100644
+--- a/soc/common/riscv-privileged/soc_common_irq.c
++++ b/soc/common/riscv-privileged/soc_common_irq.c
+@@ -196,9 +196,10 @@ void z_riscv_irq_priority_set(unsigned int irq, unsigned int prio, uint32_t flag
+ 		return;
+ 	}
+ 
+-	if (flags != 0) {
+-		riscv_aia_config_source(irq, flags);
+-	}
++	/* Always configure sourcecfg; SM=0 (inactive) means the APLIC never
++	 * forwards the source regardless of the enable bit. Default to
++	 * level-high when flags=0 (the standard "no special type" value). */
++	riscv_aia_config_source(irq, flags != 0 ? flags : APLIC_SM_LEVEL_HIGH);
+ 
+ 	/* Set priority if direct delivery mode is enabled.
+ 	 * AIA-IMSIC priority is handled via IMSIC EITHRESHOLD or EIID ordering.

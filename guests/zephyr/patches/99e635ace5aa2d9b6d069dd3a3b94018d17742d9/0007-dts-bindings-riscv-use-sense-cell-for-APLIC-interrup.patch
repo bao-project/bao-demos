@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Afonso Oliveira <afonso.oliveira707@gmail.com>
+Date: Wed, 20 May 2026 08:59:02 +0100
+Subject: [PATCH 07/13] dts: bindings: riscv: use sense cell for APLIC
+ interrupts
+
+The APLIC interrupt source mode is the IRQ sense value used by
+generic drivers. Name the cell consistently so drivers such as
+ns16550 pass it through IRQ_CONNECT() instead of falling back to zero.
+
+Signed-off-by: Afonso Oliveira <afonso.oliveira707@gmail.com>
+(cherry picked from commit 11234bc17e4d03749231e7f408928952b6d815a8)
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+---
+ dts/bindings/interrupt-controller/riscv,aplic.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dts/bindings/interrupt-controller/riscv,aplic.yaml b/dts/bindings/interrupt-controller/riscv,aplic.yaml
+index 6bd0ab695d1..932c6efd631 100644
+--- a/dts/bindings/interrupt-controller/riscv,aplic.yaml
++++ b/dts/bindings/interrupt-controller/riscv,aplic.yaml
+@@ -43,4 +43,4 @@ properties:
+ interrupt-cells:
+   - irq
+   - priority
+-  - flags
++  - sense

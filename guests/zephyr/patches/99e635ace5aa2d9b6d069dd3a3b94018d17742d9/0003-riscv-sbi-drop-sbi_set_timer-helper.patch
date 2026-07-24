@@ -1,0 +1,60 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jose Martins <josemartins90@gmail.com>
+Date: Tue, 19 May 2026 18:38:35 +0100
+Subject: [PATCH 03/13] riscv: sbi: drop sbi_set_timer helper
+
+Upstream's riscv_supervisor_timer.c (newer than this branch's base)
+defines its own file-local `static void sbi_set_timer(uint64_t)` and
+includes <zephyr/arch/riscv/sbi.h>. Our convenience helper had the same
+name with a conflicting (int / non-static) signature, so the build
+fails with a "previous declaration of 'sbi_set_timer' with type
+'int(uint64_t)'" diagnostic when the supervisor timer driver compiles.
+
+The helper was a convenience wrapper around sbi_ecall(SBI_EXT_TIME,
+SBI_FUNC_SET_TIMER, ...). Callers can use sbi_ecall directly, so just
+drop the helper. The riscv_supervisor_timer driver is already
+self-sufficient.
+
+Signed-off-by: Jose Martins <josemartins90@gmail.com>
+(cherry picked from commit fe3c401ddf3267db418a6009fae81934d7d6609a)
+---
+ arch/riscv/core/sbi.c           | 9 ---------
+ include/zephyr/arch/riscv/sbi.h | 8 --------
+ 2 files changed, 17 deletions(-)
+
+diff --git a/arch/riscv/core/sbi.c b/arch/riscv/core/sbi.c
+index f8abe5f3254..565c64c8ba7 100644
+--- a/arch/riscv/core/sbi.c
++++ b/arch/riscv/core/sbi.c
+@@ -35,12 +35,3 @@ struct sbiret sbi_ecall(int ext, int fid, unsigned long arg0,
+ 	ret.value = a1;
+ 	return ret;
+ }
+-
+-int sbi_set_timer(uint64_t stime_value)
+-{
+-	struct sbiret ret;
+-
+-	ret = sbi_ecall(SBI_EXT_TIME, SBI_FUNC_SET_TIMER,
+-			(unsigned long)stime_value, 0, 0, 0, 0, 0);
+-	return ret.error;
+-}
+diff --git a/include/zephyr/arch/riscv/sbi.h b/include/zephyr/arch/riscv/sbi.h
+index 2cad3c157ac..271ac7a5c6c 100644
+--- a/include/zephyr/arch/riscv/sbi.h
++++ b/include/zephyr/arch/riscv/sbi.h
+@@ -72,14 +72,6 @@ struct sbiret sbi_ecall(int ext, int fid, unsigned long arg0,
+ 			unsigned long arg1, unsigned long arg2,
+ 			unsigned long arg3, unsigned long arg4,
+ 			unsigned long arg5);
+-
+-/**
+- * @brief Program the next supervisor timer interrupt deadline.
+- *
+- * @param stime_value Absolute deadline, in mtime ticks.
+- * @return 0 on success, non-zero SBI error code otherwise.
+- */
+-int sbi_set_timer(uint64_t stime_value);
+ #endif /* !_ASMLANGUAGE */
+ 
+ #endif /* ZEPHYR_INCLUDE_ARCH_RISCV_SBI_H_ */
