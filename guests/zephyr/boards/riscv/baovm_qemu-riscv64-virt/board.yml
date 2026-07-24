@@ -1,0 +1,6 @@
+board:
+  name: baovm_qemu-riscv64-virt
+  full_name: Bao guest on QEMU virt (RV64)
+  vendor: bao
+  socs:
+    - name: qemu_virt_riscv64

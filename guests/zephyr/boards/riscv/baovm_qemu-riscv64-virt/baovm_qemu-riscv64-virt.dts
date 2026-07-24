@@ -1,0 +1,11 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+/dts-v1/;
+
+#define BAOVM_RISCV_ISA_BASE "rv64i"
+#include "../common/baovm_qemu-virt-common.dtsi"
+
+/ {
+	model = "Bao guest on QEMU virt (RV64)";
+	compatible = "bao,baovm-qemu-riscv64-virt";
+};
