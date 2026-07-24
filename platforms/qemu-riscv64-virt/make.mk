@@ -1,6 +1,7 @@
 RISCV_XLEN?=64
 ARCH:=riscv$(RISCV_XLEN)
 
+
 include $(bao_demos)/platforms/qemu.mk
 include $(bao_demos)/platforms/opensbi.mk
 
@@ -18,7 +19,7 @@ instructions:=$(bao_demos)/platforms/$(PLATFORM)/README.md
 run: qemu platform
 	$(call print-instructions, $(instructions), 1, true)
 	$(qemu_cmd) -nographic\
-		-M virt -cpu rv$(RISCV_XLEN),$(qemu_cpu_ext) -m 4G -smp 4\
+		-M virt,aia=aplic-imsic,aia-guests=1 -cpu rv$(RISCV_XLEN),$(qemu_cpu_ext) -m 4G -smp 4\
 		-bios $(opensbi_image)\
 		-device virtio-net-device,netdev=net0\
 		-netdev user,id=net0,net=192.168.42.0/24,hostfwd=tcp:127.0.0.1:5555-:22\

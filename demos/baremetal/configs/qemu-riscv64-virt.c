@@ -40,7 +40,8 @@ struct config config  = {
                 },
 
                 .arch = {
-                   .irqc.plic.base = 0xc000000,
+                   .irqc.aia.aplic.base = 0xd000000,
+                   .irqc.aia.imsic.base = 0x28000000,
                 }
             },
         },

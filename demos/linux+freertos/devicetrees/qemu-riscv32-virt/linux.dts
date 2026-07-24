@@ -15,7 +15,7 @@
 			reg = <0x00>;
 			status = "okay";
 			compatible = "riscv";
-			riscv,isa = "rv32imafdch_zicntr_zicsr_zifencei_sstc";
+			riscv,isa = "rv32imafdch_zicntr_zicsr_zifencei_ssaia_sstc";
 			mmu-type = "riscv,sv32";
 
 			cpu0_intc: interrupt-controller {
@@ -31,7 +31,7 @@
 			reg = <0x01>;
 			status = "okay";
 			compatible = "riscv";
-			riscv,isa = "rv32imafdch_zicntr_zicsr_zifencei_sstc";
+			riscv,isa = "rv32imafdch_zicntr_zicsr_zifencei_ssaia_sstc";
 			mmu-type = "riscv,sv32";
 
 			cpu1_intc: interrupt-controller {
@@ -47,7 +47,7 @@
 			reg = <0x02>;
 			status = "okay";
 			compatible = "riscv";
-			riscv,isa = "rv32imafdch_zicntr_zicsr_zifencei_sstc";
+			riscv,isa = "rv32imafdch_zicntr_zicsr_zifencei_ssaia_sstc";
 			mmu-type = "riscv,sv32";
 
 			cpu2_intc: interrupt-controller {
@@ -65,71 +65,81 @@
 		reg = <0x0 0x90000000 0x0 0x20000000>;
 	};
 
-	plic: interrupt-controller@c000000 {
-		riscv,ndev = <60>;
-		reg = <0x0 0xc000000 0x0 0x4000000>;
+	imsic: interrupt-controller@28000000 {
+		riscv,num-ids = <255>;
+		reg = <0x0 0x28000000 0x0 0x3000>;
 		interrupts-extended = <
-			&cpu0_intc 11 &cpu0_intc 9 
-			&cpu1_intc 11 &cpu1_intc 9 
-			&cpu2_intc 11 &cpu2_intc 9
+			&cpu0_intc 9
+			&cpu1_intc 9
+			&cpu2_intc 9
 		>;
+		msi-controller;
 		interrupt-controller;
-		compatible = "riscv,plic0";
-		#interrupt-cells = <0x1>;
+		compatible = "riscv,imsics";
+		#interrupt-cells = <0x0>;
+	};
+
+	aplic: interrupt-controller@d000000 {
+		riscv,num-sources = <96>;
+		reg = <0x0 0xd000000 0x0 0x8000>;
+		msi-parent = <&imsic>;
+		interrupt-controller;
+		compatible = "riscv,aplic";
+		#interrupt-cells = <0x2>;
 	};
 
 	virtio_mmio@10008000 {
-		interrupts = <0x8>;
-		interrupt-parent = <&plic>;
+		interrupts = <0x8 4>;
+		interrupt-parent = <&aplic>;
 		reg = <0x0 0x10008000 0x0 0x1000>;
 		compatible = "virtio,mmio";
 	};
 
 	virtio_mmio@10007000 {
-		interrupts = <0x7>;
-		interrupt-parent = <&plic>;
+		interrupts = <0x7 4>;
+		interrupt-parent = <&aplic>;
 		reg = <0x0 0x10007000 0x0 0x1000>;
 		compatible = "virtio,mmio";
 	};
 
 	virtio_mmio@10006000 {
-		interrupts = <0x6>;
-		interrupt-parent = <&plic>;
+		interrupts = <0x6 4>;
+		interrupt-parent = <&aplic>;
 		reg = <0x0 0x10006000 0x0 0x1000>;
 		compatible = "virtio,mmio";
 	};
 
 	virtio_mmio@10005000 {
-		interrupts = <0x5>;
-		interrupt-parent = <&plic>;
+		interrupts = <0x5 4>;
+		interrupt-parent = <&aplic>;
 		reg = <0x0 0x10005000 0x0 0x1000>;
 		compatible = "virtio,mmio";
 	};
 
 	virtio_mmio@10004000 {
-		interrupts = <0x4>;
-		interrupt-parent = <&plic>;
+		interrupts = <0x4 4>;
+		interrupt-parent = <&aplic>;
 		reg = <0x0 0x10004000 0x0 0x1000>;
 		compatible = "virtio,mmio";
 	};
 
 	virtio_mmio@10003000 {
-		interrupts = <0x3>;
-		interrupt-parent = <&plic>;
+		interrupts = <0x3 4>;
+		interrupt-parent = <&aplic>;
 		reg = <0x0 0x10003000 0x0 0x1000>;
 		compatible = "virtio,mmio";
 	};
 
 	virtio_mmio@10002000 {
-		interrupts = <0x2>;
-		interrupt-parent = <&plic>;
+		interrupts = <0x2 4>;
+		interrupt-parent = <&aplic>;
 		reg = <0x0 0x10002000 0x0 0x1000>;
 		compatible = "virtio,mmio";
 	};
 
 	virtio_mmio@10001000 {
-		interrupts = <0x1>;
-		interrupt-parent = <&plic>;
+		interrupts = <0x1 4>;
+		interrupt-parent = <&aplic>;
 		reg = <0x0 0x10001000 0x0 0x1000>;
 		compatible = "virtio,mmio";
 	};
@@ -139,8 +149,8 @@
         reg = <0x0 0xf0000000 0x0 0x00010000>;
 		read-channel = <0x0 0x2000>;
 		write-channel = <0x2000 0x2000>;
-		interrupt-parent = <&plic>;
-        interrupts = <52>;
+		interrupt-parent = <&aplic>;
+        interrupts = <52 4>;
 		id = <0>;
     };
 
