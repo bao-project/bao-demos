@@ -320,8 +320,8 @@ Build the firmware and deploy the system according to the target platform:
 | fvp-r-aarch32     | x         |                |              | x                |        |                    |                    |                 |
 | mps3-an536        | x         |                |              | x                |        |                    |                    |                 |
 | s32z270           | x         |                |              | x                |        |                    |                    |                 |
-| qemu-riscv64-virt | x         | x              |              |                  | x      |                    |                    |                 |
-| qemu-riscv32-virt | x         | x              |              |                  |        |                    |                    |                 |
+| qemu-riscv64-virt | x         | x              | x            | x                | x      |                    |                    |                 |
+| qemu-riscv32-virt | x         | x              | x            | x                |        |                    |                    |                 |
 | k3-com260         | x         | x              |              |                  |        |                    |                    |                 |
 | rh850-u2a16       | x         |                |              |                  |        |                    | x                  |                 |
 | tc4dx             | x         |                |              |                  |        |                    |                    |                 |
