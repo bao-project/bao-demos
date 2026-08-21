@@ -41,6 +41,11 @@ sudo apt install build-essential bison flex git libssl-dev ninja-build \
 pip3 install pykwalify packaging pyelftools
 ```
 
+**Note**: building the Zephyr demos requires Python >= 3.12. If your
+distribution provides an older version, make a newer `python3` available in
+your `PATH` before building (for example, through a pyenv or uv managed
+virtual environment).
+
 ## 0. Download and setup the toolchain
 
 Download the latest bare-metal cross-compile toolchain for your target
@@ -348,6 +353,7 @@ Build the firmware and deploy the system according to the target platform:
 | mke2fs                  | 1.46.5  |
 | cmake                   | 3.22.1  |
 | ninja                   | 1.10.1  |
+| python3                 | 3.12.13 |
 
 
 <!-- Links -->
