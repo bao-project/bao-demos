@@ -5,7 +5,7 @@ LOCAL &ToolsDir
 ; initialize and start the debugger
 ;RESet
 
-SYStem.CPU TC4D9XE
+SYStem.CPU TC4D7XP
 
 CORE.ASSIGN 1. 2. 3. 4. 5. 6.  // assign cores to the SMP system
 
@@ -28,11 +28,12 @@ MAP.BOnchip 0x0--0xffffffff // force onchip-breakpoints
 ; Flash programming
 LOCAL &elfFile &progFlash &bmhdResult
 
-LOCAL &bao_elf &baremetal_elf
+LOCAL &bao_elf &baremetal_elf &zephyr_elf
 
 
 &bao_elf="@BAO_ELF@"
 &baremetal_elf="@BAREMETAL_ELF@"
+&zephyr_elf="@ZEPHYR_ELF@"
 &elfFile="&bao_elf"
 
 ; prepare flash programming (declarations)
@@ -140,7 +141,13 @@ IF (&progFlash)
 Data.USRACCESS 0xC0000000 0xD0000000 1024. ~~/demo/tricore/etc/usraccess/usraccess.gnu.bin
 ; start program execution
 
-Data.LOAD.Elf &baremetal_elf /NoCode /NoClear
+; Debug symbols only, guest binaries are already in &bao_elf via VM_IMAGE().
+; TODO(tc4dx): OS.FILE() existence check below is untested against real
+; TRACE32 PRACTICE.
+IF OS.FILE("&baremetal_elf")
+  Data.LOAD.Elf &baremetal_elf /NoCode /NoClear
+IF OS.FILE("&zephyr_elf")
+  Data.LOAD.Elf &zephyr_elf /NoCode /NoClear
 
 ; --------------------------------------------------------------------------------
 

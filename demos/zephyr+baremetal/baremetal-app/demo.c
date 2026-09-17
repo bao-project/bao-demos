@@ -17,9 +17,13 @@
  #define TIMER_INTERVAL (TIME_S(1))
  
  spinlock_t print_lock = SPINLOCK_INITVAL;
- 
+
+ #ifndef SHMEM_IRQ_ID
+ /* tc4dx can't share this id between VMs (no per-VM virtual IRQ space) --
+  * overridden via -DSHMEM_IRQ_ID, see make.mk. */
  #define SHMEM_IRQ_ID (52)
- 
+ #endif
+
 char* const baremetal_message = (char*)SHMEM_BASE;
 char* const zephyr_message    = (char*)(SHMEM_BASE + 0x2000);
  const size_t shmem_channel_size = 0x2000;
@@ -52,23 +56,26 @@ char* const zephyr_message    = (char*)(SHMEM_BASE + 0x2000);
      memset(zephyr_message, 0, shmem_channel_size);
      shmem_update_msg(0);
      irq_set_handler(SHMEM_IRQ_ID, shmem_handler);
-     irq_set_prio(SHMEM_IRQ_ID, IRQ_MAX_PRIO);
+     /* irq_enable() before irq_set_prio(): set_prio first silently leaves it
+      * disabled (see ir_enable_interrupt()). */
      irq_enable(SHMEM_IRQ_ID);
+     irq_set_prio(SHMEM_IRQ_ID, IRQ_MAX_PRIO);
  }
  
- void uart_rx_handler(){
+ void uart_rx_handler(unsigned id){
      static int irq_count = 0;
      printf("cpu%d: %s %d\n",get_cpuid(), __func__, ++irq_count);
      uart_clear_rxirq();
          shmem_update_msg(irq_count);
  }
- 
- void ipi_handler(){
+
+ void ipi_handler(unsigned id){
+     irq_clear_ipi();
      printf("cpu%d: %s\n", get_cpuid(), __func__);
      irq_send_ipi(1ull << (get_cpuid() + 1));
  }
- 
- void timer_handler(){
+
+ void timer_handler(unsigned id){
      printf("cpu%d: %s\n", get_cpuid(), __func__);
      timer_set(TIMER_INTERVAL);
      irq_send_ipi(1ull << (get_cpuid() + 1));
@@ -104,7 +111,7 @@ char* const zephyr_message    = (char*)(SHMEM_BASE + 0x2000);
 
      irq_set_handler(IPI_IRQ_ID, ipi_handler);
      irq_enable(IPI_IRQ_ID);
-     irq_set_prio(IPI_IRQ_ID, IRQ_MAX_PRIO);
+     irq_set_prio(IPI_IRQ_ID, IPI_IRQ_PRIO);
  
      while(!master_done);
      spin_lock(&print_lock);
