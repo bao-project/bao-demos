@@ -1,0 +1,105 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Miguel Silva <miguelafsilva5@gmail.com>
+Date: Mon, 31 Aug 2026 16:00:00 +0100
+Subject: [PATCH] drivers: virtualization: bao_ipcshmem: add TriCore port
+
+The driver was ARM-only: notify_peer issued an `arm_smccc_hvc` with the
+Bao vendor hypercall encoded as an ARM SMCCC fast-call. TriCore has no
+SMCCC; Bao's TriCore port instead takes the hypercall ID in D4, like a
+normal argument (see bao-hypervisor's
+src/arch/tricore/inc/arch/hypercall.h and
+src/arch/tricore/traps.c:hvcall_handler) -- HC_IPC = 1 (see
+bao-hypervisor's src/core/inc/hypercall.h) -- with arguments shifted
+one register over accordingly, D5/D6 per HYPCALL_IN_ARG_REG (arg0 =
+D5, arg1 = D6). hvcall's own immediate operand goes unused.
+
+Wrap the architecture-specific bits behind CONFIG_ARM/ARM64 vs
+CONFIG_TRICORE. The shared call surface (read/write/notify/id/irq) is
+unchanged.
+
+Verified against tricore-elf-gcc: the register-variable inline asm
+correctly emits explicit loads into d4/d5/d6 ahead of `hvcall 0` when
+the values aren't already resident there (confirmed via objdump),
+matching bao's hypercall_get_arg(vcpu, 0)/(vcpu, 1) == D5/D6
+expectation, with the id itself read back from D4 via vcpu_readreg().
+
+Signed-off-by: Miguel Silva <miguelafsilva5@gmail.com>
+---
+ drivers/virtualization/bao_ipcshmem.c | 34 ++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/virtualization/bao_ipcshmem.c b/drivers/virtualization/bao_ipcshmem.c
+index a323cf0ca59..8d61bc59c24 100644
+--- a/drivers/virtualization/bao_ipcshmem.c
++++ b/drivers/virtualization/bao_ipcshmem.c
+@@ -2,21 +2,21 @@
+ #include "bao_ipcshmem_internal.h"
+
+ #include <zephyr/irq.h>
+-#include <zephyr/arch/arm64/arm-smccc.h>
+
+ #include <stdio.h>
+ #include <string.h>
+
++#if defined(CONFIG_ARM64) || defined(CONFIG_ARM)
++#include <zephyr/arch/arm64/arm-smccc.h>
++
+ #define ARM_SMCCC_OWNER_VENDOR_HYP	6
+ #define ARM_SMCCC_FAST_CALL	    1UL
+ #define ARM_SMCCC_SMC_64		1
+ #define ARM_SMCCC_SMC_32		0
+ #if defined(CONFIG_ARM64)
+ #define ARM_SMCCC_SMC  ARM_SMCCC_SMC_64
+-#elif defined(CONFIG_ARM)
+-#define ARM_SMCCC_SMC  ARM_SMCCC_SMC_32
+ #else
+-#error "Bao IPC Shared Memory: unsupported architecture"
++#define ARM_SMCCC_SMC  ARM_SMCCC_SMC_32
+ #endif
+ #define ARM_SMCCC_CALL_VAL(type, calling_convention, owner, func_id) \
+     (((type) << 31) | ((calling_convention) << 30) | \
+@@ -25,6 +25,20 @@
+ #define BAO_SHMEMIPC_SMCCC_VAL ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, \
+     ARM_SMCCC_SMC, ARM_SMCCC_OWNER_VENDOR_HYP, BAO_IPC_HC_ID)
+
++#elif defined(CONFIG_TRICORE)
++
++/* Bao's TriCore port takes the hypercall ID in D4, like a normal argument --
++ * hvcall's immediate operand goes unused (see bao-hypervisor's
++ * src/arch/tricore/inc/arch/hypercall.h / traps.c:hvcall_handler). Arguments
++ * shift one register over accordingly: D5/D6 (arg0/arg1), per
++ * HYPCALL_IN_ARG_REG. HC_IPC = 1 (see bao-hypervisor's
++ * src/core/inc/hypercall.h). */
++#define BAO_IPC_HC_ID 1
++
++#else
++#error "Bao IPC Shared Memory: unsupported architecture"
++#endif
++
+ static void shmem_read(const struct device *dev, char *buf, size_t n) {
+     size_t size = MIN(SHMEM_CONFIG(dev)->read_buf_size, n);
+     memcpy(buf, SHMEM_DATA(dev)->read_buf, size);
+@@ -37,10 +51,20 @@ static void shmem_write(const struct device *dev, const char *buf, size_t n) {
+
+ static void shmem_notify(const struct device *dev) {
+     unsigned shmem_id = SHMEM_CONFIG(dev)->id;
+-    struct arm_smccc_res hvc_res;
+     unsigned notification_id = 0; // we assume only one notification
++
++#if defined(CONFIG_ARM64) || defined(CONFIG_ARM)
++    struct arm_smccc_res hvc_res;
+     arm_smccc_hvc(BAO_SHMEMIPC_SMCCC_VAL, shmem_id, notification_id,
+         0, 0, 0, 0, 0, &hvc_res);
++#elif defined(CONFIG_TRICORE)
++    register unsigned long d4 __asm__("d4") = BAO_IPC_HC_ID;
++    register unsigned long d5 __asm__("d5") = shmem_id;
++    register unsigned long d6 __asm__("d6") = notification_id;
++    __asm__ volatile("hvcall 0"
++        :: "d" (d4), "d" (d5), "d" (d6)
++        : "memory");
++#endif
+ }
+
+ static unsigned shmem_id(const struct device *dev) {
+--
+2.43.0
