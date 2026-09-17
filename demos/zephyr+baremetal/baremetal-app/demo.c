@@ -64,8 +64,9 @@ char* const zephyr_message    = (char*)(SHMEM_BASE + 0x2000);
      uart_clear_rxirq();
          shmem_update_msg(irq_count);
  }
- 
- void ipi_handler(){
+
+ void ipi_handler(unsigned id){
+     irq_clear_ipi();
      printf("cpu%d: %s\n", get_cpuid(), __func__);
      irq_send_ipi(1ull << (get_cpuid() + 1));
  }
@@ -106,7 +107,7 @@ char* const zephyr_message    = (char*)(SHMEM_BASE + 0x2000);
 
      irq_set_handler(IPI_IRQ_ID, ipi_handler);
      irq_enable(IPI_IRQ_ID);
-     irq_set_prio(IPI_IRQ_ID, IRQ_MAX_PRIO);
+     irq_set_prio(IPI_IRQ_ID, IPI_IRQ_PRIO);
  
      while(!master_done);
      spin_lock(&print_lock);
