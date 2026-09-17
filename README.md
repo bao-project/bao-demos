@@ -324,7 +324,7 @@ Build the firmware and deploy the system according to the target platform:
 | qemu-riscv32-virt | x         | x              | x            | x                |        |                    |                    |                 |
 | k3-com260         | x         | x              |              |                  |        |                    |                    |                 |
 | rh850-u2a16       | x         |                |              |                  |        |                    | x                  |                 |
-| tc4dx             | x         |                |              |                  |        |                    |                    |                 |
+| tc4dx             | x         |                |              | x                |        |                    |                    |                 |
 | e3650             | x         |                |              |                  |        |                    |                    | x               |
 | imx8mp-verdin     | x         | x              |              |                  |        | x                  |                    |                 |
 

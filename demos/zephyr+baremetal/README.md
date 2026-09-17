@@ -69,5 +69,26 @@ export BAREMETAL_PARAMS="$BAREMETAL_PARAMS MEM_BASE=0x32200000 SHMEM_BASE=0x7000
 
 The Zephyr board for MPS3-AN536 is `baovm_mps3-an536`.
 
+### TC4D7 (TriCore)
+
+Unlike the MPU platforms above, TC4D7 doesn't need the `*_VM_IMAGES`/
+`BAREMETAL_PARAMS` env vars -- both guests' addresses are fixed in
+[`configs/tc4dx.c`](configs/tc4dx.c) and get embedded directly into `bao.elf`
+at build time (loaded via TRACE32, see [platforms/tc4dx](../../platforms/tc4dx/README.md)).
+
+The board only has one ASCLIN pinned by default (ASCLIN0), which this demo
+gives to Zephyr; the baremetal guest instead uses ASCLIN1, selected by
+building bao-baremetal-guest with `TC4DX_ASCLIN=1` (already wired up in this
+demo's `make.mk` for `PLATFORM=tc4dx`, no manual step needed).
+
+The Zephyr board is `kit_a3g_tc4d7_lite/tc4d7xp/cpu0` (no custom `baovm_*`
+board -- it ships inside the `hal_infineon` module and is resolved via
+`ZEPHYR_MODULES`). Zephyr's guest source is a fork
+([linumiz/zephyr-tricore](https://github.com/linumiz/zephyr-tricore),
+`dev/ifx/tricore-upstream`) rather than upstream Zephyr, since TriCore
+architecture support isn't upstream yet -- see the TODO comment in
+[`guests/zephyr/make.mk`](../../guests/zephyr/make.mk) for why that's
+currently pointed at a local mirror instead of a GitHub URL.
+
 Follow the instructions to build [Zephyr](../../guests/zephyr/README.md) 
 and the [baremetal app](../../guests/baremetal/README.md).

@@ -1,0 +1,42 @@
+/*
+ * Run Zephyr out of DLMU1 (0x90080000, 512KB) instead of the board's default
+ * DSRAM0, and add the Bao IPC shared-memory channel (shmem region carved at
+ * 0x90280000, 64KB; the first 16KB -- two 8KB read/write channels -- are
+ * mapped here). DLMU0 is left free for bao's own PLAT_DATA_ADDR.
+ */
+
+/ {
+	chosen {
+		zephyr,sram = &dlmu1;
+		zephyr,dtcm = &dlmu1;
+	};
+};
+
+/* CONFIG_AURIX_STARTUP_CPU=n (see prj.conf) leaves the chip on its
+ * boot-default backup clock instead of the PLL-reconfigured target --
+ * frequencies below corrected accordingly, confirmed by measurement on
+ * hardware. */
+&fstm {
+	clock-frequency = <DT_FREQ_M(50)>;
+};
+
+&fasclinf {
+	clock-frequency = <DT_FREQ_M(100)>;
+};
+
+/ {
+
+	bao-ipc@90280000 {
+		compatible = "bao,ipcshmem";
+		reg = <0x90280000 0x4000>;
+		read-channel = <0x0 0x2000>;
+		write-channel = <0x2000 0x2000>;
+		/* Must match configs/tc4dx.c's Zephyr .ipcs[].interrupts;
+		 * baremetal uses a different id (1361) -- tc4dx has no per-VM
+		 * virtual IRQ space, so the two VMs can't share one. */
+		interrupts = <1360 1>;
+		interrupt-parent = <&ir>;
+		id = <0>;
+		status = "okay";
+	};
+};
