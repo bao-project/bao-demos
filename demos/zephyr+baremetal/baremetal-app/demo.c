@@ -17,9 +17,13 @@
  #define TIMER_INTERVAL (TIME_S(1))
  
  spinlock_t print_lock = SPINLOCK_INITVAL;
- 
+
+ #ifndef SHMEM_IRQ_ID
+ /* tc4dx can't share this id between VMs (no per-VM virtual IRQ space) --
+  * overridden via -DSHMEM_IRQ_ID, see make.mk. */
  #define SHMEM_IRQ_ID (52)
- 
+ #endif
+
 char* const baremetal_message = (char*)SHMEM_BASE;
 char* const zephyr_message    = (char*)(SHMEM_BASE + 0x2000);
  const size_t shmem_channel_size = 0x2000;
@@ -70,8 +74,8 @@ char* const zephyr_message    = (char*)(SHMEM_BASE + 0x2000);
      printf("cpu%d: %s\n", get_cpuid(), __func__);
      irq_send_ipi(1ull << (get_cpuid() + 1));
  }
- 
- void timer_handler(){
+
+ void timer_handler(unsigned id){
      printf("cpu%d: %s\n", get_cpuid(), __func__);
      timer_set(TIMER_INTERVAL);
      irq_send_ipi(1ull << (get_cpuid() + 1));
