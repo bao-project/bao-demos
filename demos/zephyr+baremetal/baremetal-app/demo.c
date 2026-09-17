@@ -52,8 +52,10 @@ char* const zephyr_message    = (char*)(SHMEM_BASE + 0x2000);
      memset(zephyr_message, 0, shmem_channel_size);
      shmem_update_msg(0);
      irq_set_handler(SHMEM_IRQ_ID, shmem_handler);
-     irq_set_prio(SHMEM_IRQ_ID, IRQ_MAX_PRIO);
+     /* irq_enable() before irq_set_prio(): set_prio first silently leaves it
+      * disabled (see ir_enable_interrupt()). */
      irq_enable(SHMEM_IRQ_ID);
+     irq_set_prio(SHMEM_IRQ_ID, IRQ_MAX_PRIO);
  }
  
  void uart_rx_handler(){
