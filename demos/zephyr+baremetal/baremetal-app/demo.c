@@ -58,7 +58,7 @@ char* const zephyr_message    = (char*)(SHMEM_BASE + 0x2000);
      irq_set_prio(SHMEM_IRQ_ID, IRQ_MAX_PRIO);
  }
  
- void uart_rx_handler(){
+ void uart_rx_handler(unsigned id){
      static int irq_count = 0;
      printf("cpu%d: %s %d\n",get_cpuid(), __func__, ++irq_count);
      uart_clear_rxirq();
