@@ -12,7 +12,13 @@ buildroot_defcfg:=$(bao_demos)/guests/linux/buildroot/$(ARCH).config
 buildroot_external:=$(bao_demos)/guests/linux/buildroot/external
 buildroot_overlay:=$(bao_demos)/guests/linux/buildroot/overlay
 
+# Demos where Linux is the VirtIO backend (Bao's I/O dispatcher driver and
+# VirtIO device model) define linux_virtio_backend before including this file.
 ifeq ($(DEMO),virtio)
+linux_virtio_backend:=y
+endif
+
+ifeq ($(linux_virtio_backend),y)
 linux_cfg_frag+=$(bao_demos)/guests/linux/configs/virtio.config
 $(shell grep -qxF "BR2_PACKAGE_BAO_VIRTIO_DM=y" $(buildroot_defcfg) || echo "BR2_PACKAGE_BAO_VIRTIO_DM=y" >> $(buildroot_defcfg))
 $(shell grep -qxF "BR2_PACKAGE_HOST_RUSTC=y" $(buildroot_defcfg) || echo "BR2_PACKAGE_HOST_RUSTC=y" >> $(buildroot_defcfg))
@@ -34,7 +40,8 @@ $(buildroot_src):
 buildroot_image:=$(buildroot_src)/output/images/Image-$(PLATFORM)
 export LINUX_OVERRIDE_SRCDIR=$(linux_src) 
 export BAO_DEMOS_LINUX_CFG_FRAG=$(linux_cfg_frag)
-export BAO_DEMOS_BUILDROOT_OVERLAY:=$(buildroot_overlay)
+# Demos may add their own root filesystem overlay through buildroot_overlay_extra
+export BAO_DEMOS_BUILDROOT_OVERLAY:=$(buildroot_overlay) $(buildroot_overlay_extra)
 export BR2_EXTERNAL=$(buildroot_external)
 
 linux $(buildroot_image): $(linux_patches) $(linux_cfg_frag) $(buildroot_defcfg) | $(linux_src) $(buildroot_src) 
