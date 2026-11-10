@@ -1,0 +1,5 @@
+devices:
+  - id: 0
+    type: "console"
+    mmio_addr: 0xa003e00
+    data_plane: virtio

@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# Launch the Bao VirtIO device model serving the Zephyr guest's console.
+# The I/O dispatcher kernel module is loaded by /etc/init.d/S99bao.
+
+CONFIG=/etc/bao-virtio-console.yaml
+LOG=/var/log/bao-virtio-dm.log
+
+case "$1" in
+    start)
+        if [ -e /dev/bao-io-dispatcher ]; then
+            echo "Starting the Bao VirtIO console backend (log: $LOG)..."
+            nohup bao-virtio-dm --config $CONFIG > $LOG 2>&1 &
+        else
+            echo "/dev/bao-io-dispatcher not found: not starting the VirtIO backend"
+        fi
+        ;;
+    stop)
+        killall bao-virtio-dm 2> /dev/null
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
+
+exit 0

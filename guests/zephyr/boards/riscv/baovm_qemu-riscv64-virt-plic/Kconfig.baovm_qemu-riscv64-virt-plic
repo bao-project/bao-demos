@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_BAOVM_QEMU_RISCV64_VIRT_PLIC
+	select SOC_QEMU_VIRT_RISCV64
