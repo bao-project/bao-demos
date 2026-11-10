@@ -1,0 +1,6 @@
+board:
+  name: baovm_qemu-riscv64-virt-plic
+  full_name: Bao VM on QEMU RISC-V 64 virt (PLIC)
+  vendor: bao
+  socs:
+  - name: qemu_virt_riscv64
