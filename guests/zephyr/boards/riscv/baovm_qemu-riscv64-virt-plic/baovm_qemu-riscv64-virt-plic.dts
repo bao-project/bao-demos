@@ -1,0 +1,103 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Bao virtual machine on the QEMU RISC-V 64 virt platform, with Bao
+ * emulating the PLIC (Zephyr v4.5.0, supervisor mode on top of Bao's SBI).
+ *
+ * The VM is a single hart running in supervisor mode. The memory layout and
+ * the devices passed through by the hypervisor are defined by the Bao
+ * configuration of the demo; the defaults below match the usual Bao demo
+ * configuration (first UART assigned to Zephyr, RAM at 0x80000000).
+ */
+
+/dts-v1/;
+
+#include <freq.h>
+#include <mem.h>
+
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	compatible = "bao,vm", "riscv-virtio";
+	model = "Bao VM on QEMU RISC-V virt (PLIC)";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,sram = &ram0;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		timebase-frequency = <DT_FREQ_M(10)>;
+		riscv,isa-base = "rv64i";
+		riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zicsr", "zifencei",
+				       "zicntr";
+		riscv,privilege-modes = "m", "s", "u";
+
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			reg = <0>;
+			status = "okay";
+			compatible = "qemu,riscv-virt", "riscv";
+
+			hlic0: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#address-cells = <0>;
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+	};
+
+	ram0: memory@80000000 {
+		device_type = "memory";
+		reg = <0x80000000 DT_SIZE_M(128)>;
+	};
+
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "simple-bus";
+		ranges;
+
+		uart0: uart@10000000 {
+			compatible = "ns16550";
+			reg = <0x10000000 0x100>;
+			reg-shift = <0>;
+			clock-frequency = <0x384000>;
+			interrupt-parent = <&plic>;
+			interrupts = <0x0a 1>;
+			status = "okay";
+		};
+
+		plic: interrupt-controller@c000000 {
+			compatible = "sifive,plic-1.0.0";
+			reg = <0x0c000000 0x04000000>;
+			riscv,max-priority = <7>;
+			riscv,ndev = <1024>;
+			/*
+			 * Zephyr runs in supervisor mode and uses the supervisor
+			 * context of the hart (second entry).
+			 */
+			interrupts-extended = <&hlic0 0x0b &hlic0 0x09>;
+			interrupt-controller;
+			#address-cells = <0>;
+			#interrupt-cells = <2>;
+		};
+
+		/*
+		 * The machine timer registers are not accessible to the VM. This
+		 * node only enables the RISC-V supervisor timer driver, which
+		 * programs the timer through the SBI TIME extension provided by
+		 * Bao and reads the time CSR.
+		 */
+		mtimer: timer@200bff8 {
+			compatible = "riscv,machine-timer";
+			interrupts-extended = <&hlic0 7>;
+			reg = <0x200bff8 0x8 0x2004000 0x8>;
+			reg-names = "mtime", "mtimecmp";
+		};
+	};
+};

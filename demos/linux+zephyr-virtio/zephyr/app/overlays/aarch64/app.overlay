@@ -1,0 +1,57 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Memory layout and Remote I/O (VirtIO) device of the Zephyr VM, matching the
+ * Bao configuration in configs/<platform>.c.
+ */
+
+#include <zephyr/dt-bindings/interrupt-controller/arm-gic.h>
+
+/delete-node/ &dram0;
+/delete-node/ &flash0;
+
+/ {
+	chosen {
+		zephyr,flash = &flash0;
+		zephyr,sram = &shmem0;
+	};
+
+	soc {
+		/* Private VM memory where Bao loads the image: code and read-only data */
+		flash0: flash@80000000 {
+			compatible = "soc-nv-flash";
+			reg = <0x0 0x80000000 0x0 DT_SIZE_M(16)>;
+		};
+
+		/*
+		 * Memory shared with the VirtIO backend VM. All of Zephyr's RAM
+		 * lives here so the backend can reach the virtqueues and the
+		 * console buffers.
+		 */
+		shmem0: memory@d0000000 {
+			compatible = "mmio-dram";
+			reg = <0x0 0xd0000000 0x0 DT_SIZE_M(16)>;
+		};
+
+		/*
+		 * VirtIO MMIO device emulated by the backend. Accesses are
+		 * forwarded by Bao to the backend, so the initialization is
+		 * deferred until the application decides to wait for it. The
+		 * interrupt (SPI 20, i.e. interrupt 52) is injected by Bao.
+		 */
+		virtio_mmio0: virtio_mmio@a003e00 {
+			compatible = "virtio,mmio";
+			reg = <0x0 0xa003e00 0x0 0x200>;
+			interrupt-parent = <&gic>;
+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY>;
+			zephyr,deferred-init;
+			status = "okay";
+
+			virtio_console0: virtio-console {
+				compatible = "virtio,console";
+				zephyr,deferred-init;
+				status = "okay";
+			};
+		};
+	};
+};

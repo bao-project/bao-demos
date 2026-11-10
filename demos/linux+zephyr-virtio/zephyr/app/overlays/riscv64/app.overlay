@@ -1,0 +1,52 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Memory layout and Remote I/O (VirtIO) device of the Zephyr VM, matching the
+ * Bao configuration in configs/<platform>.c.
+ */
+
+/delete-node/ &ram0;
+
+/ {
+	chosen {
+		zephyr,flash = &flash0;
+		zephyr,sram = &shmem0;
+	};
+
+	/* Private VM memory where Bao loads the image: code and read-only data */
+	flash0: flash@80000000 {
+		compatible = "soc-nv-flash";
+		reg = <0x80000000 DT_SIZE_M(32)>;
+	};
+
+	/*
+	 * Memory shared with the VirtIO backend VM. All of Zephyr's RAM lives
+	 * here so the backend can reach the virtqueues and the console buffers.
+	 */
+	shmem0: memory@d0000000 {
+		device_type = "memory";
+		reg = <0xd0000000 DT_SIZE_M(16)>;
+	};
+
+	soc {
+		/*
+		 * VirtIO MMIO device emulated by the backend. Accesses are
+		 * forwarded by Bao to the backend, so the initialization is
+		 * deferred until the application decides to wait for it.
+		 */
+		virtio_mmio0: virtio_mmio@a003e00 {
+			compatible = "virtio,mmio";
+			reg = <0xa003e00 0x200>;
+			interrupt-parent = <&plic>;
+			interrupts = <52 1>;
+			zephyr,deferred-init;
+			status = "okay";
+
+			virtio_console0: virtio-console {
+				compatible = "virtio,console";
+				zephyr,deferred-init;
+				status = "okay";
+			};
+		};
+	};
+};
