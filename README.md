@@ -193,6 +193,7 @@ Build guests according to the target demo:
 * [Dual-Guest FreeRTOS+Baremetal](demos/freertos+baremetal/README.md)
 * [Dual-Guest Torizon OS+FreeRTOS](demos/torizonos+freertos/README.md)
 * [Dual-Guest Nuttx+Baremetal](demos/nuttx+baremetal/README.md)
+* [Four-guest VirtIO](demos/virtio/README.md)
 
 
 ### B.4) Build Bao
@@ -302,6 +303,7 @@ Build the firmware and deploy the system according to the target platform:
 | Zephyr+Baremetal | zephyr+baremetal |
 | Nuttx+Baremetal  | nuttx+baremetal  |
 | VirtIO           | virtio           |
+| Torizon OS+FreeRTOS | torizonos+freertos |
 
 ## Appendix II
 
