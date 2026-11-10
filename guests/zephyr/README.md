@@ -7,6 +7,10 @@ RISC-V S-mode support (and the AIA drivers the RISC-V boards rely on) is not
 part of any Zephyr release yet, so all platforms pin a snapshot of upstream
 main. Zephyr main requires Python 3.12 or newer on the PATH to build.
 
+Demos that need a different Zephyr revision or board definition (e.g. the
+[Linux+Zephyr VirtIO console demo](../../demos/linux+zephyr-virtio/README.md))
+state the values to use instead of the ones below in their README.
+
 ---
 
 Setup the environment variables for Zephyr:
@@ -59,7 +63,7 @@ git -C $BAO_DEMOS_ZEPHYR_NXP_SRC checkout FETCH_HEAD
 ```
 ---
 
-Then, patch Zephyr and build.
+Then, patch Zephyr (if there are patches for the selected revision) and build.
 
 ```
 git -C $BAO_DEMOS_ZEPHYR_SRC apply $BAO_DEMOS_ZEPHYR_PATCHES/*
