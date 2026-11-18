@@ -9,7 +9,9 @@ main. Zephyr main requires Python 3.12 or newer on the PATH to build.
 
 Demos that need a different Zephyr revision or board definition (e.g. the
 [Linux+Zephyr VirtIO console demo](../../demos/linux+zephyr-virtio/README.md))
-state the values to use instead of the ones below in their README.
+state the values to use instead of the ones below in their README. The same
+goes for demos that build the application of another demo with a configuration
+of their own, which is passed to CMake as the `APPLICATION_CONFIG_DIR`.
 
 ---
 
