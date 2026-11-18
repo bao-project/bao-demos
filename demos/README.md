@@ -11,6 +11,7 @@ The following demos are available:
 * [Dual-Guest Torizon OS+FreeRTOS](torizonos+freertos/README.md)
 * [Four-Guest VirtIO](virtio/README.md)
 * [Dual-Guest Linux+Zephyr VirtIO Console](linux+zephyr-virtio/README.md)
+* [Dual-Guest Linux+Zephyr VirtIO Console with Bounce Buffers](linux+zephyr-virtio-bounce/README.md)
 
 More demos, showcasing different Bao features, guests and configurations will
 be available in the future.

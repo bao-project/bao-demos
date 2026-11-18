@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+# Launch the Bao VirtIO device model serving the Zephyr guest's console,
+# network interface and block device.
+# The I/O dispatcher kernel module is loaded by /etc/init.d/S99bao.
+
+CONFIG=/etc/bao-virtio-console.yaml
+LOG=/var/log/bao-virtio-dm.log
+
+# The VirtIO network device is backed by a TAP interface, bridged with this
+# VM's own network interface so that the frontend sits on the same network.
+# The address of this VM moves from eth0 to the bridge.
+TAP=tap0
+BRIDGE=bao-br0
+ADDRESS=192.168.42.15/24
+
+# The VirtIO block device is backed by a 1 MiB disk image whose first sector
+# holds a message for the frontend, which answers in the second sector.
+DISK=/tmp/bao-virtio-blk.img
+
+setup_disk() {
+    dd if=/dev/zero of=$DISK bs=1024 count=1024 2> /dev/null
+    printf 'Hello from the disk image of the Linux backend\n' |
+        dd of=$DISK conv=notrunc 2> /dev/null
+}
+
+setup_network() {
+    modprobe bridge 2> /dev/null
+    if [ ! -e /dev/net/tun ]; then
+        mkdir -p /dev/net
+        mknod /dev/net/tun c 10 200
+    fi
+
+    ip tuntap add dev $TAP mode tap
+    ip link add name $BRIDGE type bridge
+    ip addr flush dev eth0
+    ip link set dev eth0 master $BRIDGE
+    ip link set dev $TAP master $BRIDGE
+    ip addr add $ADDRESS dev $BRIDGE
+    ip link set dev $BRIDGE up
+    ip link set dev eth0 up
+    ip link set dev $TAP up
+}
+
+case "$1" in
+    start)
+        if [ -e /dev/bao-io-dispatcher ]; then
+            echo "Setting up the network of the VirtIO network device..."
+            setup_network
+            echo "Creating the disk image of the VirtIO block device..."
+            setup_disk
+            echo "Starting the Bao VirtIO backend (log: $LOG)..."
+            nohup bao-virtio-dm --config $CONFIG > $LOG 2>&1 &
+        else
+            echo "/dev/bao-io-dispatcher not found: not starting the VirtIO backend"
+        fi
+        ;;
+    stop)
+        killall bao-virtio-dm 2> /dev/null
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
+
+exit 0

@@ -1,0 +1,103 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Memory layout and Remote I/O (VirtIO) device of the Zephyr VM, matching the
+ * Bao configuration in configs/<platform>.c.
+ */
+
+/* Private VM memory: Zephyr's image and all of its RAM live here */
+&ram0 {
+	reg = <0x80000000 DT_SIZE_M(32)>;
+};
+
+/ {
+	/*
+	 * The only memory shared with the VirtIO backend VM, declared as
+	 * restricted DMA pools: the VirtIO transport allocates the virtqueues
+	 * of a device from its pool and bounces the driver buffers through
+	 * it, so nothing else of Zephyr is visible to the backend. Bao shares
+	 * one region per Remote I/O device, so each device has its own pool.
+	 */
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		virtio_shm: restricted-dma-pool@d0000000 {
+			compatible = "restricted-dma-pool", "zephyr,memory-region", "mmio-sram";
+			reg = <0xd0000000 DT_SIZE_K(64)>;
+			zephyr,memory-region = "VIRTIO_SHM";
+		};
+
+		virtio_net_shm: restricted-dma-pool@d1000000 {
+			compatible = "restricted-dma-pool", "zephyr,memory-region", "mmio-sram";
+			reg = <0xd1000000 DT_SIZE_M(1)>;
+			zephyr,memory-region = "VIRTIO_NET_SHM";
+		};
+
+		virtio_blk_shm: restricted-dma-pool@d2000000 {
+			compatible = "restricted-dma-pool", "zephyr,memory-region", "mmio-sram";
+			reg = <0xd2000000 DT_SIZE_K(256)>;
+			zephyr,memory-region = "VIRTIO_BLK_SHM";
+		};
+	};
+
+	soc {
+		/*
+		 * VirtIO MMIO device emulated by the backend. Accesses are
+		 * forwarded by Bao to the backend, so the initialization is
+		 * deferred until the application decides to wait for it.
+		 */
+		virtio_mmio0: virtio_mmio@a003e00 {
+			compatible = "virtio,mmio";
+			reg = <0xa003e00 0x200>;
+			interrupt-parent = <&plic>;
+			interrupts = <52 1>;
+			memory-region = <&virtio_shm>;
+			zephyr,deferred-init;
+			status = "okay";
+
+			virtio_console0: virtio-console {
+				compatible = "virtio,console";
+				zephyr,deferred-init;
+				status = "okay";
+			};
+		};
+
+		/*
+		 * VirtIO network device. The network stack sets its interface
+		 * up at boot, so this one is not deferred: Zephyr only boots
+		 * once the backend is running.
+		 */
+		virtio_mmio1: virtio_mmio@a003c00 {
+			compatible = "virtio,mmio";
+			reg = <0xa003c00 0x200>;
+			interrupt-parent = <&plic>;
+			interrupts = <51 1>;
+			memory-region = <&virtio_net_shm>;
+			status = "okay";
+
+			virtio_net0: virtio-net {
+				compatible = "virtio,net";
+				local-mac-address = [02 00 00 00 42 16];
+				status = "okay";
+			};
+		};
+
+		/* VirtIO block device, also set up at boot */
+		virtio_mmio2: virtio_mmio@a003a00 {
+			compatible = "virtio,mmio";
+			reg = <0xa003a00 0x200>;
+			interrupt-parent = <&plic>;
+			interrupts = <50 1>;
+			memory-region = <&virtio_blk_shm>;
+			status = "okay";
+
+			virtio_blk0: virtio-blk {
+				compatible = "virtio,blk";
+				disk-name = "VD0";
+				status = "okay";
+			};
+		};
+	};
+};
