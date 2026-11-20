@@ -1,0 +1,19 @@
+devices:
+  - id: 0
+    type: "console"
+    mmio_addr: 0xa003e00
+    data_plane: virtio
+  - id: 1
+    type: "net"
+    mmio_addr: 0xa003c00
+    data_plane: virtio
+    tap_name: "tap0"
+    mac_addr: "02:00:00:00:42:16"
+  - id: 2
+    type: "block"
+    mmio_addr: 0xa003a00
+    data_plane: virtio
+    file_path: "/tmp/bao-virtio-blk.img"
+    read_only: false
+    root_device: false
+    advertise_flush: false
